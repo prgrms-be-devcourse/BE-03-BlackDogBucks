@@ -13,7 +13,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-
     @Bean
     public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
         return http
@@ -25,9 +24,7 @@ public class SecurityConfig {
 
             .and()
             .build();
-
     }
-
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {

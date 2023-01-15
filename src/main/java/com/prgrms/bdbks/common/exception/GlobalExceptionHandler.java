@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    protected ResponseEntity<ErrorResponse> constraintViolationExceptionHandling(
+    protected ResponseEntity<ErrorResponse> handleConstraintViolationException(
         HttpServletRequest request,
         ConstraintViolationException e) {
 
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<?> runtimeExceptionHandling(HttpServletRequest request,
+    public ResponseEntity<ErrorResponse> handleRuntimeException(HttpServletRequest request,
         SQLIntegrityConstraintViolationException e) {
 
         return ResponseEntity.badRequest()
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    protected ResponseEntity<ErrorResponse> illegalArgumentExceptionHandling(
+    protected ResponseEntity<ErrorResponse> handleIllegalArgumentException(
         HttpServletRequest request,
         IllegalArgumentException e) {
 
@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<ErrorResponse> nonValidRequestHandling(
+    protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
         HttpServletRequest request,
         MethodArgumentNotValidException e) {
 
@@ -70,7 +70,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidFormatException.class)
-    protected ResponseEntity<ErrorResponse> nonValidRequestsHandling(
+    protected ResponseEntity<ErrorResponse> handleInvalidFormatException(
         HttpServletRequest request,
         InvalidFormatException e) {
 

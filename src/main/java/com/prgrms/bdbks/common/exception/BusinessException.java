@@ -2,7 +2,7 @@ package com.prgrms.bdbks.common.exception;
 
 public class BusinessException extends RuntimeException {
 
-    public BusinessException() {
+    protected BusinessException() {
     }
 
     public BusinessException(String message) {
@@ -21,4 +21,5 @@ public class BusinessException extends RuntimeException {
         boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
+
 }

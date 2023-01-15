@@ -5,7 +5,7 @@ server:
 decorator:
   datasource:
     p6spy:
-      enable-logging: false
+      enable-logging: true
 
 spring:
   datasource:
@@ -17,9 +17,9 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
-      hibernate.format_sql: true
+      hibernate.format_sql: false
       dialect: org.hibernate.dialect.H2Dialect
     database: h2
 
@@ -40,7 +40,7 @@ spring:
       ddl-auto: update
     show-sql: false
     properties:
-      hibernate.format_sql: true
+      hibernate.format_sql: false
       dialect: org.hibernate.dialect.MySQL8Dialect
       hibernate.default_batch_fetch_size: 1000
     database: mysql
@@ -73,7 +73,7 @@ spring:
       ddl-auto: # todo
     show-sql: false
     properties:
-      hibernate.format_sql: true
+      hibernate.format_sql: false
       dialect: org.hibernate.dialect.MySQL8Dialect
       hibernate.default_batch_fetch_size: 1000
     database: mysql

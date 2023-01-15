@@ -1,15 +1,22 @@
 package com.prgrms.bdbks.config.p6spy;
 
 import com.p6spy.engine.logging.Category;
+import com.p6spy.engine.spy.P6SpyOptions;
 import com.p6spy.engine.spy.appender.MessageFormattingStrategy;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import javax.annotation.PostConstruct;
 import org.hibernate.engine.jdbc.internal.FormatStyle;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class P6spyConfiguration implements MessageFormattingStrategy {
+
+    @PostConstruct
+    public void setLogMessageFormat() {
+        P6SpyOptions.getActiveInstance().setLogMessageFormat(this.getClass().getName());
+    }
 
     @Override
     public String formatMessage(int connectionId, String now, long elapsed, String category,
@@ -36,7 +43,7 @@ public class P6spyConfiguration implements MessageFormattingStrategy {
             } else {
                 sql = FormatStyle.BASIC.getFormatter().format(sql);
             }
-            sql = "|\nHeFormatSql(P6Spy sql,Hibernate format):" + sql;
+            sql = "|\n Hibernate FormatSql(P6Spy sql, Hibernate format): " + sql + "\n";
         }
 
         return sql;
