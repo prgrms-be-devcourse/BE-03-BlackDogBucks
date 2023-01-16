@@ -10,13 +10,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.prgrms.bdbks.common.domain.TimeAndByColumn;
+import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
 import com.prgrms.bdbks.domain.user.authority.Authority;
 
 import lombok.AccessLevel;
@@ -28,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "users")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends TimeAndByColumn {
+public class User extends AbstractTimeColumn {
 
 	@Id
 	@Column(name = "user_id")
@@ -48,7 +46,6 @@ public class User extends TimeAndByColumn {
 	@Column(nullable = false)
 	private String nickName;
 
-	@Temporal(TemporalType.DATE)
 	@Column(nullable = false)
 	private LocalDateTime birthDate;
 
