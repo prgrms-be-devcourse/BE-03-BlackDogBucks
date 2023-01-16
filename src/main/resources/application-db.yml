@@ -1,0 +1,122 @@
+server:
+  shutdown: graceful
+  port: 8080
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:bdbks;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;
+    username: sa
+    password:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate.format_sql: false
+      dialect: org.hibernate.dialect.H2Dialect
+    database: h2
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bdbks_local;
+    username: username
+    password: password
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate.format_sql: false
+      dialect: org.hibernate.dialect.MySQL8Dialect
+      hibernate.default_batch_fetch_size: 1000
+    database: mysql
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql : trace
+
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: develop
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: # todo
+    username: # todo
+    password: # todo
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: # todo
+    show-sql: false
+    properties:
+      hibernate.format_sql: false
+      dialect: org.hibernate.dialect.MySQL8Dialect
+      hibernate.default_batch_fetch_size: 1000
+    database: mysql
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql : trace
+
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: # todo
+    username: # todo
+    password: # todo
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate.format_sql: true
+      dialect: org.hibernate.dialect.MySQL8Dialect
+      hibernate.default_batch_fetch_size: 1000
+    database: mysql
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql : trace
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: false
