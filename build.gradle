@@ -41,6 +41,9 @@ dependencies {
     // p6spy
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.1'
 
+    //guava
+    implementation 'com.google.guava:guava:31.1-jre'
+
     // querydsl
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
@@ -88,7 +91,7 @@ configurations {
 }
 
 compileQuerydsl.doFirst {
-    if(file(querydslDir).exists() )
+    if (file(querydslDir).exists())
         delete(file(querydslDir))
 }
 
