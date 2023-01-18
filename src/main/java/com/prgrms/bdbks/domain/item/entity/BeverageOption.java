@@ -11,11 +11,11 @@ public interface BeverageOption {
         DRIP("드립", "Drip");
 
         private final String korName;
-        private final String engName;
+        private final String englishName;
 
-        Coffee(String korName, String engName) {
+        Coffee(String korName, String englishName) {
             this.korName = korName;
-            this.engName = engName;
+            this.englishName = englishName;
         }
     }
 
@@ -26,11 +26,11 @@ public interface BeverageOption {
         HAZELNUT("헤이즐넛 시럽", "Hazelnut Syrup");
 
         private final String korName;
-        private final String engName;
+        private final String englishName;
 
-        Syrup(String korName, String engName) {
+        Syrup(String korName, String englishName) {
             this.korName = korName;
-            this.engName = engName;
+            this.englishName = englishName;
         }
     }
 
@@ -42,12 +42,12 @@ public interface BeverageOption {
         LOW_FAT("저지방", "Low Fat");
 
         private final String korName;
-        private final String engName;
+        private final String englishName;
 
 
-        Milk(String korName, String engName) {
+        Milk(String korName, String englishName) {
             this.korName = korName;
-            this.engName = engName;
+            this.englishName = englishName;
         }
     }
 
@@ -70,12 +70,12 @@ public interface BeverageOption {
         GRANDE("Grande","473ml"),
         VENTI("Venti", "591ml");
 
-        private final String engName;
+        private final String englishName;
         private final String amount;
 
-        Size(String engName, String amount) {
+        Size(String englishName, String amount) {
             this.amount = amount;
-            this.engName = engName;
+            this.englishName = englishName;
         }
     }
 

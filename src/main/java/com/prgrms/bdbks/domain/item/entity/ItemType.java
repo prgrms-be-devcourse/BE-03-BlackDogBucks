@@ -5,17 +5,17 @@ import lombok.Getter;
 @Getter
 public enum ItemType {
 
-    BEVERAGE("음료", "Beverage"),
-    FOOD("푸드", "Food"),
-    PRODUCT("상품", "Product");
+	BEVERAGE("음료", "Beverage"),
+	FOOD("푸드", "Food"),
+	PRODUCT("상품", "Product");
 
-    private final String korName;
+	private final String korName;
 
-    private final String engName;
+	private final String englishName;
 
-    ItemType(String korName, String engName) {
-        this.korName = korName;
-        this.engName = engName;
-    }
+	ItemType(String korName, String englishName) {
+		this.korName = korName;
+		this.englishName = englishName;
+	}
 
 }
