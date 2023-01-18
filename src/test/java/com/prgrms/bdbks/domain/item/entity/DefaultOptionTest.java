@@ -14,7 +14,7 @@ class DefaultOptionTest {
 	@ValueSource(ints = {-1, -2, 10, 11, 100, 999, -3, -555})
 	void constructor_create_count_over0_and_less_then0_fail(int count) {
 		// given & when & then
-		assertThrows(IllegalArgumentException.class, () -> DefaultOption.builder()
+		var i = assertThrows(IllegalArgumentException.class, () -> DefaultOption.builder()
 			.classicSyrupCount(count)
 			.espressoShotCount(count)
 			.vanillaSyrupCount(count)
