@@ -38,8 +38,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    //guava
-    implementation 'com.google.guava:guava:31.1-jre'
+    // jdbc
+    implementation 'org.springframework.data:spring-data-jdbc'
+    
+    implementation("com.google.guava:guava:31.1-jre") 
+    implementation 'commons-validator:commons-validator:1.7'
 
     // p6spy
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.1'
@@ -48,13 +51,14 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
     // lombok
+    testCompileOnly 'org.projectlombok:lombok'
     compileOnly 'org.projectlombok:lombok'
 
     // mysql
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     annotationProcessor 'org.projectlombok:lombok'
-
+    testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
@@ -62,8 +66,8 @@ dependencies {
 
     testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.9.0'
 
-
     runtimeOnly 'com.h2database:h2'
+
 }
 // ---- querydsl 설정
 // querydsl 사용할 경로 지정. 현재 지정한 부분은 .gitignore 에 포함되므로 git 에 올라가지 않는다.
