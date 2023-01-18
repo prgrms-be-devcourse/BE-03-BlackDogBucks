@@ -41,6 +41,7 @@ class OrderIdGeneratorTest {
 			log.info(generateOrderId);
 			log.info(currentDateTime);
 			mockLocalDateTime.verify(LocalDateTime::now, atLeast(2));
+			assertEquals(generateOrderId.length(), currentDateTime.length() + 2 + 4);
 		}
 
 	}
