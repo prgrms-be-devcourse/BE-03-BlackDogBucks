@@ -17,7 +17,7 @@ import javax.persistence.Table;
 import org.springframework.util.StringUtils;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
-import com.prgrms.bdbks.domain.user.authority.Authority;
+import com.prgrms.bdbks.domain.user.role.Role;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -57,18 +57,18 @@ public class User extends AbstractTimeColumn {
 	private String email;
 
 	@Enumerated(EnumType.STRING)
-	private Authority authority;
+	private Role role;
 
 	@Builder
 	protected User(Long id, String loginId, String password, String nickname, LocalDateTime birthDate, String phone,
-		String email, Authority authority) {
+		String email, Role role) {
 		validateLoginId(loginId);
 		validatePassword(password);
 		validateNickname(nickname);
 		validateBirthDate(birthDate);
 		validatePhone(phone);
 		validateEmail(email);
-		validateAuthority(authority);
+		validateAuthority(role);
 
 		this.id = id;
 		this.loginId = loginId;
@@ -77,7 +77,7 @@ public class User extends AbstractTimeColumn {
 		this.birthDate = birthDate;
 		this.phone = phone;
 		this.email = email;
-		this.authority = authority;
+		this.role = role;
 	}
 
 	private void validateLoginId(String loginId) {
@@ -111,7 +111,7 @@ public class User extends AbstractTimeColumn {
 		checkArgument(email.matches(emailRegex));
 	}
 
-	private void validateAuthority(Authority authority) {
-		checkNotNull(authority, "권한을 입력해주세요.");
+	private void validateAuthority(Role role) {
+		checkNotNull(role, "권한을 입력해주세요.");
 	}
 }

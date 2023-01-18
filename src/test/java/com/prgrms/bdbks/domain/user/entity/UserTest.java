@@ -10,12 +10,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import com.prgrms.bdbks.domain.user.authority.Authority;
+import com.prgrms.bdbks.domain.user.role.Role;
 
 class UserTest {
 
 	private User createUser(String loginId, String password, String nickname, LocalDateTime birthDate, String phone,
-		String email, Authority authority) {
+		String email, Role role) {
 
 		return User.builder()
 			.loginId(loginId)
@@ -24,7 +24,7 @@ class UserTest {
 			.birthDate(birthDate)
 			.phone(phone)
 			.email(email)
-			.authority(authority)
+			.role(role)
 			.build();
 	}
 
@@ -33,7 +33,7 @@ class UserTest {
 	private final String validNickname = "nickname123";
 	private final String validPhone = "01012345678";
 	private final String validEmail = "bdbks@naver.com";
-	private final Authority validAuthority = Authority.USER;
+	private final Role validRole = Role.USER;
 	private final LocalDateTime validBirthDate = LocalDateTime.now().minusYears(10L);
 
 	@Test
@@ -42,7 +42,7 @@ class UserTest {
 
 		assertDoesNotThrow(
 			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, validPhone, validEmail,
-				validAuthority));
+				validRole));
 	}
 
 	@ParameterizedTest
@@ -52,7 +52,7 @@ class UserTest {
 	void validateLoginId_EmptyValue_ExceptionThrown(String invalidUserId) {
 		assertThrows(IllegalArgumentException.class,
 			() -> createUser(invalidUserId, validPassword, validNickname, validBirthDate, validPhone, validEmail,
-				validAuthority));
+				validRole));
 	}
 
 	@ParameterizedTest
@@ -61,7 +61,7 @@ class UserTest {
 	void validateLoginId_NotValidLength_ExceptionThrown(String invalidUserId) {
 		assertThrows(IllegalArgumentException.class,
 			() -> createUser(invalidUserId, validPassword, validNickname, validBirthDate, validPhone, validEmail,
-				validAuthority));
+				validRole));
 	}
 
 	@ParameterizedTest
@@ -71,7 +71,7 @@ class UserTest {
 	void validatePassword_EmptyValue_ExceptionThrown(String invalidPassword) {
 		assertThrows(IllegalArgumentException.class,
 			() -> createUser(validLoginId, invalidPassword, validNickname, validBirthDate, validPhone, validEmail,
-				validAuthority));
+				validRole));
 	}
 
 	@ParameterizedTest
@@ -80,7 +80,7 @@ class UserTest {
 	void validatePassword_NotValidLength_ExceptionThrown(String invalidPassword) {
 		assertThrows(IllegalArgumentException.class,
 			() -> createUser(invalidPassword, invalidPassword, validNickname, validBirthDate, validPhone, validEmail,
-				validAuthority));
+				validRole));
 	}
 
 	@ParameterizedTest
@@ -90,7 +90,7 @@ class UserTest {
 	void validateNickname_EmptyValue_ExceptionThrown(String invalidPassword) {
 		assertThrows(IllegalArgumentException.class,
 			() -> createUser(validLoginId, validPassword, invalidPassword, validBirthDate, validPhone, validEmail,
-				validAuthority));
+				validRole));
 	}
 
 	@ParameterizedTest
@@ -99,7 +99,7 @@ class UserTest {
 	void validateNickname_NotValidLength_ExceptionThrown(String invalidNickname) {
 		assertThrows(IllegalArgumentException.class,
 			() -> createUser(validLoginId, validPassword, invalidNickname, validBirthDate, validPhone, validEmail,
-				validAuthority));
+				validRole));
 	}
 
 	@Test
@@ -109,7 +109,7 @@ class UserTest {
 
 		assertThrows(IllegalArgumentException.class,
 			() -> createUser(validLoginId, validPassword, validNickname, invalidBirthDate, validPhone, validEmail,
-				validAuthority));
+				validRole));
 	}
 
 	@ParameterizedTest
@@ -119,7 +119,7 @@ class UserTest {
 	void validatePhone_EmptyValue_ExceptionThrown(String invalidPhone) {
 		assertThrows(IllegalArgumentException.class,
 			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, invalidPhone, validEmail,
-				validAuthority));
+				validRole));
 	}
 
 	@ParameterizedTest
@@ -128,7 +128,7 @@ class UserTest {
 	void validatePhone_NotValidLength_ExceptionThrown(String invalidPhone) {
 		assertThrows(IllegalArgumentException.class,
 			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, invalidPhone, validEmail,
-				validAuthority));
+				validRole));
 	}
 
 	@ParameterizedTest
@@ -137,7 +137,7 @@ class UserTest {
 	void validatePhone_NotDigit_ExceptionThrown(String invalidPhone) {
 		assertThrows(IllegalArgumentException.class,
 			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, invalidPhone, validEmail,
-				validAuthority));
+				validRole));
 	}
 
 	@ParameterizedTest
@@ -147,7 +147,7 @@ class UserTest {
 	void validateEmail_EmptyValue_ExceptionThrown(String invalidEmail) {
 		assertThrows(IllegalArgumentException.class,
 			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, validPhone, invalidEmail,
-				validAuthority));
+				validRole));
 	}
 
 	@ParameterizedTest
@@ -156,16 +156,16 @@ class UserTest {
 	void validateEmail_NotValidFormat_ExceptionThrown(String invalidEmail) {
 		assertThrows(IllegalArgumentException.class,
 			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, validPhone, invalidEmail,
-				validAuthority));
+				validRole));
 	}
 
 	@Test
-	@DisplayName("validateAuthroity - 유저의 Authority 값이 null인 경우 - 생성 실패")
-	void validateAuthority_EmptyValue_ExceptionThrown() {
-		Authority invalidAuthority = null;
+	@DisplayName("validateRole - 유저의 Role이 null인 경우 - 생성 실패")
+	void validateRole_EmptyValue_ExceptionThrown() {
+		Role invalidRole = null;
 
 		assertThrows(NullPointerException.class,
 			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, validPhone, validEmail,
-				invalidAuthority));
+				invalidRole));
 	}
 }
