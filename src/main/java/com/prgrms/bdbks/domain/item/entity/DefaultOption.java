@@ -30,16 +30,16 @@ public class DefaultOption {
 	private Long id;
 
 	@Column(name = "espresso_shot_count", columnDefinition = "tinyint")
-	private int espressoShotCount = 0;
+	private Integer espressoShotCount;
 
 	@Column(name = "vanilla_syrup_count", columnDefinition = "tinyint")
-	private int vanillaSyrupCount = 0;
+	private Integer vanillaSyrupCount;
 
 	@Column(name = "classic_syrup_count", columnDefinition = "tinyint")
-	private int classicSyrupCount = 0;
+	private Integer classicSyrupCount;
 
 	@Column(name = "hazelnut_syrup_count", columnDefinition = "tinyint")
-	private int hazelnutSyrupCount = 0;
+	private Integer hazelnutSyrupCount;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "milk_type", length = 20)
