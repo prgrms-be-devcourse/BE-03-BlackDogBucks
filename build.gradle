@@ -38,6 +38,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    //guava
+    implementation 'com.google.guava:guava:31.1-jre'
+
     // p6spy
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.1'
 
@@ -88,7 +91,7 @@ configurations {
 }
 
 compileQuerydsl.doFirst {
-    if(file(querydslDir).exists() )
+    if (file(querydslDir).exists())
         delete(file(querydslDir))
 }
 

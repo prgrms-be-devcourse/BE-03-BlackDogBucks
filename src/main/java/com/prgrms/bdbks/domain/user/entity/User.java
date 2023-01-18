@@ -1,5 +1,8 @@
 package com.prgrms.bdbks.domain.user.entity;
 
+import static com.google.common.base.Preconditions.*;
+import static java.time.LocalDateTime.*;
+
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -10,10 +13,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.util.StringUtils;
+
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
 import com.prgrms.bdbks.domain.user.authority.Authority;
 
@@ -28,48 +30,88 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends AbstractTimeColumn {
 
+	private static final String numberRegex = "[0-9]+";
+	private static final String emailRegex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+
 	@Id
 	@Column(name = "user_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Size(min = 6, max = 20)
-	@Column(name = "login_id", nullable = false, unique = true)
+	@Column(name = "login_id", length = 20, nullable = false, unique = true)
 	private String loginId;
 
-	@Size(min = 8, max = 20)
-	@Column(nullable = false)
-	@JsonIgnore
+	@Column(length = 20, nullable = false)
 	private String password;
 
-	@Size(min = 4, max = 20)
-	@Column(nullable = false)
-	private String nickName;
+	@Column(length = 20, nullable = false)
+	private String nickname;
 
 	@Column(nullable = false)
 	private LocalDateTime birthDate;
 
-	@Size(min = 11, max = 11)
-	@Column(nullable = false, unique = true)
+	@Column(length = 11, nullable = false, unique = true)
 	private String phone;
 
-	@Email
-	@Column(nullable = false, unique = true)
+	@Column(length = 255, nullable = false, unique = true)
 	private String email;
 
 	@Enumerated(EnumType.STRING)
 	private Authority authority;
 
 	@Builder
-	public User(Long id, String loginId, String password, String nickName, LocalDateTime birthDate, String phone,
+	protected User(Long id, String loginId, String password, String nickname, LocalDateTime birthDate, String phone,
 		String email, Authority authority) {
+		validateLoginId(loginId);
+		validatePassword(password);
+		validateNickname(nickname);
+		validateBirthDate(birthDate);
+		validatePhone(phone);
+		validateEmail(email);
+		validateAuthority(authority);
+
 		this.id = id;
 		this.loginId = loginId;
 		this.password = password;
-		this.nickName = nickName;
+		this.nickname = nickname;
 		this.birthDate = birthDate;
 		this.phone = phone;
 		this.email = email;
 		this.authority = authority;
+	}
+
+	private void validateLoginId(String loginId) {
+		checkArgument(StringUtils.hasText(loginId), "아이디를 입력해주세요.");
+		checkArgument(6 <= loginId.length() && loginId.length() <= 20, "아이디의 길이를 확인해주세요.");
+	}
+
+	private void validatePassword(String password) {
+		checkArgument(StringUtils.hasText(password), "비밀번호를 입력해주세요.");
+		checkArgument(8 <= password.length() && password.length() <= 20, "비밀번호의 길이를 확인해주세요.");
+	}
+
+	private void validateNickname(String nickname) {
+		checkArgument(StringUtils.hasText(nickname), "닉네임을 입력해주세요.");
+		checkArgument(4 <= nickname.length() && nickname.length() <= 20, "닉네임의 길이를 확인해주세요.");
+	}
+
+	private void validateBirthDate(LocalDateTime birthDate) {
+		checkNotNull(birthDate, "생일을 입력해주세요.");
+		checkArgument(birthDate.isBefore(now()), "생년월일을 확인해주세요.");
+	}
+
+	private void validatePhone(String phone) {
+		checkArgument(StringUtils.hasText(phone), "핸드폰 번호를 입력해주세요.");
+		checkArgument(phone.length() == 11, "핸드폰 번호를 확인해주세요.");
+		checkArgument(phone.matches(numberRegex), "숫자를 입력해주세요.");
+	}
+
+	private void validateEmail(String email) {
+		checkArgument(StringUtils.hasText(email), "이메일을 입력해주세요.");
+		checkArgument(email.matches(emailRegex));
+	}
+
+	private void validateAuthority(Authority authority) {
+		checkNotNull(authority, "권한을 입력해주세요.");
 	}
 }
