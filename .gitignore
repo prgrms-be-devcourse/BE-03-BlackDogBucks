@@ -64,11 +64,13 @@ BOOT-INF/
 hs_err_pid*
 
 # spring personal config file
-*.yml
-application*.properties
-
+!**/src/main/**/*.yml
+!**/src/main/**/application*.properties
+!**/src/test/**/*.yml
+!**/src/test/**/application*.properties
 # etc
 *.swp
 
 # AWS User-specific
+
 .idea/**/aws.xml
