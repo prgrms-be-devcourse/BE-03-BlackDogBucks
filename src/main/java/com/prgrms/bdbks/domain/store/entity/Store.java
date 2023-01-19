@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
 
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,19 +29,19 @@ public class Store extends AbstractTimeColumn {
 	private String id;
 
 	@NotNull
-	@Column(name = "store_id", length = 50)
+	@Column(name = "store_name", length = 50, nullable = false)
 	private String name;
 
 	@NotNull
-	@Column(name = "lot_number_address", length = 100)
+	@Column(name = "lot_number_address", length = 100, nullable = false)
 	private String lotNumberAddress;
 
 	@NotNull
-	@Column(name = "road_name_address", length = 100)
+	@Column(name = "road_name_address", length = 100, nullable = false)
 	private String roadNameAddress;
 
 	@NotNull
-	@Column(name = "position", columnDefinition = "point")
+	@Column(name = "position", columnDefinition = "point", nullable = false)
 	private Point position;
 
 	@Builder
@@ -53,7 +52,7 @@ public class Store extends AbstractTimeColumn {
 		validationName(name);
 		validationAddress(lotNumberAddress);
 		validationAddress(roadNameAddress);
-		checkNotNull(position,"position은 null 일 수 없습니다.");
+		checkNotNull(position, "position은 null 일 수 없습니다.");
 
 		this.id = id;
 		this.name = name;
@@ -62,9 +61,9 @@ public class Store extends AbstractTimeColumn {
 		this.position = position;
 	}
 
-	private void validationId(String id){
+	private void validationId(String id) {
 		checkArgument(StringUtils.hasText(id) && !id.isBlank(), "id는 null 이거나 공백일 수 없습니다.");
-		checkArgument(id.length() <= 10,"id는 10자를 넘을 수 없습니다." );
+		checkArgument(id.length() <= 10, "id는 10자를 넘을 수 없습니다.");
 	}
 
 	private void validationAddress(String address) {
