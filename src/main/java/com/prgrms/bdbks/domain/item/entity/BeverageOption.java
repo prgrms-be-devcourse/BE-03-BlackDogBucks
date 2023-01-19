@@ -44,7 +44,6 @@ public interface BeverageOption {
         private final String korName;
         private final String englishName;
 
-
         Milk(String korName, String englishName) {
             this.korName = korName;
             this.englishName = englishName;
@@ -66,8 +65,8 @@ public interface BeverageOption {
 
     @Getter
     enum Size {
-        TALL("Tall","355ml"),
-        GRANDE("Grande","473ml"),
+        TALL("Tall", "355ml"),
+        GRANDE("Grande", "473ml"),
         VENTI("Venti", "591ml");
 
         private final String englishName;
@@ -77,6 +76,20 @@ public interface BeverageOption {
             this.amount = amount;
             this.englishName = englishName;
         }
+    }
+
+    @Getter
+    enum CupType {
+        PERSONAL("개인컵"),
+        STORE("매장컵"),
+        DISPOSABLE("일회용컵");
+
+        private final String koreaName;
+
+        CupType(String koreaName) {
+            this.koreaName = koreaName;
+        }
+
     }
 
 }

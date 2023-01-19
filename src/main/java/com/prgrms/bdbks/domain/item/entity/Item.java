@@ -33,7 +33,7 @@ public class Item extends AbstractTimeColumn {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private String id;
+	private Long id;
 
 	@NotNull
 	@Column(name = "name", nullable = false, length = 50)
