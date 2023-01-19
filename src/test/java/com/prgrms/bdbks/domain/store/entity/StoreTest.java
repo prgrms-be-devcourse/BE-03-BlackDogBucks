@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 @DisplayName("store 테스트")
 class StoreTest {
 
-	private final String id = "34523";
+	private final String id = "34534523";
 
 	private final String name = "가로수길점";
 
@@ -40,6 +40,22 @@ class StoreTest {
 				.build();
 		});
 	}
+
+	@Test
+	@DisplayName("생성- Store() - id가 10자를 넘을 경우 생성에 실패한다.")
+	void constructor_create_over_length_id_fail() {
+		assertThrows(IllegalArgumentException.class,
+			() -> Store.builder()
+				.id("12345678910")
+				.name(name)
+				.lotNumberAddress(lotNumberAddress)
+				.roadNameAddress(roadNameAddress)
+				.latitude(latitude)
+				.longitude(longitude)
+				.build()
+		);
+	}
+
 
 	@ParameterizedTest
 	@NullSource

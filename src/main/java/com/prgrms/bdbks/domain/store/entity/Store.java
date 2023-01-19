@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 public class Store extends AbstractTimeColumn {
 
 	@Id
-	@Column(name = "stores_id")
+	@Column(name = "stores_id", length = 10)
 	private String id;
 
 	@NotNull
@@ -53,7 +53,7 @@ public class Store extends AbstractTimeColumn {
 	protected Store(String id, String name, String lotNumberAddress,
 		String roadNameAddress, BigDecimal latitude, BigDecimal longitude) {
 
-		checkArgument(StringUtils.hasText(id) && !id.isBlank(), "id는 null 이거나 공백일 수 없습니다.");
+		validationId(id);
 		validationName(name);
 		validationAddress(lotNumberAddress);
 		validationAddress(roadNameAddress);
@@ -66,6 +66,11 @@ public class Store extends AbstractTimeColumn {
 		this.roadNameAddress = roadNameAddress;
 		this.latitude = latitude;
 		this.longitude = longitude;
+	}
+
+	private void validationId(String id){
+		checkArgument(StringUtils.hasText(id) && !id.isBlank(), "id는 null 이거나 공백일 수 없습니다.");
+		checkArgument(id.length() <= 10,"id는 10자를 넘을 수 없습니다." );
 	}
 
 	private void validationAddress(String address) {
