@@ -2,19 +2,17 @@ package com.prgrms.bdbks.domain.store.entity;
 
 import static com.google.common.base.Preconditions.*;
 
-import java.math.BigDecimal;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlAnyAttribute;
 
+import org.locationtech.jts.geom.Point;
 import org.springframework.util.StringUtils;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
-import com.vividsolutions.jts.geom.Point;
+
 
 import lombok.AccessLevel;
 import lombok.Builder;
