@@ -9,10 +9,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAnyAttribute;
 
 import org.springframework.util.StringUtils;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
+import com.vividsolutions.jts.geom.Point;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -42,30 +44,24 @@ public class Store extends AbstractTimeColumn {
 	private String roadNameAddress;
 
 	@NotNull
-	@Column(name = "latitude", columnDefinition = "decimal")
-	private BigDecimal latitude;
-
-	@NotNull
-	@Column(name = "longitude", columnDefinition = "decimal")
-	private BigDecimal longitude;
+	@Column(name = "position", columnDefinition = "point")
+	private Point position;
 
 	@Builder
 	protected Store(String id, String name, String lotNumberAddress,
-		String roadNameAddress, BigDecimal latitude, BigDecimal longitude) {
+		String roadNameAddress, Point position) {
 
 		validationId(id);
 		validationName(name);
 		validationAddress(lotNumberAddress);
 		validationAddress(roadNameAddress);
-		checkNotNull(latitude, "latitude는 null 일 수 없습니다.");
-		checkNotNull(longitude, "longitude는 null 일 수 없습니다.");
+		checkNotNull(position,"position은 null 일 수 없습니다.");
 
 		this.id = id;
 		this.name = name;
 		this.lotNumberAddress = lotNumberAddress;
 		this.roadNameAddress = roadNameAddress;
-		this.latitude = latitude;
-		this.longitude = longitude;
+		this.position = position;
 	}
 
 	private void validationId(String id){

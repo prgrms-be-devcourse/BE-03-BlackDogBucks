@@ -64,6 +64,9 @@ dependencies {
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.security:spring-security-test'
 
+    // point
+    implementation 'com.vividsolutions:jts:1.13'
+
     testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.9.0'
 
     runtimeOnly 'com.h2database:h2'
