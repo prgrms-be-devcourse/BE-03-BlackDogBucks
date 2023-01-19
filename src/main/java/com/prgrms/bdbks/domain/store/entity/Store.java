@@ -62,17 +62,17 @@ public class Store extends AbstractTimeColumn {
 	}
 
 	private void validationId(String id) {
-		checkArgument(StringUtils.hasText(id) && !id.isBlank(), "id는 null 이거나 공백일 수 없습니다.");
+		checkArgument(StringUtils.hasText(id), "id는 null 이거나 공백일 수 없습니다.");
 		checkArgument(id.length() <= 10, "id는 10자를 넘을 수 없습니다.");
 	}
 
 	private void validationAddress(String address) {
-		checkArgument(StringUtils.hasText(address) && !address.isBlank(), "address의 길이는 0 이상이여야 합니다.");
+		checkArgument(StringUtils.hasText(address), "address의 길이는 0 이상이여야 합니다.");
 		checkArgument(address.length() <= 100, "address는 100자를 넘을 수 없습니다.");
 	}
 
 	private void validationName(String name) {
-		checkArgument(StringUtils.hasText(name) && !name.isBlank(), "storeName의 길이는 0 이상이여야 합니다.");
+		checkArgument(StringUtils.hasText(name), "storeName의 길이는 0 이상이여야 합니다.");
 		checkArgument(name.length() <= 50, "storeName은 50자를 넘을 수 없습니다.");
 	}
 }
