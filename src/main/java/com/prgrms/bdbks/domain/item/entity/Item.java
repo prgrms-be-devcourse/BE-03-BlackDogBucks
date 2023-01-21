@@ -46,7 +46,7 @@ public class Item extends AbstractTimeColumn {
 	@NotNull
 	@Column(name = "price", nullable = false)
 	@ColumnDefault("0")
-	private int price = 0;
+	private Integer price = 0;
 
 	@NotNull
 	@Column(name = "image", nullable = false)
