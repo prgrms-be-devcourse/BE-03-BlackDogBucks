@@ -10,6 +10,7 @@ import com.prgrms.bdbks.domain.item.dto.ItemCategoriesResponse;
 import com.prgrms.bdbks.domain.item.dto.ItemCreateRequest;
 import com.prgrms.bdbks.domain.item.dto.ItemDetailResponse;
 import com.prgrms.bdbks.domain.item.dto.ItemResponses;
+import com.prgrms.bdbks.domain.item.entity.DefaultOption;
 import com.prgrms.bdbks.domain.item.entity.Item;
 import com.prgrms.bdbks.domain.item.entity.ItemCategory;
 import com.prgrms.bdbks.domain.item.entity.ItemType;
@@ -25,8 +26,9 @@ public class ItemFacadeService {
 
 	private final ItemService itemService;
 
-	public Optional<Item> findById(Long itemId) {
+	private final ItemOptionService itemOptionService;
 
+	public Optional<Item> findById(Long itemId) {
 		return null;
 	}
 
@@ -41,13 +43,13 @@ public class ItemFacadeService {
 				request.getCategoryName())
 			.orElseThrow(() -> new EntityNotFoundException(ItemCategory.class, request.getItemType(),
 				request.getCategoryName()));
-		itemService.createItem(request, itemCategory);
 
-		return null;
+		DefaultOption defaultOption = itemOptionService.create(request.getDefaultOption());
+
+		return itemService.createItem(request, itemCategory, defaultOption);
 	}
 
 	public ItemDetailResponse findItemDetail(Long itemId) {
-
 		return null;
 	}
 

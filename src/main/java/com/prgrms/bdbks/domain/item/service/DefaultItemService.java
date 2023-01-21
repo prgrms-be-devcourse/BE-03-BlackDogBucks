@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.prgrms.bdbks.domain.item.dto.ItemCreateRequest;
 import com.prgrms.bdbks.domain.item.dto.ItemDetailResponse;
 import com.prgrms.bdbks.domain.item.dto.ItemResponses;
+import com.prgrms.bdbks.domain.item.entity.DefaultOption;
 import com.prgrms.bdbks.domain.item.entity.Item;
 import com.prgrms.bdbks.domain.item.entity.ItemCategory;
 import com.prgrms.bdbks.domain.item.entity.ItemType;
@@ -32,12 +33,21 @@ public class DefaultItemService implements ItemService {
 		return null;
 	}
 
+	@Transactional
 	@Override
-	public Long createItem(ItemCreateRequest request, ItemCategory itemCategory) {
+	public Long createItem(ItemCreateRequest request, ItemCategory itemCategory, DefaultOption defaultOption) {
 
-		Item.builder().name(request.getCategoryName());
+		Item item = Item.builder()
+			.name(request.getName())
+			.englishName(request.getEnglishName())
+			.description(request.getDescription())
+			.image(request.getImage())
+			.price(request.getPrice())
+			.category(itemCategory)
+			.defaultOption(defaultOption)
+			.build();
 
-		return null;
+		return itemRepository.save(item).getId();
 	}
 
 	@Override
