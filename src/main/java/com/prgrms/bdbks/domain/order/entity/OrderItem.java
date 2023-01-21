@@ -46,7 +46,7 @@ public class OrderItem {
 	private CustomOption customOption;
 
 	@NotNull
-	@Column(name = "count", nullable = false)
+	@Column(name = "item_count", nullable = false)
 	private int count = 1;
 
 	@Builder

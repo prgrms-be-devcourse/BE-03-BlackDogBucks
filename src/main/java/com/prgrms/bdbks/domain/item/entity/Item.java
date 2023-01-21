@@ -76,19 +76,21 @@ public class Item extends AbstractTimeColumn {
 
 	@Builder
 	public Item(String name, ItemCategory category, String englishName, int price, String image,
-		String description) {
+		String description, DefaultOption defaultOption) {
 		validateName(name);
 		checkNotNull(category);
 		validateEnglishName(englishName);
 		validatePrice(price);
 		validateDescription(description);
 		validateImage(image);
+		checkNotNull(defaultOption);
 		this.name = name;
 		this.category = category;
 		this.englishName = englishName;
 		this.price = price;
 		this.image = image;
 		this.description = description;
+		this.defaultOption = defaultOption; //  map struct에서 defaultOption 까지 한번에 mapper하려변 builderㅇㅔ 있어야 해서 추가했으
 	}
 
 	private void validateName(String name) {
