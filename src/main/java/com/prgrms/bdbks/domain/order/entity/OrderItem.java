@@ -46,12 +46,12 @@ public class OrderItem {
 	private CustomOption customOption;
 
 	@NotNull
-	@Column(name = "count", nullable = false)
-	private int count = 1;
+	@Column(name = "quantity", nullable = false)
+	private int quantity = 1;
 
 	@Builder
-	public OrderItem(Order order, Item item, CustomOption customOption, int count) {
-		checkArgument(count >= 1, "item 의 count 는 1개 이상이여야 합니다.");
+	public OrderItem(Order order, Item item, CustomOption customOption, int quantity) {
+		checkArgument(quantity >= 1, "item quantity 는 1개 이상이여야 합니다.");
 		checkNotNull(order, "order 는 null 일 수 없습니다.");
 		checkNotNull(item, "item 은 null 일 수 없습니다.");
 		checkNotNull(customOption, "customOption 은 null 일 수 없습니다.");
@@ -59,7 +59,7 @@ public class OrderItem {
 		this.order = order;
 		this.item = item;
 		this.customOption = customOption;
-		this.count = count;
+		this.quantity = quantity;
 	}
 
 }
