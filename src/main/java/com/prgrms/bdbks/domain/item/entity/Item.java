@@ -85,11 +85,13 @@ public class Item extends AbstractTimeColumn {
 		validateImage(image);
 		checkNotNull(defaultOption);
 		this.name = name;
-		this.category = category;
 		this.englishName = englishName;
 		this.price = price;
 		this.image = image;
 		this.description = description;
+		checkNotNull(category);
+		this.category = category;
+		checkNotNull(defaultOption);
 		this.defaultOption = defaultOption; //  map struct에서 defaultOption 까지 한번에 mapper하려변 builderㅇㅔ 있어야 해서 추가했으
 	}
 

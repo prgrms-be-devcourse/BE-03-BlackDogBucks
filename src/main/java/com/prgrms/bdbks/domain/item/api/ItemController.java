@@ -32,12 +32,12 @@ public class ItemController {
 	private final ItemFacadeService itemService;
 
 	@PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> createItem(@RequestBody @Valid ItemCreateRequest itemCreateRequest) {
+	public ResponseEntity<URI> createItem(@RequestBody @Valid ItemCreateRequest itemCreateRequest) {
 		Long itemId = itemService.createItem(itemCreateRequest);
 
-		String getUri = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString() + "/" + itemId;
+		String createdURI = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString() + "/" + itemId;
 
-		return ResponseEntity.created(URI.create(getUri)).build();
+		return ResponseEntity.created(URI.create(createdURI)).build();
 	}
 
 	@GetMapping(value = "/{itemId}", produces = APPLICATION_JSON_VALUE)

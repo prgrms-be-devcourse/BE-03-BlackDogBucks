@@ -10,10 +10,12 @@ import com.prgrms.bdbks.domain.item.entity.ItemType;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ItemCreateRequest {
@@ -41,6 +43,6 @@ public class ItemCreateRequest {
 	private String description;
 
 	@NotNull
-	private DefaultOptionCreateRequest defaultOptionRequest;
+	private DefaultOptionCreateRequest defaultOption;
 
 }

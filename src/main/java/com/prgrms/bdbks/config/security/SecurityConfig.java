@@ -13,29 +13,27 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
-        return http
+	@Bean
+	public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
+		return http
+			.csrf().disable()
 
-            .csrf().disable().cors().and()
+			.authorizeRequests()
+			.antMatchers("/**").permitAll()
+			.anyRequest().permitAll()
+			.and()
+			.build();
+	}
 
-            .authorizeRequests()
-            .antMatchers("/**").permitAll()
+	@Bean
+	public WebSecurityCustomizer webSecurityCustomizer() {
+		return web -> web.ignoring()
+			.antMatchers("/**", "/api/v1/**");
+	}
 
-            .and()
-            .build();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-
-        return web -> web.ignoring()
-            .antMatchers("/**");
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
 }
