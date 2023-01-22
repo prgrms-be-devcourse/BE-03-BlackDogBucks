@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.prgrms.bdbks.domain.item.converter.ItemMapper;
 import com.prgrms.bdbks.domain.item.dto.ItemCreateRequest;
 import com.prgrms.bdbks.domain.item.entity.DefaultOption;
 import com.prgrms.bdbks.domain.item.entity.Item;
@@ -22,6 +23,8 @@ public class DefaultItemService implements ItemService {
 
 	private final ItemRepository itemRepository;
 
+	private final ItemMapper itemMapper;
+
 	@Override
 	public Optional<Item> findById(Long itemId) {
 		return Optional.empty();
@@ -36,15 +39,7 @@ public class DefaultItemService implements ItemService {
 	@Override
 	public Long createItem(ItemCreateRequest request, ItemCategory itemCategory, DefaultOption defaultOption) {
 
-		Item item = Item.builder()
-			.name(request.getName())
-			.englishName(request.getEnglishName())
-			.description(request.getDescription())
-			.image(request.getImage())
-			.price(request.getPrice())
-			.category(itemCategory)
-			.defaultOption(defaultOption)
-			.build();
+		Item item = itemMapper.itemCreateRequestToEntity(request, itemCategory, defaultOption);
 
 		return itemRepository.save(item).getId();
 	}
