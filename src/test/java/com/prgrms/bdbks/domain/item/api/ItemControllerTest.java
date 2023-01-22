@@ -50,7 +50,7 @@ class ItemControllerTest {
 
 	@DisplayName("생성 - Item 을 생성하고 생성된 Resource 의 URI 를 리턴한다 - 성공.")
 	@Test
-	void create_item_success() throws Exception {
+	void createItem_success() throws Exception {
 		//given
 		ItemType beverage = ItemType.BEVERAGE;
 		String categoryName = "에스프레소";

@@ -32,6 +32,7 @@ public class ItemCreateRequest {
 	@NotBlank
 	private String englishName;
 
+	@NotNull
 	@Min(0)
 	private Integer price;
 
