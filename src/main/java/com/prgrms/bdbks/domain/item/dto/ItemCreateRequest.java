@@ -43,6 +43,6 @@ public class ItemCreateRequest {
 	private String description;
 
 	@NotNull
-	private DefaultOptionCreateRequest defaultOption;
+	private DefaultOptionCreateRequest defaultOptionRequest;
 
 }

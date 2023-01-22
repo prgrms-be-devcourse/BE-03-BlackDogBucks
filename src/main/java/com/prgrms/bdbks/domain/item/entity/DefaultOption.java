@@ -77,7 +77,6 @@ public class DefaultOption {
 		if (Objects.isNull(count)) {
 			return;
 		}
-
 		Preconditions.checkArgument(count >= 0 && count <= 9, "Option 개수는 9보다 작은 양수여야합니다.");
 	}
 

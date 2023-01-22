@@ -28,7 +28,7 @@ public class ItemFacadeService {
 			.orElseThrow(() -> new EntityNotFoundException(ItemCategory.class, request.getItemType(),
 				request.getCategoryName()));
 
-		DefaultOption defaultOption = itemOptionService.create(request.getDefaultOption());
+		DefaultOption defaultOption = itemOptionService.create(request.getDefaultOptionRequest());
 
 		return itemService.createItem(request, itemCategory, defaultOption);
 	}
