@@ -76,19 +76,21 @@ public class Item extends AbstractTimeColumn {
 
 	@Builder
 	public Item(String name, ItemCategory category, String englishName, int price, String image,
-		String description) {
+		String description, DefaultOption defaultOption) {
 		validateName(name);
 		checkNotNull(category);
 		validateEnglishName(englishName);
 		validatePrice(price);
 		validateDescription(description);
 		validateImage(image);
+		checkNotNull(defaultOption);
 		this.name = name;
-		this.category = category;
 		this.englishName = englishName;
 		this.price = price;
 		this.image = image;
 		this.description = description;
+		this.category = category;
+		this.defaultOption = defaultOption;
 	}
 
 	private void validateName(String name) {

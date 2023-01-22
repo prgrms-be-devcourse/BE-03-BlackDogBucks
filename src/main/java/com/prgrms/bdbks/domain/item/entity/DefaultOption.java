@@ -1,5 +1,7 @@
 package com.prgrms.bdbks.domain.item.entity;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -54,8 +56,8 @@ public class DefaultOption {
 	private MilkAmount milkAmount = null;
 
 	@Builder
-	protected DefaultOption(int espressoShotCount, int vanillaSyrupCount, int classicSyrupCount,
-		int hazelnutSyrupCount, Milk milkType, Coffee espressoType, MilkAmount milkAmount) {
+	protected DefaultOption(Integer espressoShotCount, Integer vanillaSyrupCount, Integer classicSyrupCount,
+		Integer hazelnutSyrupCount, Milk milkType, Coffee espressoType, MilkAmount milkAmount) {
 
 		validateCount(hazelnutSyrupCount);
 		validateCount(espressoShotCount);
@@ -71,9 +73,12 @@ public class DefaultOption {
 		this.milkAmount = milkAmount;
 	}
 
-	private void validateCount(int count) {
-		Preconditions.checkArgument(count >= 0 && count <= 9, "Option 개수는 9보다 작은 양수여야합니다.");
+	private void validateCount(Integer count) {
+		if (Objects.isNull(count)) {
+			return;
+		}
 
+		Preconditions.checkArgument(count >= 0 && count <= 9, "Option 개수는 9보다 작은 양수여야합니다.");
 	}
 
 }
