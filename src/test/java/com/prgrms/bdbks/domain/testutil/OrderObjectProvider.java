@@ -1,6 +1,7 @@
 package com.prgrms.bdbks.domain.testutil;
 
 import com.prgrms.bdbks.domain.item.entity.BeverageOption;
+import com.prgrms.bdbks.domain.item.entity.DefaultOption;
 import com.prgrms.bdbks.domain.item.entity.Item;
 import com.prgrms.bdbks.domain.item.entity.ItemCategory;
 import com.prgrms.bdbks.domain.item.entity.ItemType;
@@ -30,7 +31,10 @@ public class OrderObjectProvider {
 		String name = "아이스 아메리카노";
 		String description = "진한 에스프레소에 시원한 정수물과 얼음을 더하여 스타벅스의 깔끔하고 강렬한 에스프레소를 가장 부드럽고 시원하게 즐길 수 있는 커피";
 		String englishName = "Iced Caffe Americano";
-		int price = 4500;
+		Integer price = 4500;
+		DefaultOption defaultOption = ItemObjectProvider.createDefaultOption(1, 0, 0, 0,
+			BeverageOption.Milk.OAT, BeverageOption.Coffee.DECAFFEINATED,
+			BeverageOption.MilkAmount.MEDIUM);
 
 		String image = "https://hkbks.com/api/image.jpg";
 
@@ -41,6 +45,7 @@ public class OrderObjectProvider {
 			.englishName(englishName)
 			.price(price)
 			.image(image)
+			.defaultOption(defaultOption)
 			.build();
 	}
 

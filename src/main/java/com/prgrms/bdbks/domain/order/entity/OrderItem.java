@@ -47,10 +47,10 @@ public class OrderItem {
 
 	@NotNull
 	@Column(name = "quantity", nullable = false)
-	private int quantity = 1;
+	private Integer quantity = 1;
 
 	@Builder
-	public OrderItem(Order order, Item item, CustomOption customOption, int quantity) {
+	public OrderItem(Order order, Item item, CustomOption customOption, Integer quantity) {
 		checkArgument(quantity >= 1, "item quantity 는 1개 이상이여야 합니다.");
 		checkNotNull(order, "order 는 null 일 수 없습니다.");
 		checkNotNull(item, "item 은 null 일 수 없습니다.");

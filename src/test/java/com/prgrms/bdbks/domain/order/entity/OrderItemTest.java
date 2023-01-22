@@ -13,7 +13,7 @@ import com.prgrms.bdbks.domain.item.entity.Item;
 @DisplayName("OrderItem 테스트")
 class OrderItemTest {
 
-	private final int count = 3;
+	private final Integer quantity = 3;
 
 	private final Item item = createIcedAmericano();
 
@@ -30,7 +30,7 @@ class OrderItemTest {
 				.order(order)
 				.item(item)
 				.customOption(customOption)
-				.count(count)
+				.quantity(quantity)
 				.build();
 		});
 	}
@@ -45,7 +45,7 @@ class OrderItemTest {
 				.order(order)
 				.item(item)
 				.customOption(customOption)
-				.count(lessThen0Count)
+				.quantity(lessThen0Count)
 				.build();
 		});
 	}
@@ -59,7 +59,7 @@ class OrderItemTest {
 				.order(null)
 				.item(item)
 				.customOption(customOption)
-				.count(count)
+				.quantity(quantity)
 				.build();
 		});
 	}
@@ -73,7 +73,7 @@ class OrderItemTest {
 				.order(order)
 				.item(null)
 				.customOption(customOption)
-				.count(count)
+				.quantity(quantity)
 				.build();
 		});
 	}
@@ -87,7 +87,7 @@ class OrderItemTest {
 				.order(order)
 				.item(item)
 				.customOption(null)
-				.count(count)
+				.quantity(quantity)
 				.build();
 		});
 	}
