@@ -1,5 +1,6 @@
 package com.prgrms.bdbks.domain.order.entity;
 
+import static com.prgrms.bdbks.domain.testutil.ItemObjectProvider.*;
 import static com.prgrms.bdbks.domain.testutil.OrderObjectProvider.*;
 import static org.junit.jupiter.api.Assertions.*;
 
