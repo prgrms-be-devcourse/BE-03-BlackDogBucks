@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.prgrms.bdbks.domain.item.dto.ItemCreateRequest;
+import com.prgrms.bdbks.domain.item.dto.ItemDetailResponse;
 import com.prgrms.bdbks.domain.item.dto.ItemResponses;
 import com.prgrms.bdbks.domain.item.entity.ItemType;
 import com.prgrms.bdbks.domain.item.service.ItemFacadeService;
@@ -46,4 +48,11 @@ public class ItemController {
 
 		return ResponseEntity.ok(itemResponses);
 	}
+
+	@GetMapping(value = "/{itemId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+	public ResponseEntity<ItemDetailResponse> findItemDetail(@PathVariable Long itemId) {
+		ItemDetailResponse itemDetail = itemService.findItemDetail(itemId);
+		return ResponseEntity.ok(itemDetail);
+	}
+
 }

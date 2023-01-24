@@ -24,4 +24,13 @@ class ItemRepositoryTest {
 
 		itemRepository.findAllByItemTypeAndCategoryName(beverage, categoryName);
 	}
+
+	@DisplayName("조회 - Item과 defaultOption을 함께 조회 할 수 있다.")
+	@Test
+	void findByIdWithOption_success() {
+		Long itemId = 1L;
+
+		itemRepository.findByIdWithOption(itemId);
+	}
+
 }

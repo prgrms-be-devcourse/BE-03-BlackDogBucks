@@ -29,4 +29,5 @@ public interface ItemMapper {
 	@Mapping(source = "categoryName", target = "categoryName")
 	@Mapping(source = "itemType", target = "type")
 	ItemResponse itemToItemResponse(Item item, ItemType itemType, String categoryName);
+
 }

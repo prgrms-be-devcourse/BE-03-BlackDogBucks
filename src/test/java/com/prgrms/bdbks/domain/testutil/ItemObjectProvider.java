@@ -64,6 +64,20 @@ public class ItemObjectProvider {
 			.build();
 	}
 
+	public static Item createItem(String name, ItemCategory category, String englishName, int price, String image,
+		String description, DefaultOption defaultOption) {
+
+		return Item.builder()
+			.name(name)
+			.category(category)
+			.englishName(englishName)
+			.price(price)
+			.image(image)
+			.description(description)
+			.defaultOption(defaultOption)
+			.build();
+	}
+
 	public static List<Item> createItems(List<String> names, List<String> englishNames, List<Integer> prices,
 		List<String> images, ItemCategory category, DefaultOption defaultOption) {
 		return IntStream.range(0, names.size())
