@@ -1,0 +1,169 @@
+buildscript {
+    ext {
+        queryDslVersion = "5.0.0"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.7'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id "org.asciidoctor.jvm.convert" version "3.3.2" // restdocs
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10" // querydsl
+}
+
+group = 'com.prgrms'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    asciidoctorExt
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('snippetsDir', file("build/generated-snippets"))
+    queryDslVersion = "5.0.0"
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Apache Commons Lang
+    implementation 'org.apache.commons:commons-lang3:3.0'
+
+    // jdbc
+    implementation 'org.springframework.data:spring-data-jdbc'
+
+    implementation("com.google.guava:guava:31.1-jre")
+    implementation 'commons-validator:commons-validator:1.7'
+
+    // p6spy
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.1'
+
+    // querydsl
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+    // lombok
+    testCompileOnly 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
+
+    // mapstruct
+    implementation 'org.mapstruct:mapstruct:1.5.3.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+
+    // lombok 에서 mapstruct binding 해주는 기능
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+
+    // mysql
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    annotationProcessor 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // https://mvnrepository.com/artifact/org.hibernate/hibernate-spatial
+    implementation 'org.hibernate:hibernate-spatial'
+    //https://mvnrepository.com/artifact/org.locationtech.jts/jts-core
+    implementation 'org.locationtech.jts:jts-core:1.19.0'
+
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.9.0'
+
+    runtimeOnly 'com.h2database:h2'
+
+}
+// ---- querydsl 설정
+// querydsl 사용할 경로 지정. 현재 지정한 부분은 .gitignore 에 포함되므로 git 에 올라가지 않는다.
+def querydslDir = "$buildDir/generated/'querydsl'"
+
+querydsl { // JPA 사용여부 및 사용 경로 설정
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+
+sourceSets { // build시 사용할 sourceSet 추가 설정
+    main.java.srcDir querydslDir
+}
+
+compileQuerydsl { // querydsl 컴파일 시 사용할 옵션 설정
+    options.annotationProcessorPath = configurations.querydsl
+}
+
+// querydsl이 compileClassPath를 상속하도록 설정
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl.doFirst {
+    if (file(querydslDir).exists()) delete(file(querydslDir))
+}
+
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
+}
+
+// gradle clean 시에 QClass 디렉토리 삭제
+clean {
+    delete file(querydslDir)
+}
+
+// ---- querydsl 설정 끝
+
+test {
+    useJUnitPlatform()
+    outputs.dir snippetsDir
+}
+
+tasks.named('test') {
+    outputs.dir snippetsDir
+    useJUnitPlatform()
+}
+
+tasks.named('asciidoctor') {
+    inputs.dir snippetsDir
+    dependsOn test
+}
+
+asciidoctor {
+    dependsOn test
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+}
+
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/docs')
+}
+
+task copyDocument(type: Copy) {
+    dependsOn asciidoctor
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static/docs")
+}
+
+build {
+    dependsOn copyDocument
+}
+
+bootJar {
+    dependsOn asciidoctor
+    copy {
+        from "${asciidoctor.outputDir}"
+        into 'BOOT-INF/classes/static/docs'
+    }
+}
