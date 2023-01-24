@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.util.StringUtils;
@@ -24,7 +25,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "categories")
+@Table(name = "categories", uniqueConstraints = {@UniqueConstraint(
+	name = "item_type_and_name_unique",
+	columnNames = {"item_type", "name"})})
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -51,7 +54,7 @@ public class ItemCategory {
 	private List<Item> items = new ArrayList<>();
 
 	@Builder
-	protected ItemCategory(String name, String englishName, ItemType itemType) {
+	public ItemCategory(String name, String englishName, ItemType itemType) {
 		validateName(name);
 		validateEnglishName(englishName);
 		checkNotNull(itemType);
