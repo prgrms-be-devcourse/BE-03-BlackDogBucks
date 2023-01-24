@@ -17,6 +17,8 @@ import org.mockito.Mockito;
 import com.prgrms.bdbks.common.exception.DuplicateInsertException;
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.domain.item.dto.ItemCategoryRegisterRequest;
+import com.prgrms.bdbks.domain.item.dto.ItemCategoryResponse;
+import com.prgrms.bdbks.domain.item.dto.ItemCategoryResponses;
 import com.prgrms.bdbks.domain.item.entity.ItemCategory;
 import com.prgrms.bdbks.domain.item.entity.ItemType;
 import com.prgrms.bdbks.domain.item.repository.ItemCategoryRepository;
@@ -103,11 +105,10 @@ class DefaultItemCategoryServiceTest {
 			.willReturn(itemCategories);
 
 		//when
-		List<ItemCategory> findItemCategories = itemCategoryService.findAllByType(beverage);
-
+		ItemCategoryResponses findItemCategories = itemCategoryService.findAllByType(beverage);
 		//then
-		assertThat(findItemCategories).hasSize(3)
-			.extracting(ItemCategory::getItemType)
+		assertThat(findItemCategories.getCategories()).hasSize(3)
+			.extracting(ItemCategoryResponse::getType)
 			.contains(beverage);
 		verify(itemCategoryRepository).findByItemType(beverage);
 	}
@@ -121,10 +122,10 @@ class DefaultItemCategoryServiceTest {
 			.willReturn(Collections.emptyList());
 
 		//when
-		List<ItemCategory> categories = itemCategoryService.findAllByType(itemType);
+		ItemCategoryResponses categories = itemCategoryService.findAllByType(itemType);
 
 		//then
-		assertThat(categories.size()).isEqualTo(0);
+		assertThat(categories.getCategories().size()).isEqualTo(0);
 
 		verify(itemCategoryRepository).findByItemType(itemType);
 	}

@@ -1,5 +1,9 @@
 package com.prgrms.bdbks.domain.testutil;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import com.prgrms.bdbks.domain.item.entity.BeverageOption;
 import com.prgrms.bdbks.domain.item.entity.DefaultOption;
 import com.prgrms.bdbks.domain.item.entity.Item;
@@ -61,6 +65,14 @@ public class ItemObjectProvider {
 
 	public static ItemCategory createItemCategory(String name, String englishName, ItemType itemType) {
 		return new ItemCategory(name, englishName, itemType);
+	}
+
+	public static List<ItemCategory> createItemCategoriesByType(int size, ItemType itemType, List<String> names,
+		List<String> englishNames) {
+
+		return IntStream.range(0, size)
+			.mapToObj(value -> createItemCategory(names.get(value), englishNames.get(value), itemType))
+			.collect(Collectors.toList());
 	}
 
 	public static DefaultOption createDefaultOption(Integer espressoShotCount, Integer vanillaSyrupCount,

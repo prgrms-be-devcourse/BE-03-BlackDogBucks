@@ -24,13 +24,33 @@ include::{snippets}/hello-world-api/http-response.adoc[]
 
 include::{snippets}/hello-world-api/response-body.adoc[]
 
+== Category
+
+=== read
+
+==== HTTP request
+
+include::{snippets}/category-list/http-request.adoc[]
+
+==== HTTP request param
+
+include::{snippets}/category-list/request-parameters.adoc[]
+
+==== HTTP response
+
+include::{snippets}/category-list/http-response.adoc[]
+
+==== response fields
+
+include::{snippets}/category-list/response-fields.adoc[]
+
 == Item
 
 === create
 
 ==== HTTP request
 
-include::{snippets}/hello-world-api/http-request.adoc[]
+include::{snippets}/item-create/http-request.adoc[]
 
 ===== request body
 
