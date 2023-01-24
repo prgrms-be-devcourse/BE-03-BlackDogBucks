@@ -2,12 +2,14 @@ package com.prgrms.bdbks.domain.item.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.domain.item.converter.ItemMapper;
 import com.prgrms.bdbks.domain.item.dto.ItemCreateRequest;
+import com.prgrms.bdbks.domain.item.dto.ItemResponse;
 import com.prgrms.bdbks.domain.item.entity.DefaultOption;
 import com.prgrms.bdbks.domain.item.entity.Item;
 import com.prgrms.bdbks.domain.item.entity.ItemCategory;
@@ -42,6 +44,13 @@ public class DefaultItemService implements ItemService {
 		Item item = itemMapper.itemCreateRequestToEntity(request, itemCategory, defaultOption);
 
 		return itemRepository.save(item).getId();
+	}
+
+	@Override
+	public List<ItemResponse> findAllBy(ItemType itemType, String categoryName) {
+		return itemRepository.findAllByItemTypeAndCategoryName(itemType, categoryName)
+			.stream().map(item -> itemMapper.itemToItemResponse(item, itemType, categoryName))
+			.collect(Collectors.toList());
 	}
 
 }

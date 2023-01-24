@@ -23,7 +23,6 @@ import org.springframework.test.context.TestConstructor;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgrms.bdbks.domain.item.entity.ItemCategory;
 import com.prgrms.bdbks.domain.item.entity.ItemType;
 import com.prgrms.bdbks.domain.item.repository.ItemCategoryRepository;
@@ -40,8 +39,6 @@ import lombok.RequiredArgsConstructor;
 class CategoryControllerTest {
 
 	private static final String BASE_REQUEST_URI = "/api/v1/categories";
-
-	private final ObjectMapper objectMapper;
 
 	private final MockMvc mockMvc;
 
