@@ -2,6 +2,7 @@ package com.prgrms.bdbks.domain.item.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.prgrms.bdbks.common.exception.DuplicateInsertException;
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.domain.item.dto.ItemCategoryRegisterRequest;
+import com.prgrms.bdbks.domain.item.dto.ItemCategoryResponse;
+import com.prgrms.bdbks.domain.item.dto.ItemCategoryResponses;
 import com.prgrms.bdbks.domain.item.entity.ItemCategory;
 import com.prgrms.bdbks.domain.item.entity.ItemType;
 import com.prgrms.bdbks.domain.item.repository.ItemCategoryRepository;
@@ -37,11 +40,6 @@ public class DefaultItemCategoryService implements ItemCategoryService {
 	}
 
 	@Override
-	public List<ItemCategory> findAllByType(ItemType itemType) {
-		return itemCategoryRepository.findByItemType(itemType);
-	}
-
-	@Override
 	public ItemCategory findByName(String name) {
 		return itemCategoryRepository.findByName(name)
 			.orElseThrow(() -> new EntityNotFoundException(ItemCategory.class, name));
@@ -51,6 +49,17 @@ public class DefaultItemCategoryService implements ItemCategoryService {
 	@Override
 	public Optional<ItemCategory> findByTypeAndName(ItemType itemType, String categoryName) {
 		return itemCategoryRepository.findByItemTypeAndName(itemType, categoryName);
+	}
+
+	@Override
+	public ItemCategoryResponses findAllByType(ItemType itemType) {
+		List<ItemCategoryResponse> categoryResponses = itemCategoryRepository.findByItemType(itemType)
+			.stream()
+			.map(category -> new ItemCategoryResponse(category.getId(), category.getName(), category.getEnglishName(),
+				category.getItemType()))
+			.collect(Collectors.toList());
+
+		return new ItemCategoryResponses(categoryResponses);
 	}
 
 	protected void validateDuplicateCategory(ItemType itemType, String name) {
