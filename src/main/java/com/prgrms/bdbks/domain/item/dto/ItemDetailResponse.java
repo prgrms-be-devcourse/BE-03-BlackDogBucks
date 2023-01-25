@@ -2,6 +2,7 @@ package com.prgrms.bdbks.domain.item.dto;
 
 import com.prgrms.bdbks.domain.item.entity.DefaultOption;
 import com.prgrms.bdbks.domain.item.entity.Item;
+import com.prgrms.bdbks.domain.order.dto.OptionResponse;
 
 import lombok.Getter;
 

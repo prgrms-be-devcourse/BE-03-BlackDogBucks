@@ -1,4 +1,4 @@
-package com.prgrms.bdbks.domain.item.dto;
+package com.prgrms.bdbks.domain.order.dto;
 
 import java.util.ArrayList;
 import java.util.Arrays;
