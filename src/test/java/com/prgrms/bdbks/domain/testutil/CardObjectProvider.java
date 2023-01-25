@@ -1,0 +1,17 @@
+package com.prgrms.bdbks.domain.testutil;
+
+import com.prgrms.bdbks.domain.card.entity.Card;
+import com.prgrms.bdbks.domain.user.entity.User;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class CardObjectProvider {
+
+	public static Card createCard(User user) {
+		return Card.builder()
+			.user(user)
+			.build();
+	}
+}
