@@ -3,9 +3,15 @@ package com.prgrms.bdbks.domain.user.dto;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserLoginRequest {
 
 	@NotBlank(message = "아이디는 필수 입력사항입니다.")
