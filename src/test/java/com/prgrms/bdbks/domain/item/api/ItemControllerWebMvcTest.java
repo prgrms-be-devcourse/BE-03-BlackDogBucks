@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgrms.bdbks.domain.item.dto.DefaultOptionCreateRequest;
 import com.prgrms.bdbks.domain.item.dto.ItemCreateRequest;
 import com.prgrms.bdbks.domain.item.entity.ItemType;
+import com.prgrms.bdbks.domain.item.service.ItemCategoryService;
 import com.prgrms.bdbks.domain.item.service.ItemFacadeService;
 
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,9 @@ class ItemControllerWebMvcTest {
 
 	private final ObjectMapper objectMapper;
 
+	@MockBean
+	private final ItemCategoryService itemCategoryService;
+	
 	@DisplayName("생성 - Item 을 생성하고 생성된 Resource 의 URI 를 리턴한다 - 성공.")
 	@Test
 	void createItem_success() throws Exception {

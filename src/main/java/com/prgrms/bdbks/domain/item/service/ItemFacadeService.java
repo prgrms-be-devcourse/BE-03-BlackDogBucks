@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.domain.item.dto.ItemCreateRequest;
+import com.prgrms.bdbks.domain.item.dto.ItemDetailResponse;
 import com.prgrms.bdbks.domain.item.dto.ItemResponse;
 import com.prgrms.bdbks.domain.item.dto.ItemResponses;
 import com.prgrms.bdbks.domain.item.entity.DefaultOption;
@@ -41,6 +42,10 @@ public class ItemFacadeService {
 	public ItemResponses findAllBy(ItemType itemType, String categoryName) {
 		List<ItemResponse> itemResponses = itemService.findAllBy(itemType, categoryName);
 		return new ItemResponses(categoryName, itemResponses);
+	}
+
+	public ItemDetailResponse findItemDetail(Long itemId) {
+		return itemService.findItemDetailBy(itemId);
 	}
 
 }

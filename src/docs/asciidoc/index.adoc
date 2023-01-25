@@ -79,3 +79,21 @@ include::{snippets}/item-list/http-response.adoc[]
 ==== response fields
 
 include::{snippets}/item-list/response-fields.adoc[]
+
+=== read-one
+
+==== HTTP request
+
+include::{snippets}/item-detail/http-request.adoc[]
+
+==== HTTP request param
+
+include::{snippets}/item-detail/path-parameters.adoc[]
+
+==== HTTP response
+
+include::{snippets}/item-detail/http-response.adoc[]
+
+==== response fields
+
+include::{snippets}/item-detail/response-fields.adoc[]

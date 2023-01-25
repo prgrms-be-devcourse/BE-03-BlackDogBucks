@@ -13,25 +13,34 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
 
 import org.hibernate.validator.internal.engine.path.PathImpl;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.prgrms.bdbks.common.dto.ErrorResponse;
 import com.prgrms.bdbks.common.dto.ErrorResponse.FieldError;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler extends DefaultHandlerExceptionResolver {
+public class GlobalExceptionHandler {
+
+	@ExceptionHandler(value = EntityNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleEntityNotFoundException(
+		EntityNotFoundException e, HttpServletRequest request) {
+
+		return new ResponseEntity<>(
+			ErrorResponse.notFound(e.getMessage(), request.getRequestURI(), null),
+			HttpStatus.NOT_FOUND
+		);
+	}
 
 	@ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
 	public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
-		MethodArgumentTypeMismatchException e, HttpServletRequest request
-	) {
+		MethodArgumentTypeMismatchException e, HttpServletRequest request) {
 		ErrorResponse errorResponse = ErrorResponse.badRequest(e.getParameter().getParameterName(),
 			request.getRequestURI(),
 			List.of(new FieldError(e.getName(), Objects.requireNonNull(e.getValue()).toString(), e.getMessage())));

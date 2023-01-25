@@ -7,8 +7,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.domain.item.converter.ItemMapper;
 import com.prgrms.bdbks.domain.item.dto.ItemCreateRequest;
+import com.prgrms.bdbks.domain.item.dto.ItemDetailResponse;
 import com.prgrms.bdbks.domain.item.dto.ItemResponse;
 import com.prgrms.bdbks.domain.item.entity.DefaultOption;
 import com.prgrms.bdbks.domain.item.entity.Item;
@@ -51,6 +53,14 @@ public class DefaultItemService implements ItemService {
 		return itemRepository.findAllByItemTypeAndCategoryName(itemType, categoryName)
 			.stream().map(item -> itemMapper.itemToItemResponse(item, itemType, categoryName))
 			.collect(Collectors.toList());
+	}
+
+	@Override
+	public ItemDetailResponse findItemDetailBy(Long itemId) {
+		Item item = itemRepository.findByIdWithOption(itemId)
+			.orElseThrow(() -> new EntityNotFoundException(Item.class, itemId));
+
+		return new ItemDetailResponse(item);
 	}
 
 }
