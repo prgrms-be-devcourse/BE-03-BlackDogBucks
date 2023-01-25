@@ -1,15 +1,15 @@
 spring:
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:bdbks_test;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;
-    username: sa
-    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bdbks_test
+    username: root
+    password: root
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate.format_sql: false
-      dialect: org.hibernate.dialect.H2Dialect
-    database: h2
+      dialect: org.hibernate.dialect.MySQL8SpatialDialect
+    database: mysql

@@ -111,8 +111,7 @@ configurations {
 }
 
 compileQuerydsl.doFirst {
-    if (file(querydslDir).exists())
-        delete(file(querydslDir))
+    if (file(querydslDir).exists()) delete(file(querydslDir))
 }
 
 compileQuerydsl {

@@ -1,5 +1,10 @@
 package com.prgrms.bdbks.domain.item.entity;
 
+import java.util.Arrays;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import lombok.Getter;
 
 @Getter
@@ -16,6 +21,13 @@ public enum ItemType {
 	ItemType(String korName, String englishName) {
 		this.korName = korName;
 		this.englishName = englishName;
+	}
+
+	@JsonCreator
+	public static ItemType of(String typeName) {
+		return Arrays.stream(values())
+			.filter(itemType -> Objects.equals(itemType.name(), typeName))
+			.findFirst().orElseThrow();
 	}
 
 }

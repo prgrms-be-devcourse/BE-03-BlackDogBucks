@@ -1,5 +1,6 @@
 package com.prgrms.bdbks.domain.order.entity;
 
+import static com.prgrms.bdbks.domain.testutil.ItemObjectProvider.*;
 import static com.prgrms.bdbks.domain.testutil.OrderObjectProvider.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +14,7 @@ import com.prgrms.bdbks.domain.item.entity.Item;
 @DisplayName("OrderItem 테스트")
 class OrderItemTest {
 
-	private final int count = 3;
+	private final Integer quantity = 3;
 
 	private final Item item = createIcedAmericano();
 
@@ -30,7 +31,7 @@ class OrderItemTest {
 				.order(order)
 				.item(item)
 				.customOption(customOption)
-				.count(count)
+				.quantity(quantity)
 				.build();
 		});
 	}
@@ -45,7 +46,7 @@ class OrderItemTest {
 				.order(order)
 				.item(item)
 				.customOption(customOption)
-				.count(lessThen0Count)
+				.quantity(lessThen0Count)
 				.build();
 		});
 	}
@@ -59,7 +60,7 @@ class OrderItemTest {
 				.order(null)
 				.item(item)
 				.customOption(customOption)
-				.count(count)
+				.quantity(quantity)
 				.build();
 		});
 	}
@@ -73,7 +74,7 @@ class OrderItemTest {
 				.order(order)
 				.item(null)
 				.customOption(customOption)
-				.count(count)
+				.quantity(quantity)
 				.build();
 		});
 	}
@@ -87,7 +88,7 @@ class OrderItemTest {
 				.order(order)
 				.item(item)
 				.customOption(null)
-				.count(count)
+				.quantity(quantity)
 				.build();
 		});
 	}

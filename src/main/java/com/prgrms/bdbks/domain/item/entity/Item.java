@@ -46,7 +46,7 @@ public class Item extends AbstractTimeColumn {
 	@NotNull
 	@Column(name = "price", nullable = false)
 	@ColumnDefault("0")
-	private int price = 0;
+	private Integer price = 0;
 
 	@NotNull
 	@Column(name = "image", nullable = false)
@@ -54,11 +54,11 @@ public class Item extends AbstractTimeColumn {
 
 	@NotNull
 	@Column(name = "is_best", nullable = false, columnDefinition = "bit")
-	private boolean isBest = false;
+	private Boolean isBest = false;
 
 	@NotNull
 	@Column(name = "is_new", nullable = false, columnDefinition = "bit")
-	private boolean isNew = false;
+	private Boolean isNew = false;
 
 	@NotNull
 	@Column(name = "description", nullable = false)
@@ -76,19 +76,21 @@ public class Item extends AbstractTimeColumn {
 
 	@Builder
 	public Item(String name, ItemCategory category, String englishName, int price, String image,
-		String description) {
+		String description, DefaultOption defaultOption) {
 		validateName(name);
 		checkNotNull(category);
 		validateEnglishName(englishName);
 		validatePrice(price);
 		validateDescription(description);
 		validateImage(image);
+		checkNotNull(defaultOption);
 		this.name = name;
-		this.category = category;
 		this.englishName = englishName;
 		this.price = price;
 		this.image = image;
 		this.description = description;
+		this.category = category;
+		this.defaultOption = defaultOption;
 	}
 
 	private void validateName(String name) {

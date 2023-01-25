@@ -16,6 +16,7 @@ include::{snippets}/hello-world-api/http-request.adoc[]
 
 include::{snippets}/hello-world-api/request-parameters.adoc[]
 
+
 ==== HTTP response
 
 include::{snippets}/hello-world-api/http-response.adoc[]
@@ -67,3 +68,77 @@ include::{snippets}/find_user/http-response.adoc[]
 ===== response body
 
 include::{snippets}/find_user/response-body.adoc[]
+
+== Category
+
+=== read-all
+
+==== HTTP request
+
+include::{snippets}/category-list/http-request.adoc[]
+
+==== HTTP request param
+
+include::{snippets}/category-list/request-parameters.adoc[]
+
+==== HTTP response
+
+include::{snippets}/category-list/http-response.adoc[]
+
+==== response fields
+
+include::{snippets}/category-list/response-fields.adoc[]
+
+== Item
+
+=== create
+
+==== HTTP request
+
+include::{snippets}/item-create/http-request.adoc[]
+
+===== request body
+
+include::{snippets}/item-create/request-body.adoc[]
+
+include::{snippets}/item-create/request-fields.adoc[]
+
+==== HTTP response
+
+include::{snippets}/item-create/http-response.adoc[]
+
+=== read-all
+
+==== HTTP request
+
+include::{snippets}/item-list/http-request.adoc[]
+
+==== HTTP request param
+
+include::{snippets}/item-list/request-parameters.adoc[]
+
+==== HTTP response
+
+include::{snippets}/item-list/http-response.adoc[]
+
+==== response fields
+
+include::{snippets}/item-list/response-fields.adoc[]
+
+=== read-one
+
+==== HTTP request
+
+include::{snippets}/item-detail/http-request.adoc[]
+
+==== HTTP request param
+
+include::{snippets}/item-detail/path-parameters.adoc[]
+
+==== HTTP response
+
+include::{snippets}/item-detail/http-response.adoc[]
+
+==== response fields
+
+include::{snippets}/item-detail/response-fields.adoc[]
