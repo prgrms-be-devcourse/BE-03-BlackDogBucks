@@ -21,7 +21,6 @@ import com.prgrms.bdbks.domain.item.dto.DefaultOptionCreateRequest;
 import com.prgrms.bdbks.domain.item.dto.ItemCreateRequest;
 import com.prgrms.bdbks.domain.item.dto.ItemDetailResponse;
 import com.prgrms.bdbks.domain.item.dto.ItemResponse;
-import com.prgrms.bdbks.domain.item.dto.OptionResponse;
 import com.prgrms.bdbks.domain.item.entity.BeverageOption;
 import com.prgrms.bdbks.domain.item.entity.DefaultOption;
 import com.prgrms.bdbks.domain.item.entity.Item;
@@ -30,6 +29,7 @@ import com.prgrms.bdbks.domain.item.entity.ItemType;
 import com.prgrms.bdbks.domain.item.repository.DefaultOptionRepository;
 import com.prgrms.bdbks.domain.item.repository.ItemCategoryRepository;
 import com.prgrms.bdbks.domain.item.repository.ItemRepository;
+import com.prgrms.bdbks.domain.order.dto.OptionResponse;
 
 import lombok.RequiredArgsConstructor;
 

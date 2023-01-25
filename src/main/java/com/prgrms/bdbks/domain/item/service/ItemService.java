@@ -23,4 +23,6 @@ public interface ItemService {
 
 	ItemDetailResponse findItemDetailBy(Long itemId);
 
+	Item findByIdWithDefaultOption(Long itemId);
+
 }

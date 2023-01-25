@@ -17,21 +17,23 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prgrms.bdbks.config.security.SecurityConfig;
 import com.prgrms.bdbks.domain.item.dto.DefaultOptionCreateRequest;
 import com.prgrms.bdbks.domain.item.dto.ItemCreateRequest;
 import com.prgrms.bdbks.domain.item.entity.ItemType;
-import com.prgrms.bdbks.domain.item.service.ItemCategoryService;
 import com.prgrms.bdbks.domain.item.service.ItemFacadeService;
 
 import lombok.RequiredArgsConstructor;
 
-@AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest
+@Import(SecurityConfig.class)
+@AutoConfigureMockMvc
+@WebMvcTest(controllers = ItemController.class)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 class ItemControllerWebMvcTest {
@@ -45,9 +47,6 @@ class ItemControllerWebMvcTest {
 
 	private final ObjectMapper objectMapper;
 
-	@MockBean
-	private final ItemCategoryService itemCategoryService;
-	
 	@DisplayName("생성 - Item 을 생성하고 생성된 Resource 의 URI 를 리턴한다 - 성공.")
 	@Test
 	void createItem_success() throws Exception {

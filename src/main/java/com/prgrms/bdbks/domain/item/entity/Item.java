@@ -117,5 +117,5 @@ public class Item extends AbstractTimeColumn {
 	private void validateImage(String image) {
 		checkArgument(UrlValidator.isValid(image), "image URL 은 유효한 URL 이여야 합니다.");
 	}
-	
+
 }

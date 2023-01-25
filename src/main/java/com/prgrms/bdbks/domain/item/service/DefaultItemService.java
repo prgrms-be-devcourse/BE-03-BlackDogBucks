@@ -42,7 +42,6 @@ public class DefaultItemService implements ItemService {
 	@Transactional
 	@Override
 	public Long createItem(ItemCreateRequest request, ItemCategory itemCategory, DefaultOption defaultOption) {
-
 		Item item = itemMapper.itemCreateRequestToEntity(request, itemCategory, defaultOption);
 
 		return itemRepository.save(item).getId();
@@ -61,6 +60,13 @@ public class DefaultItemService implements ItemService {
 			.orElseThrow(() -> new EntityNotFoundException(Item.class, itemId));
 
 		return new ItemDetailResponse(item);
+	}
+
+	@Override
+	public Item findByIdWithDefaultOption(Long itemId) {
+		return itemRepository.findByIdWithOption(itemId).orElseThrow(() -> {
+			throw new EntityNotFoundException(Item.class, itemId);
+		});
 	}
 
 }
