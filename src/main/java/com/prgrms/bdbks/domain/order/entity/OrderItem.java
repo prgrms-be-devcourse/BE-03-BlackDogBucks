@@ -14,7 +14,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.prgrms.bdbks.domain.item.entity.DefaultOption;
 import com.prgrms.bdbks.domain.item.entity.Item;
+import com.prgrms.bdbks.domain.item.entity.OptionPrice;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -41,6 +43,10 @@ public class OrderItem {
 	private Item item;
 
 	@NotNull
+	@Column(name = "price", nullable = false)
+	private Long price;
+
+	@NotNull
 	@OneToOne
 	@JoinColumn(name = "custom_option_id")
 	private CustomOption customOption;
@@ -50,16 +56,53 @@ public class OrderItem {
 	private Integer quantity = 1;
 
 	@Builder
-	public OrderItem(Order order, Item item, CustomOption customOption, Integer quantity) {
-		checkArgument(quantity >= 1, "item quantity 는 1개 이상이여야 합니다.");
+	public OrderItem(Order order, Item item, CustomOption customOption, Integer quantity, Long price) {
 		checkNotNull(order, "order 는 null 일 수 없습니다.");
 		checkNotNull(item, "item 은 null 일 수 없습니다.");
 		checkNotNull(customOption, "customOption 은 null 일 수 없습니다.");
-
-		this.order = order;
+		checkNotNull(price, "price는 null 일 수 없습니다.");
+		checkArgument(quantity >= 1, "item quantity 는 1개 이상이여야 합니다.");
+		checkArgument(price >= 0, "price는 음수일 수 없습니다.");
 		this.item = item;
 		this.customOption = customOption;
 		this.quantity = quantity;
+		this.price = price;
+		addOrder(order);
+	}
+
+	public Long getTotalPrice() {
+		return price * quantity;
+	}
+
+	public static OrderItem create(Order order, Item item, CustomOption customOption,
+		int quantity, OptionPrice optionPrice) {
+
+		DefaultOption defaultOption = item.getDefaultOption();
+
+		checkNotNull(defaultOption, "defaultOption 은 null 일 수 없습니다.");
+		checkNotNull(optionPrice);
+		checkNotNull(item, "item 은 null 일 수 없습니다.");
+
+		int totalPrice = item.getPrice();
+
+		totalPrice += customOption.calculateAddCosts(defaultOption.getEspressoShotCount(),
+			defaultOption.getVanillaSyrupCount(), defaultOption.getClassicSyrupCount(),
+			defaultOption.getHazelnutSyrupCount(), optionPrice);
+
+		return OrderItem.builder()
+			.customOption(customOption)
+			.item(item)
+			.quantity(quantity)
+			.price((long)totalPrice)
+			.order(order)
+			.build();
+	}
+
+	private void addOrder(Order order) {
+		if (order != null && this.order != order) {
+			this.order = order;
+			order.addOrderItem(this);
+		}
 	}
 
 }

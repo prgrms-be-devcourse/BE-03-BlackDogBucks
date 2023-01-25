@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
 import com.prgrms.bdbks.domain.item.entity.BeverageOption;
+import com.prgrms.bdbks.domain.item.entity.OptionPrice;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -89,8 +90,38 @@ public class CustomOption extends AbstractTimeColumn {
 		this.cupType = cupType;
 	}
 
-	private void validateCount(int count) {
+	private void validateCount(Integer count) {
+		if (count == null) {
+			return;
+		}
 		checkArgument(count >= 0 && count <= 9, "Option 개수는 9보다 작은 양수여야합니다.");
 	}
 
+	public int calculateAddCosts(Integer defaultEspressoShotCount, Integer defaultVanillaSyrupCount,
+		Integer defaultClassicSyrupCount, Integer defaultHazelnutSyrupCount, OptionPrice optionPrice) {
+
+		int cost = 0;
+
+		if (defaultEspressoShotCount != null) {
+			cost += defaultEspressoShotCount < this.espressoShotCount ?
+				(this.espressoShotCount - defaultEspressoShotCount) * optionPrice.getEspressoPrice() : 0;
+		}
+
+		if (defaultVanillaSyrupCount != null) {
+			cost += defaultVanillaSyrupCount < this.vanillaSyrupCount ?
+				(this.vanillaSyrupCount - defaultVanillaSyrupCount) * optionPrice.getSyrupPrice() : 0;
+		}
+
+		if (defaultClassicSyrupCount != null) {
+			cost += defaultClassicSyrupCount < this.classicSyrupCount ?
+				(this.classicSyrupCount - defaultClassicSyrupCount) * optionPrice.getSyrupPrice() : 0;
+		}
+
+		if (defaultHazelnutSyrupCount != null) {
+			cost += defaultHazelnutSyrupCount < this.hazelnutSyrupCount ?
+				(this.hazelnutSyrupCount - defaultHazelnutSyrupCount) * optionPrice.getSyrupPrice() : 0;
+		}
+
+		return cost;
+	}
 }
