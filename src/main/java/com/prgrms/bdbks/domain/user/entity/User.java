@@ -1,9 +1,8 @@
 package com.prgrms.bdbks.domain.user.entity;
 
 import static com.google.common.base.Preconditions.*;
-import static java.time.LocalDateTime.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,10 +22,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "users")
 @Getter
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends AbstractTimeColumn {
 
@@ -48,19 +49,19 @@ public class User extends AbstractTimeColumn {
 	private String nickname;
 
 	@Column(nullable = false)
-	private LocalDateTime birthDate;
+	private LocalDate birthDate;
 
 	@Column(length = 11, nullable = false, unique = true)
 	private String phone;
 
-	@Column(length = 255, nullable = false, unique = true)
+	@Column(nullable = false, unique = true)
 	private String email;
 
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
 	@Builder
-	protected User(Long id, String loginId, String password, String nickname, LocalDateTime birthDate, String phone,
+	protected User(Long id, String loginId, String password, String nickname, LocalDate birthDate, String phone,
 		String email, Role role) {
 		validateLoginId(loginId);
 		validatePassword(password);
@@ -87,17 +88,17 @@ public class User extends AbstractTimeColumn {
 
 	private void validatePassword(String password) {
 		checkArgument(StringUtils.hasText(password), "비밀번호를 입력해주세요.");
-		checkArgument(8 <= password.length() && password.length() <= 20, "비밀번호의 길이를 확인해주세요.");
+		checkArgument(8 <= password.length() && password.length() <= 60, "비밀번호의 길이를 확인해주세요.");
 	}
 
 	private void validateNickname(String nickname) {
 		checkArgument(StringUtils.hasText(nickname), "닉네임을 입력해주세요.");
-		checkArgument(4 <= nickname.length() && nickname.length() <= 20, "닉네임의 길이를 확인해주세요.");
+		checkArgument(2 <= nickname.length() && nickname.length() <= 20, "닉네임의 길이를 확인해주세요.");
 	}
 
-	private void validateBirthDate(LocalDateTime birthDate) {
+	private void validateBirthDate(LocalDate birthDate) {
 		checkNotNull(birthDate, "생일을 입력해주세요.");
-		checkArgument(birthDate.isBefore(now()), "생년월일을 확인해주세요.");
+		checkArgument(birthDate.isBefore(LocalDate.now()), "생년월일을 확인해주세요.");
 	}
 
 	private void validatePhone(String phone) {
@@ -114,4 +115,15 @@ public class User extends AbstractTimeColumn {
 	private void validateAuthority(Role role) {
 		checkNotNull(role, "권한을 입력해주세요.");
 	}
+
+	public void changePassword(String password) {
+		validatePassword(password);
+		this.password = password;
+	}
+
+	public void changeAuthority(Role role) {
+		validateAuthority(role);
+		this.role = role;
+	}
+
 }
