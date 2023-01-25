@@ -5,6 +5,10 @@ import java.time.LocalDateTime;
 import com.prgrms.bdbks.domain.user.entity.User;
 import com.prgrms.bdbks.domain.user.role.Role;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserObjectProvider {
 
 	public static User createUser() {
