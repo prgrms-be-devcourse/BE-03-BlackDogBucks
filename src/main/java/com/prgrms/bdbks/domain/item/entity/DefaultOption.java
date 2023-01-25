@@ -15,6 +15,7 @@ import com.google.common.base.Preconditions;
 import com.prgrms.bdbks.domain.item.entity.BeverageOption.Coffee;
 import com.prgrms.bdbks.domain.item.entity.BeverageOption.Milk;
 import com.prgrms.bdbks.domain.item.entity.BeverageOption.MilkAmount;
+import com.prgrms.bdbks.domain.order.dto.OrderCreateRequest;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -59,10 +60,10 @@ public class DefaultOption {
 	protected DefaultOption(Integer espressoShotCount, Integer vanillaSyrupCount, Integer classicSyrupCount,
 		Integer hazelnutSyrupCount, Milk milkType, Coffee espressoType, MilkAmount milkAmount) {
 
-		validateCount(hazelnutSyrupCount);
-		validateCount(espressoShotCount);
-		validateCount(classicSyrupCount);
-		validateCount(vanillaSyrupCount);
+		validateCountAllowNull(hazelnutSyrupCount);
+		validateCountAllowNull(espressoShotCount);
+		validateCountAllowNull(classicSyrupCount);
+		validateCountAllowNull(vanillaSyrupCount);
 
 		this.espressoShotCount = espressoShotCount;
 		this.vanillaSyrupCount = vanillaSyrupCount;
@@ -73,11 +74,26 @@ public class DefaultOption {
 		this.milkAmount = milkAmount;
 	}
 
-	private void validateCount(Integer count) {
-		if (Objects.isNull(count)) {
+	private void validateCountAllowNull(Integer count) {
+		if (Objects.isNull(count)) { // allow null
 			return;
 		}
 		Preconditions.checkArgument(count >= 0 && count <= 9, "Option 개수는 9보다 작은 양수여야합니다.");
 	}
 
+	public void validateOption(OrderCreateRequest.OrderItemRequest.OrderItemOption customOption) {
+		validateOption(this.espressoShotCount, customOption.getEspressoShotCount());
+		validateOption(this.espressoType, customOption.getEspressoType());
+		validateOption(this.vanillaSyrupCount, customOption.getVanillaSyrupCount());
+		validateOption(this.classicSyrupCount, customOption.getClassicSyrupCount());
+		validateOption(this.hazelnutSyrupCount, customOption.getHazelnutSyrupCount());
+		validateOption(this.milkType, customOption.getMilkType());
+		validateOption(this.milkAmount, customOption.getMilkAmount());
+	}
+
+	private void validateOption(Object defaultOption, Object customOption) {
+		if ((defaultOption == null && customOption != null) || (defaultOption != null && customOption == null)) {
+			throw new IllegalArgumentException("잘못된 주문 옵션입니다.");
+		}
+	}
 }
