@@ -24,7 +24,7 @@ include::{snippets}/hello-world-api/http-response.adoc[]
 
 include::{snippets}/hello-world-api/response-body.adoc[]
 
-=== User
+== User
 
 === create
 
