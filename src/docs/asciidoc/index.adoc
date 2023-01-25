@@ -5,6 +5,7 @@
 
 [[resources-post]]
 == Test
+
 === create
 
 ==== HTTP request
@@ -12,12 +13,31 @@
 include::{snippets}/hello-world-api/http-request.adoc[]
 
 ===== request Param
-include::{snippets}/hello-world-api/request-parameters.adoc[]
 
+include::{snippets}/hello-world-api/request-parameters.adoc[]
 
 ==== HTTP response
 
 include::{snippets}/hello-world-api/http-response.adoc[]
 
 ===== response body
+
 include::{snippets}/hello-world-api/response-body.adoc[]
+
+== Item
+
+=== create
+
+==== HTTP request
+
+include::{snippets}/hello-world-api/http-request.adoc[]
+
+===== request body
+
+include::{snippets}/item-create/request-body.adoc[]
+
+include::{snippets}/item-create/request-fields.adoc[]
+
+==== HTTP response
+
+include::{snippets}/item-create/http-response.adoc[]
