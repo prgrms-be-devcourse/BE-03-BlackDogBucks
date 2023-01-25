@@ -42,7 +42,7 @@ public class User extends AbstractTimeColumn {
 	@Column(name = "login_id", length = 20, nullable = false, unique = true)
 	private String loginId;
 
-	@Column(length = 20, nullable = false)
+	@Column(length = 60, nullable = false)
 	private String password;
 
 	@Column(length = 20, nullable = false)

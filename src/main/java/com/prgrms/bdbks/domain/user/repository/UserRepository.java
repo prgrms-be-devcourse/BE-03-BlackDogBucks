@@ -6,13 +6,13 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository
-	extends JpaRepository<User, String> {
-	Optional<User> findByLoginId(String var1);
+public interface UserRepository extends JpaRepository<User, Long> {
+	Optional<User> findByLoginId(String loginId);
 
-	@Query(value = "SELECT u FROM User u WHERE u.loginId = ?1 AND u.password = ?2")
-	Optional<User> findByLoginIdAndPassword(String var1, String var2);
+	@Query(value = "SELECT u FROM User u WHERE u.loginId = :loginId AND u.password = :password")
+	Optional<User> findByLoginIdAndPassword(@Param("loginId") String loginId, @Param("password") String password);
 }

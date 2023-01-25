@@ -5,11 +5,12 @@ import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
 import com.prgrms.bdbks.domain.user.dto.UserFindResponse;
 import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
 import com.prgrms.bdbks.domain.user.entity.User;
-import com.prgrms.bdbks.domain.user.service.UserServiceDefault;
+import com.prgrms.bdbks.domain.user.service.DefaultUserService;
 
 import java.util.Optional;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,36 +21,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 @RequestMapping("/api/v1")
 @RestController
-@Slf4j
+@RequiredArgsConstructor
 public class UserController {
-	private final UserServiceDefault userServiceDefault;
+	private final DefaultUserService defaultUserService;
 	private final UserMapper userMapper;
 
-	public UserController(UserServiceDefault userServiceDefault, UserMapper userMapper) {
-		this.userServiceDefault = userServiceDefault;
-		this.userMapper = userMapper;
-	}
-
 	@PostMapping(value = {"/auth/signup"})
-	public ResponseEntity<String> signup(@RequestBody UserCreateRequest userCreateRequest) {
-		this.userServiceDefault.register(userCreateRequest);
+	public ResponseEntity<String> signup(@RequestBody @Valid UserCreateRequest userCreateRequest) {
+		this.defaultUserService.register(userCreateRequest);
 		return new ResponseEntity<>("Sign Up Completed", HttpStatus.CREATED);
 	}
 
-	@GetMapping(value = {"users/{loginId}"})
+	@GetMapping(value = {"/users/{loginId}"})
 	public ResponseEntity<UserFindResponse> readUser(@PathVariable String loginId) {
-		Optional<User> user = this.userServiceDefault.findUser(loginId);
+		Optional<User> user = this.defaultUserService.findUser(loginId);
 		return user.map(value -> ResponseEntity.ok(userMapper.entityToFindResponse(value)))
 			.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 
 	@PostMapping(value = {"/auth/login"})
-	public ResponseEntity<String> login(@RequestBody UserLoginRequest request, HttpSession session) {
-		Optional<User> user = this.userServiceDefault.login(request.getLoginId(), request.getPassword());
+	public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest request, HttpSession session) {
+		Optional<User> user = this.defaultUserService.login(request.getLoginId(), request.getPassword());
 		if (user.isPresent()) {
 			session.setAttribute("user", user.get());
 			return new ResponseEntity<>("Login Succeeded", HttpStatus.OK);
@@ -70,7 +66,7 @@ public class UserController {
 
 	}
 
-	@GetMapping(value = {"users/me"})
+	@GetMapping(value = {"/users/me"})
 	public ResponseEntity<UserFindResponse> getMe(HttpSession session) {
 		User user = (User)session.getAttribute("user");
 		if (user != null) {
