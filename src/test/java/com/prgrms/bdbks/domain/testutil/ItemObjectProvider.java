@@ -60,7 +60,24 @@ public class ItemObjectProvider {
 			.englishName(englishName)
 			.price(price)
 			.image(image)
+			.description(description)
 			.build();
+	}
+
+	public static List<Item> createItems(List<String> names, List<String> englishNames, List<Integer> prices,
+		List<String> images, ItemCategory category, DefaultOption defaultOption) {
+		return IntStream.range(0, names.size())
+			.mapToObj(
+				value -> Item.builder()
+					.name(names.get(value))
+					.category(category)
+					.englishName(englishNames.get(value))
+					.price(prices.get(value))
+					.image(images.get(value))
+					.description("description")
+					.defaultOption(defaultOption)
+					.build()
+			).collect(Collectors.toList());
 	}
 
 	public static ItemCategory createItemCategory(String name, String englishName, ItemType itemType) {

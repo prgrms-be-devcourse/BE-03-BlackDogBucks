@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.prgrms.bdbks.domain.item.dto.ItemCreateRequest;
+import com.prgrms.bdbks.domain.item.dto.ItemResponse;
 import com.prgrms.bdbks.domain.item.entity.DefaultOption;
 import com.prgrms.bdbks.domain.item.entity.Item;
 import com.prgrms.bdbks.domain.item.entity.ItemCategory;
@@ -16,5 +17,7 @@ public interface ItemService {
 	List<Item> findByCategoryName(ItemType itemType, String categoryName);
 
 	Long createItem(ItemCreateRequest request, ItemCategory itemCategory, DefaultOption defaultOption);
+
+	List<ItemResponse> findAllBy(ItemType itemType, String categoryName);
 
 }
