@@ -1,6 +1,5 @@
 package com.prgrms.bdbks.domain.testutil;
 
-import com.prgrms.bdbks.domain.card.dto.CardChargeRequest;
 import com.prgrms.bdbks.domain.card.entity.Card;
 import com.prgrms.bdbks.domain.user.entity.User;
 
@@ -25,7 +24,4 @@ public class CardObjectProvider {
 			.build();
 	}
 
-	public static CardChargeRequest createCardRequest(String id, int amount) {
-		return new CardChargeRequest(id, amount);
-	}
 }

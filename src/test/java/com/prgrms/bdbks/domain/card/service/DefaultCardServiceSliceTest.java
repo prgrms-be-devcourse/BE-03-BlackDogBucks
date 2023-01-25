@@ -41,7 +41,7 @@ public class DefaultCardServiceSliceTest {
 		User user = createUser(userId);
 		Card card = createCard(user, cardId);
 
-		CardChargeRequest cardChargeRequest = createCardRequest(cardId, amount);
+		CardChargeRequest cardChargeRequest = new CardChargeRequest(cardId, amount);
 		Optional<Card> optionalCard = Optional.of(card);
 
 		when(cardRepository.findById(cardId)).thenReturn(optionalCard);
