@@ -11,8 +11,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +57,7 @@ class DefaultCardServiceIntegrationTest {
 	void getCardList_validUser_ReturnCards() {
 
 		//when
-		CardSearchResponses responses = defaultCardService.getCardList(user);
+		CardSearchResponses responses = defaultCardService.findAll(user.getId());
 
 		List<CardSearchResponse> cardResponseList = responses.getCardSearchResponses();
 
@@ -90,8 +92,8 @@ class DefaultCardServiceIntegrationTest {
 	@DisplayName("getCard - 카드를 카드 id로 조회할 수 있다. - 성공")
 	@Test
 	void getCard_validId_FindSuccess() {
-		assertDoesNotThrow(() -> defaultCardService.getCard(card.getId()));
-		Card savedCard = defaultCardService.getCard(this.card.getId());
+		assertDoesNotThrow(() -> defaultCardService.findByCardId(card.getId()));
+		Card savedCard = defaultCardService.findByCardId(this.card.getId());
 
 		Assertions.assertThat(savedCard)
 			.hasFieldOrPropertyWithValue("id", card.getId())
@@ -99,14 +101,19 @@ class DefaultCardServiceIntegrationTest {
 			.hasFieldOrPropertyWithValue("amount", card.getAmount());
 	}
 
-	@DisplayName("getCard - 카드를 카드 id로 조회할 수 있다. - 실패")
-	@Test
-	void getCard_invalidId_exceptionThrown() {
-
-		//given
-		String id = "없는id";
-
+	@DisplayName("getCard - 등록되지 않은 카드는 조회할 수 없다. - 실패")
+	@ParameterizedTest
+	@ValueSource(strings = {"unknownId"})
+	void getCard_invalidId_exceptionThrown(String cardId) {
 		//when
-		assertThrows(EntityNotFoundException.class, () -> defaultCardService.getCard(id));
+		assertThrows(EntityNotFoundException.class, () -> defaultCardService.findByCardId(cardId));
+	}
+
+	@DisplayName("getCard - 카드id가 null인 경우 카드 조회에 실패한다. - 실패")
+	@ParameterizedTest
+	@NullSource
+	void getCard_NullSource_exceptionThrown(String cardId) {
+		//when
+		assertThrows(DataAccessException.class, () -> defaultCardService.findByCardId(cardId));
 	}
 }

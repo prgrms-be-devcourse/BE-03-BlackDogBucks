@@ -1,7 +1,6 @@
 package com.prgrms.bdbks.domain.card.service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import com.prgrms.bdbks.domain.card.dto.CardSearchResponse;
 import com.prgrms.bdbks.domain.card.dto.CardSearchResponses;
 import com.prgrms.bdbks.domain.card.entity.Card;
 import com.prgrms.bdbks.domain.card.repository.CardRepository;
-import com.prgrms.bdbks.domain.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,30 +26,30 @@ public class DefaultCardService implements CardService {
 
 	@Override
 	@Transactional
-	public CardChargeResponse charge(Long userid, String cardId, int amount) {
+	public CardChargeResponse charge(Long userId, String cardId, int amount) {
 		//TODO 5만원 이상 충전 시 쿠폰 생성로직 추가(FACADE)
 		Card card = cardRepository.findById(cardId)
 			.orElseThrow(() -> new EntityNotFoundException(Card.class, cardId));
 
-		card.compareUser(userid);
+		card.compareUser(userId);
 		card.chargeAmount(amount);
 
-		return CardChargeResponse.of(card.getId(), card.getAmount());
+		return new CardChargeResponse(cardId, amount);
 	}
 
 	@Override
-	public CardSearchResponses getCardList(User user) {
-		List<Card> cards = cardRepository.findByUserId(Objects.requireNonNull(user).getId());
+	public CardSearchResponses findAll(Long userId) {
+		List<Card> cards = cardRepository.findByUserId(userId);
 
 		List<CardSearchResponse> responses = cards.stream()
 			.map(cardMapper::toCardSearchResponse)
 			.collect(Collectors.toList());
 
-		return CardSearchResponses.of(responses);
+		return new CardSearchResponses(responses);
 	}
 
 	@Override
-	public Card getCard(String cardId) {
+	public Card findByCardId(String cardId) {
 		return cardRepository.findById(cardId)
 			.orElseThrow(() -> new EntityNotFoundException(Card.class, cardId));
 	}
