@@ -1,4 +1,4 @@
-package com.prgrms.bdbks.domain.order.dto;
+package com.prgrms.bdbks.domain.item.dto;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +26,7 @@ public class OptionResponse {
 		.collect(Collectors.toList());
 
 	private final List<String> cupType = Arrays.stream(BeverageOption.CupType.values())
-		.map(BeverageOption.CupType::getKoreaName)
+		.map(BeverageOption.CupType::getKorName)
 		.collect(Collectors.toList());
 
 	public OptionResponse(BeverageOption.Coffee espressoType, Integer espressoShotCount, Integer vanillaSyrupCount,
