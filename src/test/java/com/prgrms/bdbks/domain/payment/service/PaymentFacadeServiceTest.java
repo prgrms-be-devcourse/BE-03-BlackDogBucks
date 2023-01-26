@@ -15,7 +15,8 @@ import com.prgrms.bdbks.domain.card.dto.CardPayResponse;
 import com.prgrms.bdbks.domain.card.service.CardService;
 import com.prgrms.bdbks.domain.order.entity.Order;
 import com.prgrms.bdbks.domain.payment.dto.PaymentChargeRequest;
-import com.prgrms.bdbks.domain.payment.dto.PaymentOrderRequest;
+import com.prgrms.bdbks.domain.payment.dto.OrderPayment;
+import com.prgrms.bdbks.domain.payment.entity.PaymentType;
 import com.prgrms.bdbks.domain.payment.model.PaymentResult;
 import com.prgrms.bdbks.domain.testutil.OrderObjectProvider;
 
@@ -35,30 +36,25 @@ class PaymentFacadeServiceTest {
 	@Test
 	void orderPay_ValidParameters_Success() {
 		//given
-		int totalPrice = 20000;
 		Long userId = 1L;
 		String cardId = "CardId";
-		boolean couponUsed = false;
-		int count = 3;
-
 		Order order = OrderObjectProvider.createOrder();
 
-		PaymentOrderRequest paymentOrderRequest = new PaymentOrderRequest(totalPrice, userId, cardId, couponUsed,
-			count);
+		OrderPayment orderPayment = new OrderPayment(order, cardId, PaymentType.ORDER);
 
 		String paymentId = "PaymentId";
 		PaymentResult paymentResult = new PaymentResult(paymentId);
-		CardPayResponse cardPayResponse = new CardPayResponse(cardId, totalPrice);
+		CardPayResponse cardPayResponse = new CardPayResponse(cardId, order.getTotalPrice());
 
-		when(cardService.pay(userId, cardId, totalPrice)).thenReturn(cardPayResponse);
-		when(paymentService.orderPay(order, cardId, totalPrice)).thenReturn(paymentResult);
+		when(cardService.pay(userId, cardId, order.getTotalPrice())).thenReturn(cardPayResponse);
+		when(paymentService.orderPay(order, cardId, order.getTotalPrice())).thenReturn(paymentResult);
 
 		//when
-		PaymentResult result = paymentFacadeService.orderPay(paymentOrderRequest, order, null);
+		PaymentResult result = paymentFacadeService.orderPay(orderPayment);
 
 		//then
-		verify(cardService).pay(userId, cardId, totalPrice);
-		verify(paymentService).orderPay(order, cardId, totalPrice);
+		verify(cardService).pay(userId, cardId, order.getTotalPrice());
+		verify(paymentService).orderPay(order, cardId, order.getTotalPrice());
 
 		assertThat(result)
 			.hasFieldOrPropertyWithValue("paymentId", paymentResult.getPaymentId());

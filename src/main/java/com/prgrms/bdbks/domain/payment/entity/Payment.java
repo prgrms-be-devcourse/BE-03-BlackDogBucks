@@ -79,7 +79,7 @@ public class Payment extends AbstractTimeColumn {
 	}
 
 	private void validatePrice(int price) {
-		if (price >= 0) {
+		if (price <= 0) {
 			throw new PaymentException("결제 금액은 0원부터 가능합니다.");
 		}
 	}

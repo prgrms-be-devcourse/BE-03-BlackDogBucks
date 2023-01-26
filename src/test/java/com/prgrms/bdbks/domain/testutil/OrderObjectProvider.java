@@ -1,5 +1,6 @@
 package com.prgrms.bdbks.domain.testutil;
 
+import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 import com.prgrms.bdbks.domain.item.entity.BeverageOption;
 import com.prgrms.bdbks.domain.order.entity.CustomOption;
 import com.prgrms.bdbks.domain.order.entity.Order;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OrderObjectProvider {
 
-	public static Order createOrder(Long coupon, Long userId, String storeId, int totalPrice) {
+	public static Order createOrder(Coupon coupon, Long userId, String storeId, int totalPrice) {
 
 		return Order.builder()
 			.coupon(coupon)

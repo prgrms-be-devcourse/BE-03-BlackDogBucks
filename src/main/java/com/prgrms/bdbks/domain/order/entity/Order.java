@@ -8,16 +8,20 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
+import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -36,9 +40,9 @@ public class Order extends AbstractTimeColumn {
 	@GenericGenerator(name = "order_id_generator", strategy = "com.prgrms.bdbks.domain.order.repository.OrderIdGenerator")
 	private String id;
 
-	// 추후 객체 참조로 변경
-	@Column(name = "coupon_id")
-	private Long coupon;
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "coupon_id")
+	private Coupon coupon;
 
 	@NotNull
 	@Column(name = "user_id", nullable = false)
@@ -56,7 +60,7 @@ public class Order extends AbstractTimeColumn {
 	private List<OrderItem> orderItems = new ArrayList<>();
 
 	@Builder
-	protected Order(Long coupon, Long userId, String storeId, int totalPrice) {
+	protected Order(Coupon coupon, Long userId, String storeId, int totalPrice) {
 		checkNotNull(userId, "userId 는 null 일 수 없습니다.");
 		checkNotNull(storeId, "storeId 는 null 일 수 없습니다.");
 		checkArgument(totalPrice >= 0, "totalPrice 는 0보다 작을 수 없습니다.");

@@ -3,40 +3,37 @@ package com.prgrms.bdbks.domain.payment.service;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.domain.card.service.CardService;
-import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 import com.prgrms.bdbks.domain.order.entity.Order;
+import com.prgrms.bdbks.domain.payment.dto.OrderPayment;
 import com.prgrms.bdbks.domain.payment.dto.PaymentChargeRequest;
-import com.prgrms.bdbks.domain.payment.dto.PaymentOrderRequest;
 import com.prgrms.bdbks.domain.payment.model.PaymentResult;
 
 import lombok.RequiredArgsConstructor;
 
-@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class PaymentFacadeService {
 
 	private final PaymentService paymentService;
+
 	private final CardService cardService;
 
-	@Transactional
-	public PaymentResult orderPay(PaymentOrderRequest paymentOrderRequest, Order order, Coupon coupon) {
+	public PaymentResult orderPay(OrderPayment orderPayment) {
+		Order order = orderPayment.getOrder();
 
-		cardService.pay(paymentOrderRequest.getUserId(), paymentOrderRequest.getCardId(),
-			paymentOrderRequest.getTotalPrice());
+		cardService.pay(order.getUserId(), orderPayment.getCardId(),
+			order.getTotalPrice());
 
-		if (Objects.nonNull(coupon)) {
-			coupon.useCoupon();
+		if (Objects.nonNull(order.getCoupon())) {
+			order.getCoupon().useCoupon();
 		}
 
-		return paymentService.orderPay(order, paymentOrderRequest.getCardId(), paymentOrderRequest.getTotalPrice());
-
+		return paymentService.orderPay(order, orderPayment.getCardId(),
+			order.getTotalPrice());
 	}
 
-	@Transactional
 	public PaymentResult chargePay(Long userId, PaymentChargeRequest paymentChargeRequest) {
 		cardService.charge(userId, paymentChargeRequest.getCardId(), paymentChargeRequest.getAmount());
 
