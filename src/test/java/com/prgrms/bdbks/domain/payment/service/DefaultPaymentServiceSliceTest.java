@@ -31,7 +31,7 @@ public class DefaultPaymentServiceSliceTest {
 	@InjectMocks
 	private DefaultPaymentService defaultPaymentService;
 
-	@DisplayName("orderPay - 사용자의 충전카드로 주문 금액을 결제할 수 있다. - 성공")
+	@DisplayName("orderPay - 사용자의 충전카드 주문 결제 내역을 만들 수 있다. - 성공")
 	@Test
 	void orderPay_ValidParameters_Success() {
 		Long userId = 1L;
@@ -50,7 +50,7 @@ public class DefaultPaymentServiceSliceTest {
 		verify(paymentRepository).save(any());
 	}
 
-	@DisplayName("chargePay - 사용자의 충전카드에 금액을 충전할 수 있다. - 성공")
+	@DisplayName("chargePay - 사용자의 충전카드 충전 결제 내역을 만들 수 있다. - 성공")
 	@Test
 	void chargePay() {
 
