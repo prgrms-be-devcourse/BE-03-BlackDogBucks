@@ -85,4 +85,8 @@ public class Coupon extends AbstractTimeColumn {
 		checkArgument(expireDate.isAfter(now()), "만료일은 현재시간보다 전일 수 없습니다.");
 		checkNotNull(expireDate, "만료일을 입력해주세요.");
 	}
+
+	public void useCoupon() {
+		this.used = true;
+	}
 }
