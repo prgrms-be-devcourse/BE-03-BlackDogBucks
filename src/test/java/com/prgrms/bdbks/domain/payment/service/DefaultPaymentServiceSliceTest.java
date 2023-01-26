@@ -23,7 +23,7 @@ import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
 import com.prgrms.bdbks.domain.user.entity.User;
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentServiceSliceTest {
+public class DefaultPaymentServiceSliceTest {
 
 	@Mock
 	private PaymentRepository paymentRepository;
