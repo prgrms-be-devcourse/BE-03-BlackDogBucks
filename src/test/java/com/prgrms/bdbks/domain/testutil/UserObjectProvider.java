@@ -13,7 +13,7 @@ public class UserObjectProvider {
 
 	public static User createUser() {
 		return User.builder()
-			.birthDate(LocalDateTime.now().minusYears(26L))
+			.birthDate(LocalDateTime.now().minusYears(26L).toLocalDate())
 			.email("test@naver.com")
 			.loginId("test1234")
 			.password("password1234")
@@ -26,7 +26,7 @@ public class UserObjectProvider {
 	public static User createUser(Long id) {
 		return User.builder()
 			.id(id)
-			.birthDate(LocalDateTime.now().minusYears(26L))
+			.birthDate(LocalDateTime.now().minusYears(26L).toLocalDate())
 			.email("test@naver.com")
 			.loginId("test1234")
 			.password("password1234")
