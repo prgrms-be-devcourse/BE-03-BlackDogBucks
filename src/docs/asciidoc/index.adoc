@@ -16,6 +16,7 @@ include::{snippets}/hello-world-api/http-request.adoc[]
 
 include::{snippets}/hello-world-api/request-parameters.adoc[]
 
+
 ==== HTTP response
 
 include::{snippets}/hello-world-api/http-response.adoc[]
@@ -23,6 +24,50 @@ include::{snippets}/hello-world-api/http-response.adoc[]
 ===== response body
 
 include::{snippets}/hello-world-api/response-body.adoc[]
+
+== User
+
+=== create
+
+==== HTTP request
+
+include::{snippets}/signup/http-request.adoc[]
+
+==== HTTP response
+
+include::{snippets}/signup/http-response.adoc[]
+
+===== response body
+
+include::{snippets}/signup/response-body.adoc[]
+
+=== login
+
+==== HTTP request
+
+include::{snippets}/login/http-request.adoc[]
+
+==== HTTP response
+
+include::{snippets}/login/http-response.adoc[]
+
+===== response body
+
+include::{snippets}/login/response-body.adoc[]
+
+=== find_user
+
+==== HTTP request
+
+include::{snippets}/find_user/http-request.adoc[]
+
+==== HTTP response
+
+include::{snippets}/find_user/http-response.adoc[]
+
+===== response body
+
+include::{snippets}/find_user/response-body.adoc[]
 
 == Category
 
