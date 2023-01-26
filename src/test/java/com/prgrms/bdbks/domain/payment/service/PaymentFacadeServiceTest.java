@@ -1,6 +1,7 @@
 package com.prgrms.bdbks.domain.payment.service;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.DisplayName;
@@ -10,12 +11,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.domain.card.dto.CardChargeResponse;
 import com.prgrms.bdbks.domain.card.dto.CardPayResponse;
 import com.prgrms.bdbks.domain.card.service.CardService;
 import com.prgrms.bdbks.domain.order.entity.Order;
-import com.prgrms.bdbks.domain.payment.dto.PaymentChargeRequest;
 import com.prgrms.bdbks.domain.payment.dto.OrderPayment;
+import com.prgrms.bdbks.domain.payment.dto.PaymentChargeRequest;
 import com.prgrms.bdbks.domain.payment.entity.PaymentType;
 import com.prgrms.bdbks.domain.payment.model.PaymentResult;
 import com.prgrms.bdbks.domain.testutil.OrderObjectProvider;
@@ -60,6 +62,26 @@ class PaymentFacadeServiceTest {
 			.hasFieldOrPropertyWithValue("paymentId", paymentResult.getPaymentId());
 	}
 
+	@DisplayName("orderPay - 미등록 카드로는 결제할 수 없다. - 실패 ")
+	@Test
+	void orderPay_InvalidCardId_Fail() {
+		//given
+		Long userId = 1L;
+		String cardId = "unKnownId";
+		Order order = OrderObjectProvider.createOrder();
+
+		OrderPayment orderPayment = new OrderPayment(order, cardId, PaymentType.ORDER);
+
+		when(cardService.pay(userId, cardId, order.getTotalPrice())).thenThrow(EntityNotFoundException.class);
+
+		//when & then
+		assertThrows(EntityNotFoundException.class, () -> {
+			paymentFacadeService.orderPay(orderPayment);
+		});
+
+		verify(cardService).pay(userId, cardId, order.getTotalPrice());
+	}
+
 	@DisplayName("chargePay - 카드 충전 결제를 진행할 수 있다. - 성공")
 	@Test
 	void chargePay_ValidParameters_Success() {
@@ -87,4 +109,29 @@ class PaymentFacadeServiceTest {
 			.hasFieldOrPropertyWithValue("paymentId", paymentResult.getPaymentId());
 
 	}
+
+	@DisplayName("chargePay - 카드 충전 결제를 진행할 수 있다. - 실패")
+	@Test
+	void chargePay_InValidParameters_Fail() {
+
+		//given
+		Long userId = 1L;
+		String cardId = "cardId";
+		int amount = 40000;
+		String paymentId = "PaymentId";
+		PaymentChargeRequest paymentChargeRequest = new PaymentChargeRequest(amount, cardId);
+		PaymentResult paymentResult = new PaymentResult(paymentId);
+
+		when(cardService.charge(userId, cardId, amount)).thenThrow(EntityNotFoundException.class);
+
+		//when
+		assertThrows(EntityNotFoundException.class, () -> {
+			paymentFacadeService.chargePay(userId, paymentChargeRequest);
+		});
+
+		//then
+		verify(cardService).charge(userId, cardId, amount);
+
+	}
+
 }

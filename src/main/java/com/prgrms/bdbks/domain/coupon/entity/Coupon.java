@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import org.springframework.util.StringUtils;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
+import com.prgrms.bdbks.common.exception.UsedCouponException;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -86,7 +87,11 @@ public class Coupon extends AbstractTimeColumn {
 		checkNotNull(expireDate, "만료일을 입력해주세요.");
 	}
 
-	public void useCoupon() {
+	public void use() {
+		if (used) {
+			throw new UsedCouponException("이미 사용한 쿠폰입니다.");
+		}
+
 		this.used = true;
 	}
 }

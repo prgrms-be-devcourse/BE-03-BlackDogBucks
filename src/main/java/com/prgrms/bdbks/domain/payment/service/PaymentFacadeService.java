@@ -27,7 +27,7 @@ public class PaymentFacadeService {
 			order.getTotalPrice());
 
 		if (Objects.nonNull(order.getCoupon())) {
-			order.getCoupon().useCoupon();
+			order.getCoupon().use();
 		}
 
 		return paymentService.orderPay(order, orderPayment.getCardId(),
