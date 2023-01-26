@@ -2,7 +2,7 @@ package com.prgrms.bdbks.domain.user.entity;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,15 @@ import com.prgrms.bdbks.domain.user.role.Role;
 
 class UserTest {
 
-	private User createUser(String loginId, String password, String nickname, LocalDateTime birthDate, String phone,
+	private final String validLoginId = "user123";
+	private final String validPassword = "password123";
+	private final String validNickname = "nickname123";
+	private final String validPhone = "01012345678";
+	private final String validEmail = "bdbks@naver.com";
+	private final Role validRole = Role.USER;
+	private final LocalDate validBirthDate = LocalDate.now().minusYears(10L);
+
+	private User createUser(String loginId, String password, String nickname, LocalDate birthDate, String phone,
 		String email, Role role) {
 
 		return User.builder()
@@ -27,14 +35,6 @@ class UserTest {
 			.role(role)
 			.build();
 	}
-
-	private final String validLoginId = "user123";
-	private final String validPassword = "password123";
-	private final String validNickname = "nickname123";
-	private final String validPhone = "01012345678";
-	private final String validEmail = "bdbks@naver.com";
-	private final Role validRole = Role.USER;
-	private final LocalDateTime validBirthDate = LocalDateTime.now().minusYears(10L);
 
 	@Test
 	@DisplayName("Builder - 유저의 모든 필드 값이 유효한 경우 - 생성 성공")
@@ -94,7 +94,7 @@ class UserTest {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = {"a", "ab", "abc", "123", "1234567890123457890123", "asdfasdasdfasdfaffasdfasdf"})
+	@ValueSource(strings = {"a", "1", "1234567890123457890123", "asdfasdasdfasdfaffasdfasdf"})
 	@DisplayName("validatePassword - 유저의 nickname 길이가 제한 길이를 벗어나는 경우 - 생성 실패")
 	void validateNickname_NotValidLength_ExceptionThrown(String invalidNickname) {
 		assertThrows(IllegalArgumentException.class,
@@ -105,7 +105,7 @@ class UserTest {
 	@Test
 	@DisplayName("validateBirthDate - 유저의 birthDate 값이 LocalDateTime.now()보다 미래인 경우 - 생성 실패")
 	void validateNickname_NotValidLength_ExceptionThrown() {
-		LocalDateTime invalidBirthDate = LocalDateTime.now().plusSeconds(1L);
+		LocalDate invalidBirthDate = LocalDate.now().plusDays(1);
 
 		assertThrows(IllegalArgumentException.class,
 			() -> createUser(validLoginId, validPassword, validNickname, invalidBirthDate, validPhone, validEmail,
