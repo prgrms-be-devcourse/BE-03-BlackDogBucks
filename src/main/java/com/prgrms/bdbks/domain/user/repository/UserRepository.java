@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByLoginId(String loginId);
 
+	boolean existsByLoginId(String loginId);
+
 	@Query(value = "SELECT u FROM User u WHERE u.loginId = :loginId AND u.password = :password")
 	Optional<User> findByLoginIdAndPassword(@Param("loginId") String loginId, @Param("password") String password);
 }

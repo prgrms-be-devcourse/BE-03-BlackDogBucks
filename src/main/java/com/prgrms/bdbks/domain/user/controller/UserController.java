@@ -32,8 +32,12 @@ public class UserController {
 
 	@PostMapping(value = {"/auth/signup"})
 	public ResponseEntity<String> signup(@RequestBody @Valid UserCreateRequest userCreateRequest) {
-		this.defaultUserService.register(userCreateRequest);
-		return new ResponseEntity<>("Sign Up Completed", HttpStatus.CREATED);
+		if (defaultUserService.findUser(userCreateRequest.getLoginId()).isPresent()) {
+			return new ResponseEntity<>("Sign Up Failed", HttpStatus.BAD_REQUEST);
+		} else {
+			this.defaultUserService.register(userCreateRequest);
+			return new ResponseEntity<>("Sign Up Completed", HttpStatus.CREATED);
+		}
 	}
 
 	@GetMapping(value = {"/users/{loginId}"})

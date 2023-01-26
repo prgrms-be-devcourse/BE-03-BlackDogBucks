@@ -1,5 +1,6 @@
 package com.prgrms.bdbks.domain.user.service;
 
+import com.prgrms.bdbks.common.exception.DuplicateInsertException;
 import com.prgrms.bdbks.domain.user.converter.UserMapper;
 import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
 import com.prgrms.bdbks.domain.user.entity.User;
@@ -27,7 +28,11 @@ public class DefaultUserService implements UserService {
 	public User register(UserCreateRequest userCreateRequest) {
 		User user = userMapper.createRequestToEntity(userCreateRequest);
 		user.changePassword(this.passwordEncoder.encode(user.getPassword()));
-		return new UserAdapter(this.userRepository.save(user));
+		if (!this.userRepository.existsByLoginId(user.getLoginId())) {
+			return new UserAdapter(this.userRepository.save(user));
+		} else {
+			throw new DuplicateInsertException(String.format("이미 등록된 사용자 아이디 입니다. (%s)", user.getLoginId()));
+		}
 	}
 
 	@Override

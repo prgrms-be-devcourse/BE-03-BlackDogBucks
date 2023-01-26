@@ -24,12 +24,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prgrms.bdbks.common.exception.DuplicateInsertException;
 import com.prgrms.bdbks.config.security.SecurityConfig;
 import com.prgrms.bdbks.domain.user.converter.UserMapper;
 import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
 import com.prgrms.bdbks.domain.user.dto.UserFindResponse;
 import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
 import com.prgrms.bdbks.domain.user.entity.User;
+import com.prgrms.bdbks.domain.user.repository.UserRepository;
 import com.prgrms.bdbks.domain.user.role.Role;
 import com.prgrms.bdbks.domain.user.service.DefaultUserService;
 
@@ -51,11 +53,18 @@ class UserControllerMvcTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
 	@Autowired
 	private ObjectMapper objectMapper;
+
 	private User emptyUser;
+
 	@MockBean
 	private DefaultUserService defaultUserService;
+
+	@MockBean
+	private UserRepository userRepository;
+
 	@MockBean
 	private UserMapper userMapper;
 	@MockBean
@@ -85,6 +94,23 @@ class UserControllerMvcTest {
 			.andExpect(status().isCreated())
 			.andExpect(content().string("Sign Up Completed"))
 			.andDo(print());
+	}
+
+	@DisplayName("실패 - 중복된 아이디로 사용자 가입에 실패한다.")
+	@Test
+	void signup_failure() throws Exception {
+		String USER_NAME = "blackdog";
+		String USER_PHONE = "01012341234";
+		String USER_EMAIL = "blackdog@blackdog.com";
+		UserCreateRequest userCreateRequest = new UserCreateRequest(USER_LOGIN_ID, USER_PASSWORD, USER_NAME,
+			USER_BIRTH_DATE, USER_PHONE, USER_EMAIL, USER_ROLE);
+
+		when(defaultUserService.findUser(userCreateRequest.getLoginId())).thenReturn(Optional.of(emptyUser));
+
+		mockMvc.perform(post(AUTH_API_PATH + "/signup")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(userCreateRequest)))
+			.andExpect(status().isBadRequest());
 	}
 
 	@DisplayName("조회 - 로그인에 성공한다.")
