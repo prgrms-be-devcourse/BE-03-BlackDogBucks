@@ -1,17 +1,18 @@
 package com.prgrms.bdbks.domain.coupon.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.prgrms.bdbks.common.exception.EntityNotFoundException;
+import com.prgrms.bdbks.domain.coupon.converter.CouponMapper;
 import com.prgrms.bdbks.domain.coupon.dto.CouponSaveResponse;
 import com.prgrms.bdbks.domain.coupon.dto.CouponSearchResponses;
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
-import com.prgrms.bdbks.domain.coupon.converter.CouponMapper;
 import com.prgrms.bdbks.domain.coupon.repository.CouponRepository;
-import com.prgrms.bdbks.domain.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -43,5 +44,16 @@ public class DefaultCouponService implements CouponService {
 			coupons.stream()
 				.map(couponMapper::toCouponSearchResponse)
 				.collect(Collectors.toList()));
+	}
+
+	@Override
+	public Optional<Coupon> getOptionalCouponByCouponId(Long couponId) {
+		return couponRepository.findById(couponId);
+	}
+
+	@Override
+	public Coupon getCouponByCouponId(Long couponId) {
+		return couponRepository.findById(couponId)
+			.orElseThrow(() -> new EntityNotFoundException(Coupon.class, couponId));
 	}
 }
