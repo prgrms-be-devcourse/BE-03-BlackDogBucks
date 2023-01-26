@@ -1,4 +1,4 @@
-package com.prgrms.bdbks.domain.star.mapper;
+package com.prgrms.bdbks.domain.star.converter;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

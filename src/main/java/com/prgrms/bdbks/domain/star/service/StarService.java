@@ -11,5 +11,5 @@ public interface StarService {
 
 	void delete(Long userId);
 
-	void updateCount(Star star, int count);
+	void updateCount(Long userId, int count);
 }
