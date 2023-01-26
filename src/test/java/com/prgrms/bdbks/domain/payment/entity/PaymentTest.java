@@ -24,7 +24,7 @@ class PaymentTest {
 	@DisplayName("validatePaymentType() - 결제 타입 검증 - 성공")
 	@Test
 	void validPaymentType_validPaymentType_ExceptionDoesNotThrown() {
-		assertDoesNotThrow(() -> createPayment(order, validCardId, paymentType, validPrice, validPaymentDateTime));
+		assertDoesNotThrow(() -> createOrderPayment(order, validCardId, paymentType, validPrice, validPaymentDateTime));
 	}
 
 	@DisplayName("validatePaymentType() - 결제 타입 검증 - 실패")
@@ -33,7 +33,7 @@ class PaymentTest {
 		PaymentType invalidPaymentType = null;
 
 		assertThrows(NullPointerException.class,
-			() -> createPayment(order, validCardId, invalidPaymentType, validPrice, validPaymentDateTime));
+			() -> createOrderPayment(order, validCardId, invalidPaymentType, validPrice, validPaymentDateTime));
 	}
 
 	@DisplayName("validatePrice() - 결제금액 검증 - 성공")
@@ -41,7 +41,7 @@ class PaymentTest {
 	@ValueSource(ints = {2000, 3000, 5000})
 	void validatePrice_ValidPrice_ExceptionDoesNotThrown(int price) {
 		assertDoesNotThrow(
-			() -> createPayment(order, validCardId, paymentType, price, validPaymentDateTime));
+			() -> createOrderPayment(order, validCardId, paymentType, price, validPaymentDateTime));
 	}
 
 	@DisplayName("validatePrice() 결제금액 검증 - 실패")
@@ -49,7 +49,7 @@ class PaymentTest {
 	@ValueSource(ints = {-2000, -3000, -5000})
 	void validatePrice_InvalidPrice_ExceptionThrown(int price) {
 		assertThrows(IllegalArgumentException.class,
-			() -> createPayment(order, validCardId, paymentType, price, validPaymentDateTime));
+			() -> createOrderPayment(order, validCardId, paymentType, price, validPaymentDateTime));
 	}
 
 	@DisplayName("validateCardId() - 충전카드Id 검증 - 성공")
@@ -58,7 +58,7 @@ class PaymentTest {
 		PaymentType paymentType = PaymentType.ORDER;
 
 		assertDoesNotThrow(() ->
-			createPayment(order, validCardId, paymentType, validPrice, validPaymentDateTime));
+			createOrderPayment(order, validCardId, paymentType, validPrice, validPaymentDateTime));
 	}
 
 	@DisplayName("validateCardId() - 충전카드Id 검증 - 실패")
@@ -67,13 +67,13 @@ class PaymentTest {
 		String invalidId = null;
 
 		assertThrows(NullPointerException.class,
-			() -> createPayment(order, invalidId, paymentType, validPrice, validPaymentDateTime));
+			() -> createOrderPayment(order, invalidId, paymentType, validPrice, validPaymentDateTime));
 	}
 
 	@DisplayName("validatePaymentDateTime() - 결제 시간 검증 - 성공")
 	@Test
 	void validatePaymentDateTime_validPaymentDateTime_ExceptionDoesNotThrown() {
-		assertDoesNotThrow(() -> createPayment(order, validCardId, paymentType, validPrice, validPaymentDateTime));
+		assertDoesNotThrow(() -> createOrderPayment(order, validCardId, paymentType, validPrice, validPaymentDateTime));
 	}
 
 	@DisplayName("validatePaymentDateTime() - 결제 시간 검증 - 실패")
@@ -82,7 +82,7 @@ class PaymentTest {
 		LocalDateTime paymentDateTime = null;
 
 		assertThrows(NullPointerException.class,
-			() -> createPayment(order, validCardId, paymentType, validPrice, paymentDateTime));
+			() -> createOrderPayment(order, validCardId, paymentType, validPrice, paymentDateTime));
 	}
 
 }
