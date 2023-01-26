@@ -12,15 +12,18 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.prgrms.bdbks.config.security.SecurityConfig;
 import com.prgrms.bdbks.domain.item.service.ItemCategoryService;
 
 import lombok.RequiredArgsConstructor;
 
-@AutoConfigureMockMvc(addFilters = false)
+@Import(SecurityConfig.class)
+@AutoConfigureMockMvc
 @WebMvcTest(controllers = CategoryController.class)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor

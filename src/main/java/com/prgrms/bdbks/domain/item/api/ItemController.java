@@ -20,7 +20,7 @@ import com.prgrms.bdbks.domain.item.dto.ItemCreateRequest;
 import com.prgrms.bdbks.domain.item.dto.ItemDetailResponse;
 import com.prgrms.bdbks.domain.item.dto.ItemResponses;
 import com.prgrms.bdbks.domain.item.entity.ItemType;
-import com.prgrms.bdbks.domain.item.service.ItemFacadeService;
+import com.prgrms.bdbks.domain.item.service.ItemService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ItemController {
 
-	private final ItemFacadeService itemService;
+	private final ItemService itemService;
 
 	@PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<URI> createItem(@RequestBody @Valid ItemCreateRequest itemCreateRequest) {
@@ -44,15 +44,13 @@ public class ItemController {
 	public ResponseEntity<ItemResponses> findAllBy(
 		@RequestParam("kinds") ItemType itemType,
 		@RequestParam("category") String categoryName) {
-		ItemResponses itemResponses = itemService.findAllBy(itemType, categoryName);
 
-		return ResponseEntity.ok(itemResponses);
+		return ResponseEntity.ok(itemService.findAllBy(itemType, categoryName));
 	}
 
 	@GetMapping(value = "/{itemId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<ItemDetailResponse> findItemDetail(@PathVariable Long itemId) {
-		ItemDetailResponse itemDetail = itemService.findItemDetail(itemId);
-		return ResponseEntity.ok(itemDetail);
+		return ResponseEntity.ok(itemService.findItemDetailBy(itemId));
 	}
 
 }

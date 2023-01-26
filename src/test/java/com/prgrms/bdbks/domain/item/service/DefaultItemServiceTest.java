@@ -11,16 +11,18 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.domain.item.dto.DefaultOptionCreateRequest;
 import com.prgrms.bdbks.domain.item.dto.ItemCreateRequest;
 import com.prgrms.bdbks.domain.item.dto.ItemDetailResponse;
 import com.prgrms.bdbks.domain.item.dto.ItemResponse;
+import com.prgrms.bdbks.domain.item.dto.ItemResponses;
+import com.prgrms.bdbks.domain.item.dto.OptionResponse;
 import com.prgrms.bdbks.domain.item.entity.BeverageOption;
 import com.prgrms.bdbks.domain.item.entity.DefaultOption;
 import com.prgrms.bdbks.domain.item.entity.Item;
@@ -29,7 +31,7 @@ import com.prgrms.bdbks.domain.item.entity.ItemType;
 import com.prgrms.bdbks.domain.item.repository.DefaultOptionRepository;
 import com.prgrms.bdbks.domain.item.repository.ItemCategoryRepository;
 import com.prgrms.bdbks.domain.item.repository.ItemRepository;
-import com.prgrms.bdbks.domain.order.dto.OptionResponse;
+import com.prgrms.bdbks.domain.store.service.StoreService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -47,7 +49,8 @@ class DefaultItemServiceTest {
 
 	private final DefaultOptionRepository defaultOptionRepository;
 
-	private final ObjectMapper objectMapper;
+	@MockBean
+	private StoreService storeService;
 
 	@DisplayName("생성 - createItem() - Item 생성에 성공한다.")
 	@Test
@@ -77,13 +80,8 @@ class DefaultItemServiceTest {
 
 		itemCategoryRepository.save(itemCategory);
 
-		DefaultOption defaultOption = createDefaultOption(espressoShotCount, vanillaSyrupCount, classicSyrupCount,
-			hazelnutSyrupCount, null, null, null);
-
-		defaultOptionRepository.save(defaultOption);
-
 		//when
-		Long itemId = defaultItemService.createItem(request, itemCategory, defaultOption);
+		Long itemId = defaultItemService.createItem(request);
 
 		//then
 		Item findItem = itemRepository.findById(itemId).get();
@@ -97,8 +95,17 @@ class DefaultItemServiceTest {
 			.hasFieldOrPropertyWithValue("isBest", false)
 			.hasFieldOrPropertyWithValue("isNew", false)
 			.hasFieldOrPropertyWithValue("description", description)
-			.hasFieldOrPropertyWithValue("category", itemCategory)
-			.hasFieldOrPropertyWithValue("defaultOption", defaultOption);
+			.hasFieldOrPropertyWithValue("category", itemCategory);
+
+		assertThat(findItem.getDefaultOption())
+			.hasFieldOrPropertyWithValue("espressoShotCount", espressoShotCount)
+			.hasFieldOrPropertyWithValue("vanillaSyrupCount", vanillaSyrupCount)
+			.hasFieldOrPropertyWithValue("classicSyrupCount", classicSyrupCount)
+			.hasFieldOrPropertyWithValue("hazelnutSyrupCount", hazelnutSyrupCount)
+			.hasFieldOrPropertyWithValue("milkType", null)
+			.hasFieldOrPropertyWithValue("espressoType", null)
+			.hasFieldOrPropertyWithValue("milkAmount", null);
+
 	}
 
 	@DisplayName("생성 - findAllBy - Item 조회에 성공한다.")
@@ -146,16 +153,16 @@ class DefaultItemServiceTest {
 		));
 
 		//when
-		List<ItemResponse> itemResponses = defaultItemService.findAllBy(beverage, espressoCategoryName);
+		ItemResponses itemResponses = defaultItemService.findAllBy(beverage, espressoCategoryName);
 
 		//then
-		assertThat(itemResponses).hasSize(3);
+		assertThat(itemResponses.getItems()).hasSize(3);
 
-		assertThat(itemResponses)
+		assertThat(itemResponses.getItems())
 			.extracting(ItemResponse::getType)
 			.contains(beverage);
 
-		assertThat(itemResponses)
+		assertThat(itemResponses.getItems())
 			.extracting(ItemResponse::getCategoryName)
 			.contains(espressoCategoryName);
 	}
@@ -179,7 +186,7 @@ class DefaultItemServiceTest {
 		Integer hazelnutSyrupCount = 0;
 
 		DefaultOptionCreateRequest defaultOptionCreateRequest = new DefaultOptionCreateRequest(espressoShotCount,
-			vanillaSyrupCount, classicSyrupCount, hazelnutSyrupCount, null, null, null);
+			vanillaSyrupCount, classicSyrupCount, hazelnutSyrupCount, null, BeverageOption.Coffee.ESPRESSO, null);
 
 		ItemCreateRequest request = new ItemCreateRequest(
 			beverage, categoryName, name, englishName, price, image, description, defaultOptionCreateRequest
@@ -194,7 +201,7 @@ class DefaultItemServiceTest {
 
 		defaultOptionRepository.save(defaultOption);
 
-		Long americanoId = defaultItemService.createItem(request, itemCategory, defaultOption);
+		Long americanoId = defaultItemService.createItem(request);
 
 		//when
 		ItemDetailResponse itemDetailResponse = defaultItemService.findItemDetailBy(americanoId);
@@ -234,7 +241,7 @@ class DefaultItemServiceTest {
 		// 컵 타입 포함 여부
 		assertThat(optionResponse.getCupType())
 			.isEqualTo(Arrays.stream(BeverageOption.CupType.values())
-				.map(BeverageOption.CupType::getKoreaName)
+				.map(BeverageOption.CupType::getKorName)
 				.collect(Collectors.toList()));
 
 		assertThat(optionResponse.getSyrup()).hasSize(2);
@@ -246,9 +253,6 @@ class DefaultItemServiceTest {
 		assertThat(itemDetailResponse.getPrice()).isEqualTo(price);
 		assertThat(itemDetailResponse.getIsBest()).isFalse();
 		assertThat(itemDetailResponse.getIsNew()).isFalse();
-
-		System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(itemDetailResponse));
-
 	}
 
 	@DisplayName("조회 - findItemDetailBy - 존재하지 않는 Item을 조회하면 예외를 던진다. - 실패")

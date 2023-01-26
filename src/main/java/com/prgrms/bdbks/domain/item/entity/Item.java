@@ -40,7 +40,7 @@ public class Item extends AbstractTimeColumn {
 	private String name;
 
 	@NotNull
-	@Column(name = "english_name", nullable = false, length = 50)
+	@Column(name = "english_name", nullable = false, length = 150)
 	private String englishName;
 
 	@NotNull
