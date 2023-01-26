@@ -116,13 +116,13 @@ public class Payment extends AbstractTimeColumn {
 			.build();
 	}
 
-	public static Payment createOrderPayment(Order order, Card card, int price) {
+	public static Payment createOrderPayment(Order order, String cardId, int price) {
 		return Payment.builder()
 			.paymentType(PaymentType.ORDER)
 			.order(order)
 			.price(price)
 			.paymentDateTime(LocalDateTime.now())
-			.cardId(card.getId())
+			.cardId(cardId)
 			.build();
 	}
 }

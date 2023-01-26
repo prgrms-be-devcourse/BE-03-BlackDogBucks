@@ -39,20 +39,19 @@ public class DefaultPaymentServiceSliceTest {
 		int totalPrice = 50000;
 
 		User user = UserObjectProvider.createUser(userId);
-		Card card = CardObjectProvider.createCard(user, cardId);
 		Order order = OrderObjectProvider.createOrder();
 		Payment payment = createChargePayment(cardId, PaymentType.ORDER, totalPrice, LocalDateTime.now());
 
 		when(paymentRepository.save(any())).thenReturn(payment);
 
-		defaultPaymentService.orderPay(order, card, totalPrice);
+		defaultPaymentService.orderPay(order, cardId, totalPrice);
 
 		verify(paymentRepository).save(any());
 	}
 
 	@DisplayName("chargePay - 사용자의 충전카드 충전 결제 내역을 만들 수 있다. - 성공")
 	@Test
-	void chargePay() {
+	void chargePay_ValidParameters_Success() {
 
 		//given
 		String cardId = "cardID";

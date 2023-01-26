@@ -1,5 +1,7 @@
 package com.prgrms.bdbks.domain.star.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,7 +48,7 @@ class StarServiceIntegrationTest {
 		starService.create(user);
 
 		//then
-		Assertions.assertEquals(starRepository.findAll().size(), expectSize);
+		assertEquals(starRepository.findAll().size(), expectSize);
 
 	}
 
@@ -58,7 +60,7 @@ class StarServiceIntegrationTest {
 		Long unknownUserId = 100L;
 
 		//when & then
-		Assertions.assertThrows(EntityNotFoundException.class, () -> starService.findById(unknownUserId));
+		assertThrows(EntityNotFoundException.class, () -> starService.findByUserId(unknownUserId));
 	}
 
 	@DisplayName("findById - 사용자의 별을 조회할 수 있다. - 성공")
@@ -69,7 +71,7 @@ class StarServiceIntegrationTest {
 		starService.create(user);
 
 		//when & then
-		Assertions.assertDoesNotThrow(() -> starService.findById(userId));
+		assertDoesNotThrow(() -> starService.findByUserId(userId));
 	}
 
 	@DisplayName("delete - 사용자의 별을 삭제할 수 있다. - 성공")
@@ -83,7 +85,7 @@ class StarServiceIntegrationTest {
 		starService.delete(userId);
 
 		//then
-		Assertions.assertFalse(starRepository.findByUserId(userId).isPresent());
+		assertFalse(starRepository.findByUserId(userId).isPresent());
 
 	}
 

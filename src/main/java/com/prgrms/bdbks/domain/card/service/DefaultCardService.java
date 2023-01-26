@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.domain.card.converter.CardMapper;
 import com.prgrms.bdbks.domain.card.dto.CardChargeResponse;
+import com.prgrms.bdbks.domain.card.dto.CardPayResponse;
 import com.prgrms.bdbks.domain.card.dto.CardSearchResponse;
 import com.prgrms.bdbks.domain.card.dto.CardSearchResponses;
 import com.prgrms.bdbks.domain.card.entity.Card;
@@ -52,6 +53,16 @@ public class DefaultCardService implements CardService {
 	public Card findByCardId(String cardId) {
 		return cardRepository.findById(cardId)
 			.orElseThrow(() -> new EntityNotFoundException(Card.class, cardId));
+	}
+
+	@Override
+	@Transactional
+	public CardPayResponse pay(Long userId, String cardId, int totalPrice) {
+		Card card = findByCardId(cardId);
+		card.compareUser(userId);
+		card.payAmount(totalPrice);
+
+		return new CardPayResponse(cardId, totalPrice);
 	}
 
 }

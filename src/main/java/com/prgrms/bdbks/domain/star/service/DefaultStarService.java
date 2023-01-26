@@ -34,7 +34,7 @@ public class DefaultStarService implements StarService {
 	}
 
 	@Override
-	public Star findById(Long userId) {
+	public Star findByUserId(Long userId) {
 		Star star = starRepository.findByUserId(userId)
 			.orElseThrow(() -> new EntityNotFoundException(Star.class, userId));
 

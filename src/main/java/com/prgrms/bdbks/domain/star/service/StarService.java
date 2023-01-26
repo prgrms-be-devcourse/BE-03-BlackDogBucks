@@ -7,7 +7,7 @@ public interface StarService {
 
 	Long create(User user);
 
-	Star findById(Long userId);
+	Star findByUserId(Long userId);
 
 	void delete(Long userId);
 
