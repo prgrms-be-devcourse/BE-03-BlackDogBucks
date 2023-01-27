@@ -19,7 +19,7 @@ import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
 import com.prgrms.bdbks.domain.user.dto.UserFindResponse;
 import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
 import com.prgrms.bdbks.domain.user.entity.User;
-import com.prgrms.bdbks.domain.user.service.DefaultUserService;
+import com.prgrms.bdbks.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,29 +27,29 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 public class UserController {
-	private final DefaultUserService defaultUserService;
+	private final UserService userService;
 	private final UserMapper userMapper;
 
 	@PostMapping(value = {"/auth/signup"})
 	public ResponseEntity<String> signup(@RequestBody @Valid UserCreateRequest userCreateRequest) {
-		if (defaultUserService.findUser(userCreateRequest.getLoginId()).isPresent()) {
+		if (userService.findUser(userCreateRequest.getLoginId()).isPresent()) {
 			return new ResponseEntity<>("Sign Up Failed", HttpStatus.BAD_REQUEST);
 		} else {
-			this.defaultUserService.register(userCreateRequest);
+			this.userService.register(userCreateRequest);
 			return new ResponseEntity<>("Sign Up Completed", HttpStatus.CREATED);
 		}
 	}
 
 	@GetMapping(value = {"/users/{loginId}"})
 	public ResponseEntity<UserFindResponse> readUser(@PathVariable String loginId) {
-		Optional<User> user = this.defaultUserService.findUser(loginId);
+		Optional<User> user = this.userService.findUser(loginId);
 		return user.map(value -> ResponseEntity.ok(userMapper.entityToFindResponse(value)))
 			.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 
 	@PostMapping(value = {"/auth/login"})
 	public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest request, HttpSession session) {
-		Optional<User> user = this.defaultUserService.login(request.getLoginId(), request.getPassword());
+		Optional<User> user = this.userService.login(request.getLoginId(), request.getPassword());
 		if (user.isPresent()) {
 			session.setAttribute("user", user.get());
 			return new ResponseEntity<>("Login Succeeded", HttpStatus.OK);

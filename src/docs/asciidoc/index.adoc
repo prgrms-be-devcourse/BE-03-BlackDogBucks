@@ -16,7 +16,6 @@ include::{snippets}/hello-world-api/http-request.adoc[]
 
 include::{snippets}/hello-world-api/request-parameters.adoc[]
 
-
 ==== HTTP response
 
 include::{snippets}/hello-world-api/http-response.adoc[]
@@ -142,3 +141,24 @@ include::{snippets}/item-detail/http-response.adoc[]
 ==== response fields
 
 include::{snippets}/item-detail/response-fields.adoc[]
+
+== Order
+
+=== read-one
+
+==== HTTP request
+
+include::{snippets}/order-detail/http-request.adoc[]
+
+==== HTTP request param
+
+include::{snippets}/order-detail/path-parameters.adoc[]
+
+==== HTTP response
+
+include::{snippets}/order-detail/http-response.adoc[]
+
+==== response fields
+
+include::{snippets}/order-detail/response-fields.adoc[]
+

@@ -2,6 +2,7 @@ package com.prgrms.bdbks.domain.item.entity;
 
 import static com.google.common.base.Preconditions.*;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -70,7 +71,7 @@ public class Item extends AbstractTimeColumn {
 	private ItemCategory category;
 
 	@NotNull
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "default_option_id")
 	private DefaultOption defaultOption;
 

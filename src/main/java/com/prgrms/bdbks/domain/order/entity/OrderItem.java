@@ -2,6 +2,7 @@ package com.prgrms.bdbks.domain.order.entity;
 
 import static com.google.common.base.Preconditions.*;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -47,7 +48,7 @@ public class OrderItem {
 	private Integer price;
 
 	@NotNull
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "custom_option_id")
 	private CustomOption customOption;
 

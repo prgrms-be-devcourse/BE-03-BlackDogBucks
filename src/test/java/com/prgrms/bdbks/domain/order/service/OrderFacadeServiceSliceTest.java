@@ -4,7 +4,6 @@ import static com.prgrms.bdbks.domain.coupon.entity.Coupon.*;
 import static com.prgrms.bdbks.domain.item.entity.BeverageOption.Coffee.*;
 import static com.prgrms.bdbks.domain.item.entity.BeverageOption.CupType.*;
 import static com.prgrms.bdbks.domain.item.entity.BeverageOption.Size.*;
-import static com.prgrms.bdbks.domain.order.entity.OrderItem.*;
 import static com.prgrms.bdbks.domain.testutil.ItemObjectProvider.createCustomOption;
 import static com.prgrms.bdbks.domain.testutil.ItemObjectProvider.*;
 import static com.prgrms.bdbks.domain.testutil.OrderObjectProvider.createCustomOption;
@@ -101,12 +100,12 @@ class OrderFacadeServiceSliceTest {
 		ReflectionTestUtils.setField(order, "id", orderId);
 
 		Item icedAmericano = createIcedAmericano();
-		create(order, icedAmericano, customOption, 2,
+		OrderItem.create(order, icedAmericano, customOption, 2,
 			optionPrice);
 
 		Item caffeLatte = createCaffeLatte();
 
-		create(order, caffeLatte, customOption, 3,
+		OrderItem.create(order, caffeLatte, customOption, 3,
 			optionPrice);
 
 		Store store = StoreObjectProvider.creatStore(storeId);
