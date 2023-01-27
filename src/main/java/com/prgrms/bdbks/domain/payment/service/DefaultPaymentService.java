@@ -8,6 +8,7 @@ import com.prgrms.bdbks.domain.order.entity.Order;
 import com.prgrms.bdbks.domain.payment.dto.PaymentChargeResponse;
 import com.prgrms.bdbks.domain.payment.dto.PaymentOrderResponse;
 import com.prgrms.bdbks.domain.payment.entity.Payment;
+import com.prgrms.bdbks.domain.payment.model.PaymentResult;
 import com.prgrms.bdbks.domain.payment.repository.PaymentRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -20,18 +21,18 @@ public class DefaultPaymentService implements PaymentService {
 	private final PaymentRepository paymentRepository;
 
 	@Override
-	public PaymentOrderResponse orderPay(Order order, Card card, int totalPrice) {
-		Payment payment = Payment.createOrderPayment(order, card, totalPrice);
+	public PaymentResult orderPay(Order order, String cardId, int totalPrice) {
+		Payment payment = Payment.createOrderPayment(order, cardId, totalPrice);
 		paymentRepository.save(payment);
 
-		return new PaymentOrderResponse(payment.getId());
+		return new PaymentResult(payment.getId());
 	}
 
 	@Override
-	public PaymentChargeResponse chargePay(String cardId, int totalPrice) {
+	public PaymentResult chargePay(String cardId, int totalPrice) {
 		Payment payment = Payment.createChargePayment(cardId, totalPrice);
 		paymentRepository.save(payment);
 
-		return new PaymentChargeResponse(payment.getId());
+		return new PaymentResult(payment.getId());
 	}
 }

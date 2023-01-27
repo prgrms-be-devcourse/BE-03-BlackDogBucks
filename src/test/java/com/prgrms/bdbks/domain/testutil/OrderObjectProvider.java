@@ -11,9 +11,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OrderObjectProvider {
-
-	public static Order createOrder(Coupon coupon, Long userId, String storeId, Long totalPrice) {
-
+	public static Order createOrder(Coupon coupon, Long userId, String storeId) {
 		return Order.builder()
 			.coupon(coupon)
 			.userId(userId)

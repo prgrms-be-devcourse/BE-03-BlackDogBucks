@@ -3,6 +3,8 @@ package com.prgrms.bdbks.domain.order.service;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Nullable;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +16,8 @@ import com.prgrms.bdbks.domain.order.converter.OrderMapper;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateRequest;
 import com.prgrms.bdbks.domain.order.dto.OrderDetailResponse;
 import com.prgrms.bdbks.domain.order.entity.Order;
-import com.prgrms.bdbks.domain.payment.service.PaymentService;
+import com.prgrms.bdbks.domain.payment.dto.OrderPayment;
+import com.prgrms.bdbks.domain.payment.service.PaymentFacadeService;
 import com.prgrms.bdbks.domain.star.service.StarService;
 import com.prgrms.bdbks.domain.store.entity.Store;
 import com.prgrms.bdbks.domain.store.service.StoreService;
@@ -37,7 +40,7 @@ public class OrderFacadeService {
 
 	private final OrderMapper orderMapper;
 
-	private final PaymentService paymentService;
+	private final PaymentFacadeService paymentService;
 
 	private final StarService starService;
 
@@ -46,30 +49,29 @@ public class OrderFacadeService {
 	@Transactional
 	public String createOrder(OrderCreateRequest request) {
 
-		storeService.findById(request.getStoreId()); // wrapping 된 Object? <- exists
+		storeService.findById(request.getStoreId());
 		userService.findUserById(request.getUserId());
 
-		Coupon coupon = null;
-
-		if (Objects.nonNull(request.getPaymentOption().getCouponId())) {
-			// 쿠폰이 사용 가능 여부 체크
-			coupon = couponService.getCouponByCouponId(request.getPaymentOption().getCouponId());
-		}
+		Coupon coupon = findCoupon(request.getPaymentOption().getCouponId());
 
 		List<CustomItem> customItems = itemService.customItems(request.getOrderItems());
 		Order order = orderService.createOrder(coupon, request.getUserId(), request.getStoreId(),
-			customItems); // < couponRepository go to
+			customItems);
 
-		// 1. 결제로 보내 -> userId, 결제 타입, 쿠폰,
-		// 2-1. chargeCard인 경우 chargeCard 가격 감소 payment 기록 save
+		paymentService.orderPay(new OrderPayment(order, request.getPaymentOption().getChargeCardId(),
+			request.getPaymentOption().getPaymentType()));
 
-		// 2-2. creditCard인 경우 기능 save
-		// 3-1. 쿠폰 사용했을 경우 -> 쿠폰 상태 사용함으로 변경 - 결제 시 넘겨기 주
-
-		// 3-2. 쿠폰 사용안했을 경우 -> 별 적립
 		updateStar(request.getUserId(), coupon, order.getTotalQuantity());
 
 		return order.getId();
+	}
+
+	@Nullable
+	private Coupon findCoupon(Long couponId) {
+		if (Objects.nonNull(couponId)) {
+			return couponService.getCouponByCouponId(couponId);
+		}
+		return null;
 	}
 
 	private void updateStar(long userId, Coupon coupon, int totalOrderCount) {

@@ -17,10 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.prgrms.bdbks.domain.card.entity.Card;
 import com.prgrms.bdbks.domain.card.repository.CardRepository;
 import com.prgrms.bdbks.domain.order.entity.Order;
-import com.prgrms.bdbks.domain.payment.dto.PaymentChargeResponse;
 import com.prgrms.bdbks.domain.payment.entity.Payment;
 import com.prgrms.bdbks.domain.payment.entity.PaymentStatus;
 import com.prgrms.bdbks.domain.payment.entity.PaymentType;
+import com.prgrms.bdbks.domain.payment.model.PaymentResult;
 import com.prgrms.bdbks.domain.payment.repository.PaymentRepository;
 import com.prgrms.bdbks.domain.testutil.OrderObjectProvider;
 import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
@@ -62,9 +62,9 @@ public class DefaultPaymentServiceIntegrationTest {
 	@ValueSource(ints = {10000, 20000, 50000, 500000, 549999, 550000})
 	@DisplayName("chargePay - 사용자의 충전카드에 금액을 충전할 수 있다. - 성공")
 	void chargePay_validPrice_Success(int totalPrice) {
-		PaymentChargeResponse paymentChargeResponse = paymentService.chargePay(card.getId(), totalPrice);
+		PaymentResult paymentResult = paymentService.chargePay(card.getId(), totalPrice);
 
-		Optional<Payment> optionalPayment = paymentRepository.findById(paymentChargeResponse.getPaymentId());
+		Optional<Payment> optionalPayment = paymentRepository.findById(paymentResult.getPaymentId());
 		assertTrue(optionalPayment.isPresent());
 
 		Payment savedPayment = optionalPayment.get();

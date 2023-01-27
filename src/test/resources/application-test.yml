@@ -3,7 +3,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/bdbks_test
     username: root
-    password: root
+    password: dudwl0804!
   jpa:
     open-in-view: false
     hibernate:

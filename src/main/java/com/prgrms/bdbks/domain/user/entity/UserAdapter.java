@@ -14,6 +14,7 @@ public class UserAdapter extends User {
 	String nickname;
 
 	String password;
+
 	String email;
 
 	Role role;

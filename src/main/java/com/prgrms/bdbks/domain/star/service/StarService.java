@@ -7,9 +7,9 @@ public interface StarService {
 
 	Long create(User user);
 
-	Star findById(Long userId);
+	Star findByUserId(Long userId);
 
 	void delete(Long userId);
 
-	void updateCount(Star star, int count);
+	void updateCount(Long userId, int count);
 }
