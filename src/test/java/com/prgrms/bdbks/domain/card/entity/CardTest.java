@@ -21,7 +21,7 @@ class CardTest {
 		.password("password1")
 		.nickname("nickname1")
 		.email("mailmail@naver.com")
-		.birthDate(LocalDateTime.now().minusYears(10L))
+		.birthDate(LocalDateTime.now().minusYears(10L).toLocalDate())
 		.phone("01012341234")
 		.role(Role.USER)
 		.build();

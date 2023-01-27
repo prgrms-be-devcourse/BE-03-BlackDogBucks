@@ -44,7 +44,7 @@ public class OrderItem {
 
 	@NotNull
 	@Column(name = "price", nullable = false)
-	private Long price;
+	private Integer price;
 
 	@NotNull
 	@OneToOne
@@ -56,7 +56,7 @@ public class OrderItem {
 	private Integer quantity = 1;
 
 	@Builder
-	public OrderItem(Order order, Item item, CustomOption customOption, Integer quantity, Long price) {
+	public OrderItem(Order order, Item item, CustomOption customOption, Integer quantity, Integer price) {
 		checkNotNull(order, "order 는 null 일 수 없습니다.");
 		checkNotNull(item, "item 은 null 일 수 없습니다.");
 		checkNotNull(customOption, "customOption 은 null 일 수 없습니다.");
@@ -70,7 +70,7 @@ public class OrderItem {
 		addOrder(order);
 	}
 
-	public Long getTotalPrice() {
+	public int getTotalPrice() {
 		return price * quantity;
 	}
 
@@ -83,7 +83,7 @@ public class OrderItem {
 		checkNotNull(optionPrice);
 		checkNotNull(item, "item 은 null 일 수 없습니다.");
 
-		int totalPrice = item.getPrice();
+		int totalPrice = item.getPrice(); // todo 통일.
 
 		totalPrice += customOption.calculateAddCosts(defaultOption.getEspressoShotCount(),
 			defaultOption.getVanillaSyrupCount(), defaultOption.getClassicSyrupCount(),
@@ -93,7 +93,7 @@ public class OrderItem {
 			.customOption(customOption)
 			.item(item)
 			.quantity(quantity)
-			.price((long)totalPrice)
+			.price(totalPrice)
 			.order(order)
 			.build();
 	}

@@ -54,7 +54,7 @@ public class Order extends AbstractTimeColumn {
 
 	@NotNull
 	@Column(name = "total_price", nullable = false)
-	private Long totalPrice = 0L;
+	private Integer totalPrice = 0;
 
 	@NotNull
 	@Column(name = "order_status", nullable = false)
@@ -98,17 +98,21 @@ public class Order extends AbstractTimeColumn {
 	}
 
 	private void calculateTotalPrice() {
-		long sumPrice = this.orderItems.stream()
-			.mapToLong(OrderItem::getTotalPrice)
+		int sumPrice = this.orderItems.stream()
+			.mapToInt(OrderItem::getTotalPrice)
 			.sum();
 
 		if (this.coupon != null) {
-			this.totalPrice = sumPrice - coupon.getPrice() < 0 ? 0 : sumPrice - coupon.getPrice();
+			this.totalPrice = Math.max(sumPrice - coupon.getPrice(), 0);
 		} else {
 			this.totalPrice = sumPrice;
 		}
 
 		validateTotalPrice(this.totalPrice);
+	}
+
+	public int getTotalQuantity() {
+		return orderItems.stream().mapToInt(OrderItem::getQuantity).sum();
 	}
 
 }

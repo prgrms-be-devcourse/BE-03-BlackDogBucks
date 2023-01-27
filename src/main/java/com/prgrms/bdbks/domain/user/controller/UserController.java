@@ -1,12 +1,5 @@
 package com.prgrms.bdbks.domain.user.controller;
 
-import com.prgrms.bdbks.domain.user.converter.UserMapper;
-import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
-import com.prgrms.bdbks.domain.user.dto.UserFindResponse;
-import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
-import com.prgrms.bdbks.domain.user.entity.User;
-import com.prgrms.bdbks.domain.user.service.DefaultUserService;
-
 import java.util.Optional;
 
 import javax.servlet.http.HttpSession;
@@ -20,6 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.prgrms.bdbks.domain.user.converter.UserMapper;
+import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
+import com.prgrms.bdbks.domain.user.dto.UserFindResponse;
+import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
+import com.prgrms.bdbks.domain.user.entity.User;
+import com.prgrms.bdbks.domain.user.service.DefaultUserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -67,7 +67,6 @@ public class UserController {
 		} else {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 		}
-
 	}
 
 	@GetMapping(value = {"/users/me"})

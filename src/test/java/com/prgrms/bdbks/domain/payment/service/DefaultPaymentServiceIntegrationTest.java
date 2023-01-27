@@ -48,7 +48,7 @@ public class DefaultPaymentServiceIntegrationTest {
 	private Card card;
 
 	private final Order order = OrderObjectProvider.createOrder();
-
+	
 	@BeforeEach
 	void setUp() {
 		userRepository.save(user);
