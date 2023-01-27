@@ -3,6 +3,7 @@ package com.prgrms.bdbks.domain.payment.service;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.domain.card.service.CardService;
 import com.prgrms.bdbks.domain.order.entity.Order;
@@ -14,12 +15,14 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PaymentFacadeService {
 
 	private final PaymentService paymentService;
 
 	private final CardService cardService;
 
+	@Transactional
 	public PaymentResult orderPay(OrderPayment orderPayment) {
 		Order order = orderPayment.getOrder();
 
@@ -34,6 +37,7 @@ public class PaymentFacadeService {
 			order.getTotalPrice());
 	}
 
+	@Transactional
 	public PaymentResult chargePay(Long userId, PaymentChargeRequest paymentChargeRequest) {
 		cardService.charge(userId, paymentChargeRequest.getCardId(), paymentChargeRequest.getAmount());
 
