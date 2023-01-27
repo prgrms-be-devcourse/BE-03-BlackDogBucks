@@ -42,7 +42,7 @@ public class Payment extends AbstractTimeColumn {
 	@OneToOne(fetch = FetchType.LAZY)
 	private Order order;
 
-	private String cardId;
+	private String chargeCardId;
 
 	@Enumerated(value = STRING)
 	private PaymentType paymentType;
@@ -56,14 +56,14 @@ public class Payment extends AbstractTimeColumn {
 	private PaymentStatus paymentStatus;
 
 	@Builder
-	protected Payment(Order order, String cardId, PaymentType paymentType, int price, LocalDateTime paymentDateTime) {
-		validateCardId(cardId);
+	protected Payment(Order order, String chargeCardId, PaymentType paymentType, int price, LocalDateTime paymentDateTime) {
+		validateCardId(chargeCardId);
 		validatePrice(price);
 		validatePaymentType(paymentType);
 		validatePaymentDateTime(paymentDateTime);
 
 		this.order = order;
-		this.cardId = cardId;
+		this.chargeCardId = chargeCardId;
 		this.paymentType = paymentType;
 		this.price = price;
 		this.paymentDateTime = paymentDateTime;
@@ -103,24 +103,24 @@ public class Payment extends AbstractTimeColumn {
 		}
 	}
 
-	public static Payment createChargePayment(String cardId, int price) {
+	public static Payment createChargePayment(String chargeCardId, int price) {
 		validateChargeAmount(price);
 
 		return Payment.builder()
 			.paymentType(PaymentType.CHARGE)
 			.price(price)
 			.paymentDateTime(LocalDateTime.now())
-			.cardId(cardId)
+			.chargeCardId(chargeCardId)
 			.build();
 	}
 
-	public static Payment createOrderPayment(Order order, String cardId, int price) {
+	public static Payment createOrderPayment(Order order, String chargeCardId, int price) {
 		return Payment.builder()
 			.paymentType(PaymentType.ORDER)
 			.order(order)
 			.price(price)
 			.paymentDateTime(LocalDateTime.now())
-			.cardId(cardId)
+			.chargeCardId(chargeCardId)
 			.build();
 	}
 }
