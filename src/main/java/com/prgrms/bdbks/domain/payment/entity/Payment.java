@@ -1,6 +1,5 @@
 package com.prgrms.bdbks.domain.payment.entity;
 
-import static com.google.common.base.Preconditions.*;
 import static com.prgrms.bdbks.domain.card.entity.Card.*;
 import static com.prgrms.bdbks.domain.payment.entity.PaymentStatus.*;
 import static javax.persistence.EnumType.*;
@@ -21,7 +20,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
 import com.prgrms.bdbks.common.exception.PaymentException;
-import com.prgrms.bdbks.domain.card.entity.Card;
 import com.prgrms.bdbks.domain.order.entity.Order;
 
 import lombok.AccessLevel;
@@ -100,7 +98,7 @@ public class Payment extends AbstractTimeColumn {
 	//TODO 주문 금액과 충전 카드의 금액을 비교해야 함
 
 	private static void validateChargeAmount(int amount) {
-		if (MIN_CHARGE_PRICE <= amount && amount <= MAX_CHARGE_PRICE) {
+		if (!(MIN_CHARGE_PRICE <= amount && amount <= MAX_CHARGE_PRICE)) {
 			throw new PaymentException("충전 금액은 10,000~550,000원 까지 가능합니다.");
 		}
 	}
