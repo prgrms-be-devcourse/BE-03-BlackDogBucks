@@ -79,7 +79,7 @@ public class Payment extends AbstractTimeColumn {
 	}
 
 	private void validatePrice(int price) {
-		if (price >= 0) {
+		if (price <= 0) {
 			throw new PaymentException("결제 금액은 0원부터 가능합니다.");
 		}
 	}
@@ -116,13 +116,13 @@ public class Payment extends AbstractTimeColumn {
 			.build();
 	}
 
-	public static Payment createOrderPayment(Order order, Card card, int price) {
+	public static Payment createOrderPayment(Order order, String cardId, int price) {
 		return Payment.builder()
 			.paymentType(PaymentType.ORDER)
 			.order(order)
 			.price(price)
 			.paymentDateTime(LocalDateTime.now())
-			.cardId(card.getId())
+			.cardId(cardId)
 			.build();
 	}
 }

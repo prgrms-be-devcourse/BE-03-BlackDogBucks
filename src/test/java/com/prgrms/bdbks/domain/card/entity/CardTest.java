@@ -3,6 +3,7 @@ package com.prgrms.bdbks.domain.card.entity;
 import static com.prgrms.bdbks.domain.testutil.CardObjectProvider.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +22,7 @@ class CardTest {
 		.password("password1")
 		.nickname("nickname1")
 		.email("mailmail@naver.com")
-		.birthDate(LocalDateTime.now().minusYears(10L))
+		.birthDate(LocalDate.now().minusYears(10L))
 		.phone("01012341234")
 		.role(Role.USER)
 		.build();
