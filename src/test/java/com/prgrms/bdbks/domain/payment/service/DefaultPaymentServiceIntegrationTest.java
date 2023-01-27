@@ -48,8 +48,6 @@ public class DefaultPaymentServiceIntegrationTest {
 
 	private Card card;
 
-	private final Order order = OrderObjectProvider.createOrder();
-
 	@BeforeEach
 	void setUp() {
 		userRepository.save(user);
@@ -74,7 +72,7 @@ public class DefaultPaymentServiceIntegrationTest {
 
 		assertThat(savedPayment)
 			.hasFieldOrPropertyWithValue("id", paymentResult.getPaymentId())
-			.hasFieldOrPropertyWithValue("cardId",card.getId())
+			.hasFieldOrPropertyWithValue("chargeCardId", card.getId())
 			.hasFieldOrPropertyWithValue("paymentStatus",PaymentStatus.APPROVE)
 			.hasFieldOrPropertyWithValue("paymentType",PaymentType.CHARGE);
 	}
