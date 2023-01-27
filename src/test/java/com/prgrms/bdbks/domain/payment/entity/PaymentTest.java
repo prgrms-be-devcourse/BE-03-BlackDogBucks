@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.prgrms.bdbks.common.exception.PaymentException;
 import com.prgrms.bdbks.domain.order.entity.Order;
 import com.prgrms.bdbks.domain.testutil.OrderObjectProvider;
 
@@ -32,7 +33,7 @@ class PaymentTest {
 	void validPaymentType_InvalidPaymentType_ExceptionThrown() {
 		PaymentType invalidPaymentType = null;
 
-		assertThrows(NullPointerException.class,
+		assertThrows(PaymentException.class,
 			() -> createOrderPayment(order, validCardId, invalidPaymentType, validPrice, validPaymentDateTime));
 	}
 
@@ -48,7 +49,7 @@ class PaymentTest {
 	@ParameterizedTest
 	@ValueSource(ints = {-2000, -3000, -5000})
 	void validatePrice_InvalidPrice_ExceptionThrown(int price) {
-		assertThrows(IllegalArgumentException.class,
+		assertThrows(PaymentException.class,
 			() -> createOrderPayment(order, validCardId, paymentType, price, validPaymentDateTime));
 	}
 
@@ -66,7 +67,7 @@ class PaymentTest {
 	void validCardId_invalidCardId_ExceptionThrown() {
 		String invalidId = null;
 
-		assertThrows(NullPointerException.class,
+		assertThrows(PaymentException.class,
 			() -> createOrderPayment(order, invalidId, paymentType, validPrice, validPaymentDateTime));
 	}
 
@@ -81,7 +82,7 @@ class PaymentTest {
 	void validatePaymentDateTime_InvalidPaymentDateTime_ExceptionThrown() {
 		LocalDateTime paymentDateTime = null;
 
-		assertThrows(NullPointerException.class,
+		assertThrows(PaymentException.class,
 			() -> createOrderPayment(order, validCardId, paymentType, validPrice, paymentDateTime));
 	}
 

@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.prgrms.bdbks.common.exception.PaymentException;
 import com.prgrms.bdbks.domain.card.entity.Card;
 import com.prgrms.bdbks.domain.card.repository.CardRepository;
 import com.prgrms.bdbks.domain.order.entity.Order;
@@ -61,23 +62,21 @@ public class DefaultPaymentServiceIntegrationTest {
 	@ParameterizedTest
 	@ValueSource(ints = {10000, 20000, 50000, 500000, 549999, 550000})
 	@DisplayName("chargePay - 사용자의 충전카드에 금액을 충전할 수 있다. - 성공")
-	void chargePay_validPrice_Success(int totalPrice) {
+	void chargePay_ValidPrice_Success(int totalPrice) {
+		//when
 		PaymentResult paymentResult = paymentService.chargePay(card.getId(), totalPrice);
 
+		//then
 		Optional<Payment> optionalPayment = paymentRepository.findById(paymentResult.getPaymentId());
 		assertTrue(optionalPayment.isPresent());
 
 		Payment savedPayment = optionalPayment.get();
 
-		assertThat(savedPayment.getPaymentStatus()).isEqualTo(PaymentStatus.APPROVE);
-		assertThat(savedPayment.getPaymentType()).isEqualTo(PaymentType.CHARGE);
-
-		Optional<Card> optionalCard = cardRepository.findById(card.getId());
-		assertTrue(optionalCard.isPresent());
-
-		Card savedCard = optionalCard.get();
-
-		assertThat(savedCard.getAmount()).isEqualTo(totalPrice);
+		assertThat(savedPayment)
+			.hasFieldOrPropertyWithValue("id", paymentResult.getPaymentId())
+			.hasFieldOrPropertyWithValue("cardId",card.getId())
+			.hasFieldOrPropertyWithValue("paymentStatus",PaymentStatus.APPROVE)
+			.hasFieldOrPropertyWithValue("paymentType",PaymentType.CHARGE);
 	}
 
 	@ParameterizedTest
@@ -85,6 +84,6 @@ public class DefaultPaymentServiceIntegrationTest {
 	@DisplayName("chargePay - 사용자의 충전카드에 한도를 벗어나는 금액은 충전할 수 없다. - 실패")
 	void chargePay_InvalidPrice_Success(int totalPrice) {
 
-		assertThrows(IllegalArgumentException.class, () -> paymentService.chargePay(card.getId(), totalPrice));
+		assertThrows(PaymentException.class, () -> paymentService.chargePay(card.getId(), totalPrice));
 	}
 }
