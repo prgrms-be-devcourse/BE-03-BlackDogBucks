@@ -88,6 +88,8 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 }
 // ---- querydsl 설정
 // querydsl 사용할 경로 지정. 현재 지정한 부분은 .gitignore 에 포함되므로 git 에 올라가지 않는다.
