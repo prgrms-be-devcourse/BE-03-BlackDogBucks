@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.prgrms.bdbks.domain.order.dto.OrderCreateRequest;
+import com.prgrms.bdbks.domain.order.dto.OrderCreateResponse;
 import com.prgrms.bdbks.domain.order.dto.OrderDetailResponse;
 import com.prgrms.bdbks.domain.order.service.OrderFacadeService;
 
@@ -30,11 +31,12 @@ public class OrderController {
 
 	@PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> createOrder(@RequestBody @Valid OrderCreateRequest orderCreateRequest) {
-		orderService.createOrder(orderCreateRequest);
-		// 가칭
-		String currentUri = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
+		OrderCreateResponse response = orderService.createOrder(orderCreateRequest);
 
-		return ResponseEntity.created(URI.create(currentUri)).build();
+		String redirectUri =
+			ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString() + "/" + response.getOrderId();
+
+		return ResponseEntity.created(URI.create(redirectUri)).body(response);
 	}
 
 	@GetMapping(value = "/{orderId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)

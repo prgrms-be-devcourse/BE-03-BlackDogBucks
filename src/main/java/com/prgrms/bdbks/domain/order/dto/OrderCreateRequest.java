@@ -67,6 +67,7 @@ public class OrderCreateRequest {
 
 		@Getter
 		@AllArgsConstructor
+		@NoArgsConstructor(access = AccessLevel.PROTECTED)
 		public static class Option {
 
 			private Integer espressoShotCount;

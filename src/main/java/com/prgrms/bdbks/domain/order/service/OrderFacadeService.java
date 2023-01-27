@@ -14,9 +14,11 @@ import com.prgrms.bdbks.domain.item.dto.CustomItem;
 import com.prgrms.bdbks.domain.item.service.ItemService;
 import com.prgrms.bdbks.domain.order.converter.OrderMapper;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateRequest;
+import com.prgrms.bdbks.domain.order.dto.OrderCreateResponse;
 import com.prgrms.bdbks.domain.order.dto.OrderDetailResponse;
 import com.prgrms.bdbks.domain.order.entity.Order;
 import com.prgrms.bdbks.domain.payment.dto.OrderPayment;
+import com.prgrms.bdbks.domain.payment.model.PaymentResult;
 import com.prgrms.bdbks.domain.payment.service.PaymentFacadeService;
 import com.prgrms.bdbks.domain.star.service.StarService;
 import com.prgrms.bdbks.domain.store.entity.Store;
@@ -47,8 +49,7 @@ public class OrderFacadeService {
 	private final CouponService couponService;
 
 	@Transactional
-	public String createOrder(OrderCreateRequest request) {
-
+	public OrderCreateResponse createOrder(OrderCreateRequest request) {
 		storeService.findById(request.getStoreId());
 		userService.findUserById(request.getUserId());
 
@@ -57,13 +58,13 @@ public class OrderFacadeService {
 		List<CustomItem> customItems = itemService.customItems(request.getOrderItems());
 		Order order = orderService.createOrder(coupon, request.getUserId(), request.getStoreId(),
 			customItems);
-
-		paymentService.orderPay(new OrderPayment(order, request.getPaymentOption().getChargeCardId(),
-			request.getPaymentOption().getPaymentType()));
+		PaymentResult paymentResult = paymentService.orderPay(
+			new OrderPayment(order, request.getPaymentOption().getChargeCardId(),
+				request.getPaymentOption().getPaymentType()));
 
 		updateStar(request.getUserId(), coupon, order.getTotalQuantity());
 
-		return order.getId();
+		return new OrderCreateResponse(order.getId(), paymentResult.getPaymentId());
 	}
 
 	@Nullable
@@ -75,7 +76,7 @@ public class OrderFacadeService {
 	}
 
 	private void updateStar(long userId, Coupon coupon, int totalOrderCount) {
-		if (!Objects.isNull(coupon)) {
+		if (Objects.isNull(coupon)) {
 			starService.updateCount(userId, totalOrderCount);
 		}
 	}

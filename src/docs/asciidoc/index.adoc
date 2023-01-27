@@ -162,3 +162,21 @@ include::{snippets}/order-detail/http-response.adoc[]
 
 include::{snippets}/order-detail/response-fields.adoc[]
 
+=== create
+
+==== HTTP request
+
+include::{snippets}/order-create/http-request.adoc[]
+
+===== request fields
+
+include::{snippets}/order-create/request-fields.adoc[]
+
+==== HTTP response
+
+include::{snippets}/order-create/http-response.adoc[]
+
+==== response fields
+
+include::{snippets}/order-create/response-fields.adoc[]
+

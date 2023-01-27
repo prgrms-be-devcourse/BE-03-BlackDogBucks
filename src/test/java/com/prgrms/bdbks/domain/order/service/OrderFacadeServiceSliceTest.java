@@ -35,6 +35,7 @@ import com.prgrms.bdbks.domain.item.service.ItemService;
 import com.prgrms.bdbks.domain.order.converter.OrderMapper;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateRequest;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateRequest.PaymentOption;
+import com.prgrms.bdbks.domain.order.dto.OrderCreateResponse;
 import com.prgrms.bdbks.domain.order.dto.OrderDetailResponse;
 import com.prgrms.bdbks.domain.order.entity.CustomOption;
 import com.prgrms.bdbks.domain.order.entity.Order;
@@ -116,9 +117,10 @@ class OrderFacadeServiceSliceTest {
 
 		given(orderService.findByIdWithOrderItemsAndCustomOption(orderId))
 			.willReturn(order);
-
-		given(storeService.findById(order.getStoreId())).willReturn(store);
-		given(userService.findUserById(order.getUserId())).willReturn(user);
+		given(storeService.findById(order.getStoreId()))
+			.willReturn(store);
+		given(userService.findUserById(order.getUserId()))
+			.willReturn(user);
 
 		//when
 		OrderDetailResponse orderDetailResponse = orderFacadeService.findOrderById(orderId);
@@ -149,7 +151,6 @@ class OrderFacadeServiceSliceTest {
 		verify(orderService).findByIdWithOrderItemsAndCustomOption(orderId);
 		verify(storeService).findById(order.getStoreId());
 		verify(userService).findUserById(order.getUserId());
-
 	}
 
 	@DisplayName("findOrderById() - orderId가 없는 경우 주문 정보를 조회에 실패한다. - 실패")
@@ -207,15 +208,14 @@ class OrderFacadeServiceSliceTest {
 
 		OrderCreateRequest request = new OrderCreateRequest(userId, storeId, orderItemRequests, paymentOption);
 
-		//when
 		given(storeService.findById(storeId))
 			.willReturn(store);
 		given(userService.findUserById(userId))
 			.willReturn(user);
-
 		given(couponService.getCouponByCouponId(couponId))
 			.willThrow(EntityNotFoundException.class);
 
+		//when
 		assertThrows(EntityNotFoundException.class, () ->
 			orderFacadeService.createOrder(request));
 
@@ -337,6 +337,7 @@ class OrderFacadeServiceSliceTest {
 
 		//then
 		verify(storeService).findById(request.getStoreId());
+		verify(userService).findUserById(request.getUserId());
 	}
 
 	@DisplayName("주문 생성 - 주문을 정상 생성한다 - 성공")
@@ -394,13 +395,11 @@ class OrderFacadeServiceSliceTest {
 		given(paymentFacadeService.orderPay(orderPayment))
 			.willReturn(paymentResult);
 
-		doNothing().when(starService).updateCount(userId, order.getTotalQuantity());
-
 		//when
-		String createOrderId = orderFacadeService.createOrder(request);
+		OrderCreateResponse orderCreateResponse = orderFacadeService.createOrder(request);
 
 		//then
-		assertThat(createOrderId).isEqualTo(orderId);
+		assertThat(orderCreateResponse.getOrderId()).isEqualTo(orderId);
 
 		verify(storeService).findById(request.getStoreId());
 		verify(userService).findUserById(request.getUserId());
@@ -408,7 +407,6 @@ class OrderFacadeServiceSliceTest {
 		verify(paymentFacadeService).orderPay(orderPayment);
 		verify(itemService).customItems(request.getOrderItems());
 		verify(orderService).createOrder(coupon, userId, storeId, customItems);
-		verify(starService).updateCount(userId, order.getTotalQuantity());
 	}
 
 	@DisplayName("주문 생성 - 쿠폰이 없는 주문을 정상 생성한다 - 성공")
@@ -456,17 +454,22 @@ class OrderFacadeServiceSliceTest {
 		given(paymentFacadeService.orderPay(orderPayment))
 			.willReturn(paymentResult);
 
+		doNothing().when(starService).updateCount(userId, order.getTotalQuantity());
+
 		//when
-		String createOrderId = orderFacadeService.createOrder(request);
+		OrderCreateResponse response = orderFacadeService.createOrder(request);
 
 		//then
-		assertThat(createOrderId).isEqualTo(orderId);
+		assertThat(response.getOrderId()).isEqualTo(orderId);
+
+		assertThat(response.getPaymentId()).isEqualTo("paymentID");
 
 		verify(storeService).findById(request.getStoreId());
 		verify(userService).findUserById(request.getUserId());
 		verify(paymentFacadeService).orderPay(orderPayment);
 		verify(itemService).customItems(request.getOrderItems());
 		verify(orderService).createOrder(null, userId, storeId, customItems);
+		verify(starService).updateCount(userId, order.getTotalQuantity());
 	}
 
 }

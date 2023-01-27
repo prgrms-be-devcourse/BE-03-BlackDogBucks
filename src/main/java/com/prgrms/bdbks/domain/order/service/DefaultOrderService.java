@@ -53,7 +53,7 @@ public class DefaultOrderService implements OrderService {
 		customItems.forEach(it ->
 			OrderItem.create(newOrder, it.getItem(), it.getCustomOption(), it.getQuantity(), optionPrice));
 
-		return newOrder;
+		return orderRepository.save(newOrder);
 	}
 
 }
