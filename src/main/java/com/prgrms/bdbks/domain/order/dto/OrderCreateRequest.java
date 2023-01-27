@@ -11,11 +11,13 @@ import com.prgrms.bdbks.domain.item.entity.BeverageOption;
 import com.prgrms.bdbks.domain.payment.entity.PaymentType;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class OrderCreateRequest {
 
 	@NotNull(message = "사용자 id가 입력되지않았습니다.")
@@ -26,13 +28,14 @@ public class OrderCreateRequest {
 
 	@NotNull(message = "주문 item이 선택되지않았습니다.")
 	@Size(min = 1, message = "주문할 아이템은 최소 {min} 다.니합야 여개")
-	private List<OrderItemRequest> orderItems;
+	private List<Item> orderItems;
 
 	@NotNull(message = "결제 수단이 선택되지 않았습니다.")
 	private PaymentOption paymentOption;
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
+	@AllArgsConstructor
 	public static class PaymentOption {
 
 		@NotNull
@@ -41,12 +44,12 @@ public class OrderCreateRequest {
 		private Long couponId;
 
 		private String chargeCardId;
-
 	}
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
-	public static class OrderItemRequest {
+	@AllArgsConstructor
+	public static class Item {
 
 		@NotNull
 		private Long itemId;
@@ -57,13 +60,14 @@ public class OrderCreateRequest {
 
 		@Min(0)
 		@NotNull
-		private Long price;
+		private int price;
 
 		@NotNull
-		private OrderItemOption option;
+		private OrderCreateRequest.Item.Option option;
 
 		@Getter
-		public static class OrderItemOption {
+		@AllArgsConstructor
+		public static class Option {
 
 			private Integer espressoShotCount;
 

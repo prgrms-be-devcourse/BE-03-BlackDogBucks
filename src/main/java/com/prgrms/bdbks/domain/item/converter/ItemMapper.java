@@ -35,7 +35,7 @@ public interface ItemMapper {
 	@Mapping(source = "itemType", target = "type")
 	ItemResponse itemToItemResponse(Item item, ItemType itemType, String categoryName);
 
-	CustomOption optionRequestToEntity(OrderCreateRequest.OrderItemRequest.OrderItemOption optionRequest);
+	CustomOption optionRequestToEntity(OrderCreateRequest.Item.Option optionRequest);
 
 	ItemResponses itemsToItemResponses(String categoryName, List<ItemResponse> items);
 }

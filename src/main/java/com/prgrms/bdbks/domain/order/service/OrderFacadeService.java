@@ -52,7 +52,7 @@ public class OrderFacadeService {
 		storeService.findById(request.getStoreId());
 		userService.findUserById(request.getUserId());
 
-		Coupon coupon = findCoupon(request.getPaymentOption().getCouponId());
+		Coupon coupon = findCouponIfExists(request.getPaymentOption().getCouponId());
 
 		List<CustomItem> customItems = itemService.customItems(request.getOrderItems());
 		Order order = orderService.createOrder(coupon, request.getUserId(), request.getStoreId(),
@@ -67,7 +67,7 @@ public class OrderFacadeService {
 	}
 
 	@Nullable
-	private Coupon findCoupon(Long couponId) {
+	private Coupon findCouponIfExists(Long couponId) {
 		if (Objects.nonNull(couponId)) {
 			return couponService.getCouponByCouponId(couponId);
 		}

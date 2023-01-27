@@ -23,5 +23,5 @@ public interface ItemService {
 
 	Item findByIdWithDefaultOption(Long itemId);
 
-	List<CustomItem> customItems(List<OrderCreateRequest.OrderItemRequest> orderItems);
+	List<CustomItem> customItems(List<OrderCreateRequest.Item> orderItems);
 }

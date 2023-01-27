@@ -81,7 +81,7 @@ public class DefaultOption {
 		Preconditions.checkArgument(count >= 0 && count <= 9, "Option 개수는 9보다 작은 양수여야합니다.");
 	}
 
-	public void validateOption(OrderCreateRequest.OrderItemRequest.OrderItemOption customOption) {
+	public void validateOption(OrderCreateRequest.Item.Option customOption) {
 		validateOption(this.espressoShotCount, customOption.getEspressoShotCount());
 		validateOption(this.espressoType, customOption.getEspressoType());
 		validateOption(this.vanillaSyrupCount, customOption.getVanillaSyrupCount());

@@ -86,12 +86,12 @@ public class DefaultItemService implements ItemService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<CustomItem> customItems(List<OrderCreateRequest.OrderItemRequest> orderItems) {
+	public List<CustomItem> customItems(List<OrderCreateRequest.Item> orderItems) {
 		return orderItems.stream()
 			.map(req -> {
 				Item item = findByIdWithDefaultOption(req.getItemId());
 				DefaultOption defaultOption = item.getDefaultOption();
-				OrderCreateRequest.OrderItemRequest.OrderItemOption customOptionRequest = req.getOption();
+				OrderCreateRequest.Item.Option customOptionRequest = req.getOption();
 				defaultOption.validateOption(customOptionRequest);
 				CustomOption customOption = itemMapper.optionRequestToEntity(customOptionRequest);
 				return new CustomItem(item, customOption, req.getQuantity());

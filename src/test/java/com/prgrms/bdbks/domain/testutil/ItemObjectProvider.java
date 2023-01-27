@@ -9,6 +9,8 @@ import com.prgrms.bdbks.domain.item.entity.DefaultOption;
 import com.prgrms.bdbks.domain.item.entity.Item;
 import com.prgrms.bdbks.domain.item.entity.ItemCategory;
 import com.prgrms.bdbks.domain.item.entity.ItemType;
+import com.prgrms.bdbks.domain.order.dto.OrderCreateRequest;
+import com.prgrms.bdbks.domain.order.entity.CustomOption;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -40,7 +42,7 @@ public class ItemObjectProvider {
 
 		String image = "https://hkbks.com/api/image.jpg";
 
-		return Item.builder()
+		return com.prgrms.bdbks.domain.item.entity.Item.builder()
 			.description(description)
 			.name(name)
 			.category(itemCategory)
@@ -63,7 +65,7 @@ public class ItemObjectProvider {
 
 		String image = "https://hkbks.com/api/image.jpg";
 
-		return Item.builder()
+		return com.prgrms.bdbks.domain.item.entity.Item.builder()
 			.description(description)
 			.name(name)
 			.category(itemCategory)
@@ -77,7 +79,7 @@ public class ItemObjectProvider {
 	public static Item createItem(String name, ItemCategory category, String englishName, int price, String image,
 		String description) {
 
-		return Item.builder()
+		return com.prgrms.bdbks.domain.item.entity.Item.builder()
 			.name(name)
 			.category(category)
 			.englishName(englishName)
@@ -90,7 +92,7 @@ public class ItemObjectProvider {
 	public static Item createItem(String name, ItemCategory category, String englishName, int price, String image,
 		String description, DefaultOption defaultOption) {
 
-		return Item.builder()
+		return com.prgrms.bdbks.domain.item.entity.Item.builder()
 			.name(name)
 			.category(category)
 			.englishName(englishName)
@@ -105,7 +107,7 @@ public class ItemObjectProvider {
 		List<String> images, ItemCategory category, DefaultOption defaultOption) {
 		return IntStream.range(0, names.size())
 			.mapToObj(
-				value -> Item.builder()
+				value -> com.prgrms.bdbks.domain.item.entity.Item.builder()
 					.name(names.get(value))
 					.category(category)
 					.englishName(englishNames.get(value))
@@ -141,6 +143,18 @@ public class ItemObjectProvider {
 			.milkAmount(milkAmount)
 			.espressoType(espressoType)
 			.milkType(milkType)
+			.build();
+	}
+
+	public static CustomOption createCustomOption(OrderCreateRequest.Item.Option option) {
+		return CustomOption.builder()
+			.espressoType(option.getEspressoType())
+			.espressoShotCount(option.getEspressoShotCount())
+			.vanillaSyrupCount(option.getVanillaSyrupCount())
+			.classicSyrupCount(option.getClassicSyrupCount())
+			.hazelnutSyrupCount(option.getHazelnutSyrupCount())
+			.cupSize(option.getCupSize())
+			.cupType(option.getCupType())
 			.build();
 	}
 

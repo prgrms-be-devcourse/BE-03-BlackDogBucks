@@ -44,4 +44,20 @@ public class OrderPayment {
 			throw new PaymentException("카드 아이디를 입력해주세요");
 		}
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		OrderPayment that = (OrderPayment)o;
+		return Objects.equals(order, that.order) && paymentType == that.paymentType && Objects.equals(
+			cardId, that.cardId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(order, paymentType, cardId);
+	}
 }
