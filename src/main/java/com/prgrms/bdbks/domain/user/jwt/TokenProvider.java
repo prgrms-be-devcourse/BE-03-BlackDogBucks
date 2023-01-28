@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.prgrms.bdbks.common.exception.AuthorityNotFoundException;
 import com.prgrms.bdbks.common.exception.JwtValidateException;
+import com.prgrms.bdbks.config.jwt.JwtConfigure;
 import com.prgrms.bdbks.domain.user.entity.User;
 
 import io.jsonwebtoken.Claims;
