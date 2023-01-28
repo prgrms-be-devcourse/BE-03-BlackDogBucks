@@ -21,6 +21,13 @@ public class CategoryController {
 
 	private final ItemCategoryService itemCategoryService;
 
+	/**
+	 * <pre>
+	 *     아이템 타입 별 카테고리 리스트 조회
+	 * </pre>
+	 * @param itemType
+	 * @return status : ok, body : ItemCategoryResponses
+	 */
 	@GetMapping(produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
 	public ResponseEntity<ItemCategoryResponses> findCategoriesByItemType(@RequestParam("kinds") ItemType itemType) {
 		ItemCategoryResponses categories = itemCategoryService.findAllByType(itemType);
