@@ -56,7 +56,8 @@ public class Payment extends AbstractTimeColumn {
 	private PaymentStatus paymentStatus;
 
 	@Builder
-	protected Payment(Order order, String chargeCardId, PaymentType paymentType, int price, LocalDateTime paymentDateTime) {
+	protected Payment(Order order, String chargeCardId, PaymentType paymentType, int price,
+		LocalDateTime paymentDateTime) {
 		validateCardId(chargeCardId);
 		validatePrice(price);
 		validatePaymentType(paymentType);
@@ -77,7 +78,7 @@ public class Payment extends AbstractTimeColumn {
 	}
 
 	private void validatePrice(int price) {
-		if (price <= 0) {
+		if (price < 0) {
 			throw new PaymentException("결제 금액은 0원부터 가능합니다.");
 		}
 	}

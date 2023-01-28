@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.TestConstructor;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.prgrms.bdbks.domain.item.entity.ItemCategory;
 import com.prgrms.bdbks.domain.item.entity.ItemType;
 import com.prgrms.bdbks.domain.item.repository.ItemCategoryRepository;
+import com.prgrms.bdbks.domain.store.service.StoreService;
 import com.prgrms.bdbks.domain.testutil.ItemObjectProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -43,6 +45,9 @@ class CategoryControllerTest {
 	private final MockMvc mockMvc;
 
 	private final ItemCategoryRepository itemCategoryRepository;
+
+	@MockBean
+	private StoreService storeService;
 
 	@DisplayName("조회 - kinds 파라미터로 ItemCategory 목록을 조회한다. - 성공")
 	@Test

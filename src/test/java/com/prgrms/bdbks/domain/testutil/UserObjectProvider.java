@@ -1,6 +1,5 @@
 package com.prgrms.bdbks.domain.testutil;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.prgrms.bdbks.domain.user.entity.User;
@@ -14,7 +13,7 @@ public class UserObjectProvider {
 
 	public static User createUser() {
 		return User.builder()
-			.birthDate(LocalDate.now().minusYears(26L))
+			.birthDate(LocalDateTime.now().minusYears(26L).toLocalDate())
 			.email("test@naver.com")
 			.loginId("test1234")
 			.password("password1234")
@@ -27,7 +26,7 @@ public class UserObjectProvider {
 	public static User createUser(Long id) {
 		return User.builder()
 			.id(id)
-			.birthDate(LocalDate.now().minusYears(26L))
+			.birthDate(LocalDateTime.now().minusYears(26L).toLocalDate())
 			.email("test@naver.com")
 			.loginId("test1234")
 			.password("password1234")

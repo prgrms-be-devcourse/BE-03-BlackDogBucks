@@ -26,7 +26,7 @@ public class OptionResponse {
 		.collect(Collectors.toList());
 
 	private final List<String> cupType = Arrays.stream(BeverageOption.CupType.values())
-		.map(BeverageOption.CupType::getKoreaName)
+		.map(BeverageOption.CupType::getKorName)
 		.collect(Collectors.toList());
 
 	public OptionResponse(BeverageOption.Coffee espressoType, Integer espressoShotCount, Integer vanillaSyrupCount,

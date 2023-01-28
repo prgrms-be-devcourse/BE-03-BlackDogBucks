@@ -85,5 +85,5 @@ public class Card extends AbstractTimeColumn {
 	public void compareUser(Long userId) {
 		checkArgument(Objects.equals(this.user.getId(), userId));
 	}
-	
+
 }

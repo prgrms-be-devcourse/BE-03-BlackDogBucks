@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -41,6 +42,7 @@ import com.prgrms.bdbks.domain.item.entity.ItemType;
 import com.prgrms.bdbks.domain.item.repository.DefaultOptionRepository;
 import com.prgrms.bdbks.domain.item.repository.ItemCategoryRepository;
 import com.prgrms.bdbks.domain.item.repository.ItemRepository;
+import com.prgrms.bdbks.domain.store.service.StoreService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -63,6 +65,9 @@ class ItemControllerTest {
 	private final ItemCategoryRepository itemCategoryRepository;
 
 	private final DefaultOptionRepository defaultOptionRepository;
+
+	@MockBean
+	private StoreService storeService;
 
 	@DisplayName("생성 - Item 을 생성하고 생성된 Resource 의 URI 를 리턴한다 - 성공.")
 	@Test
@@ -316,7 +321,7 @@ class ItemControllerTest {
 						.toArray(String[]::new))))
 			.andExpect(jsonPath("$.option.cupType[*]")
 				.value(containsInAnyOrder(Arrays.stream(BeverageOption.CupType.values())
-					.map(BeverageOption.CupType::getKoreaName)
+					.map(BeverageOption.CupType::getKorName)
 					.toArray(String[]::new))))
 			.andDo(document("item-detail",
 				preprocessRequest(prettyPrint()),
