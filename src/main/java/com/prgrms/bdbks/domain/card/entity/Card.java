@@ -48,7 +48,7 @@ public class Card extends AbstractTimeColumn {
 	private User user;
 
 	@Builder
-	protected Card( User user, String name) {
+	protected Card(User user, String name) {
 		validateUser(user);
 
 		this.user = user;
@@ -85,5 +85,5 @@ public class Card extends AbstractTimeColumn {
 	public void compareUser(Long userId) {
 		checkArgument(Objects.equals(this.user.getId(), userId));
 	}
-	
+
 }

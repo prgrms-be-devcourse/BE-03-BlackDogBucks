@@ -68,7 +68,8 @@ class CouponControllerTest {
 	@Test
 	void findUnusedCoupon_ValidUser_Success() throws Exception {
 
-		mockMvc.perform(get("/api/v1/coupons/unused")
+		mockMvc.perform(get("/api/v1/coupons/detail")
+				.param("used", "false")
 				.sessionAttr("user", user)
 				.accept(APPLICATION_JSON))
 			.andExpect(status().isOk())
@@ -83,14 +84,20 @@ class CouponControllerTest {
 			.andDo(document("coupon-findUnused",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
+				requestParameters(
+					parameterWithName("used").description("조회할 쿠폰 사용 여부")
+				),
+
 				responseFields(
 					fieldWithPath("couponSearchResponses.[].couponId").type(JsonFieldType.NUMBER).description("쿠폰 Id"),
-					fieldWithPath("couponSearchResponses.[].userId").type(JsonFieldType.NUMBER).description("쿠폰 소유자 Id"),
+					fieldWithPath("couponSearchResponses.[].userId").type(JsonFieldType.NUMBER)
+						.description("쿠폰 소유자 Id"),
 					fieldWithPath("couponSearchResponses.[].name").type(JsonFieldType.STRING).description("쿠폰 이름"),
 					fieldWithPath("couponSearchResponses.[].price").type(JsonFieldType.NUMBER).description("쿠폰 할인 가격"),
-					fieldWithPath("couponSearchResponses.[].expireDate").type(JsonFieldType.ARRAY).description("쿠폰 만료일"),
+					fieldWithPath("couponSearchResponses.[].expireDate").type(JsonFieldType.ARRAY)
+						.description("쿠폰 만료일"),
 					fieldWithPath("couponSearchResponses.[].used").type(JsonFieldType.BOOLEAN).description("쿠폰 사용 여부")
-					)
+				)
 			));
 	}
 
@@ -114,12 +121,14 @@ class CouponControllerTest {
 				preprocessResponse(prettyPrint()),
 				responseFields(
 					fieldWithPath("couponSearchResponses.[].couponId").type(JsonFieldType.NUMBER).description("쿠폰 Id"),
-					fieldWithPath("couponSearchResponses.[].userId").type(JsonFieldType.NUMBER).description("쿠폰 소유자 Id"),
+					fieldWithPath("couponSearchResponses.[].userId").type(JsonFieldType.NUMBER)
+						.description("쿠폰 소유자 Id"),
 					fieldWithPath("couponSearchResponses.[].name").type(JsonFieldType.STRING).description("쿠폰 이름"),
 					fieldWithPath("couponSearchResponses.[].price").type(JsonFieldType.NUMBER).description("쿠폰 할인 가격"),
-					fieldWithPath("couponSearchResponses.[].expireDate").type(JsonFieldType.ARRAY).description("쿠폰 만료일"),
+					fieldWithPath("couponSearchResponses.[].expireDate").type(JsonFieldType.ARRAY)
+						.description("쿠폰 만료일"),
 					fieldWithPath("couponSearchResponses.[].used").type(JsonFieldType.BOOLEAN).description("쿠폰 사용 여부")
-					)
+				)
 			));
 	}
 }

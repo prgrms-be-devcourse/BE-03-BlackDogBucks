@@ -58,8 +58,8 @@ public class DefaultCouponService implements CouponService {
 	}
 
 	@Override
-	public CouponSearchResponses findUnusedCoupon(Long userId) {
-		List<Coupon> coupons = couponRepository.findUnusedCoupon(userId);
+	public CouponSearchResponses findUnusedCoupon(Long userId, boolean used) {
+		List<Coupon> coupons = couponRepository.findUnusedCoupon(userId, used);
 		return new CouponSearchResponses(
 			coupons.stream()
 				.map(couponMapper::toCouponSearchResponse)

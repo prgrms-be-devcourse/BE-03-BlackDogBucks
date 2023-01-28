@@ -15,5 +15,5 @@ public interface CouponService {
 
 	Coupon getCouponByCouponId(Long couponId);
 
-	CouponSearchResponses findUnusedCoupon(Long userId);
+	CouponSearchResponses findUnusedCoupon(Long userId, boolean used);
 }

@@ -4,6 +4,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
@@ -27,9 +28,11 @@ public class CouponController {
 	 * @param user - 조회할 Coupon의 User
 	 * @return status : ok , body : CouponSearchResponses
 	 */
-	@GetMapping(value = "/unused", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<CouponSearchResponses> findUnusedCoupon(@SessionAttribute("user") User user) {
-		CouponSearchResponses searchResponses = couponService.findUnusedCoupon(user.getId());
+
+	@GetMapping(value = "/detail", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<CouponSearchResponses> findUnusedCoupon(@SessionAttribute("user") User user,
+		@RequestParam(defaultValue = "false") boolean used) {
+		CouponSearchResponses searchResponses = couponService.findUnusedCoupon(user.getId(), used);
 		return ResponseEntity.ok(searchResponses);
 	}
 

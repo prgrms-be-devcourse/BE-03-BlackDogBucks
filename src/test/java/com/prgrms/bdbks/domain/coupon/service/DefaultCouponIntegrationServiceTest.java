@@ -1,13 +1,11 @@
 package com.prgrms.bdbks.domain.coupon.service;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -79,7 +77,7 @@ public class DefaultCouponIntegrationServiceTest {
 	void findUnusedCoupon_validUser_Success() {
 		List<Coupon> coupons = CouponObjectProvider.createCoupon(user.getId());
 		couponRepository.saveAll(coupons);
-		CouponSearchResponses unusedCoupons = couponService.findUnusedCoupon(user.getId());
+		CouponSearchResponses unusedCoupons = couponService.findUnusedCoupon(user.getId(), false);
 
 		List<CouponSearchResponse> couponResponses = unusedCoupons.getCouponSearchResponses();
 
