@@ -48,9 +48,9 @@ public class Card extends AbstractTimeColumn {
 	private User user;
 
 	@Builder
-	protected Card(String id, User user, String name) {
+	protected Card(User user, String name) {
 		validateUser(user);
-		this.id = id;
+
 		this.user = user;
 		this.name = name;
 	}

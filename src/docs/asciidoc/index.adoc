@@ -142,6 +142,37 @@ include::{snippets}/item-detail/http-response.adoc[]
 
 include::{snippets}/item-detail/response-fields.adoc[]
 
+== Coupon
+
+=== find-All
+
+==== HTTP request
+
+include::{snippets}/coupon-findAll/http-request.adoc[]
+
+==== HTTP response
+
+include::{snippets}/coupon-findAll/http-response.adoc[]
+
+==== response fields
+
+include::{snippets}/coupon-findAll/response-fields.adoc[]
+
+
+=== find-Unused
+
+==== HTTP request
+
+include::{snippets}/coupon-findUnused/http-request.adoc[]
+
+==== HTTP response
+
+include::{snippets}/coupon-findUnused/http-response.adoc[]
+
+==== response fields
+
+include::{snippets}/coupon-findUnused/response-fields.adoc[]
+=======
 == Order
 
 === read-one
@@ -179,4 +210,3 @@ include::{snippets}/order-create/http-response.adoc[]
 ==== response fields
 
 include::{snippets}/order-create/response-fields.adoc[]
-

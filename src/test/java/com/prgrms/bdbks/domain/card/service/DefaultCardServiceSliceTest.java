@@ -39,7 +39,7 @@ public class DefaultCardServiceSliceTest {
 		int amount = 50000;
 
 		User user = createUser(userId);
-		Card card = createCard(user, cardId);
+		Card card = createCard(user);
 
 		CardChargeRequest cardChargeRequest = new CardChargeRequest(cardId, amount);
 		Optional<Card> optionalCard = Optional.of(card);
@@ -47,7 +47,7 @@ public class DefaultCardServiceSliceTest {
 		when(cardRepository.findById(cardId)).thenReturn(optionalCard);
 
 		//when
-		CardChargeResponse response = defaultCardService.charge(userId, card.getId(), amount);
+		CardChargeResponse response = defaultCardService.charge(userId, cardId, amount);
 
 		//then
 		verify(cardRepository).findById(cardId);

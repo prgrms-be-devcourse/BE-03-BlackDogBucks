@@ -16,12 +16,4 @@ public class CardObjectProvider {
 			.build();
 	}
 
-	public static Card createCard(User user, String id) {
-		return Card.builder()
-			.id(id)
-			.user(user)
-			.name("카드카드카드")
-			.build();
-	}
-
 }

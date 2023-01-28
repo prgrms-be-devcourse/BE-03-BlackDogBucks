@@ -31,7 +31,7 @@ public class Coupon extends AbstractTimeColumn {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "coupon_id")
-	private Long id;
+	private Long couponId;
 
 	@Column(nullable = false)
 	private Long userId;

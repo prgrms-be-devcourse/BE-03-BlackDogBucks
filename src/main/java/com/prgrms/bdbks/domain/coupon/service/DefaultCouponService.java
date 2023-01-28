@@ -56,4 +56,13 @@ public class DefaultCouponService implements CouponService {
 		return couponRepository.findById(couponId)
 			.orElseThrow(() -> new EntityNotFoundException(Coupon.class, couponId));
 	}
+
+	@Override
+	public CouponSearchResponses findUnusedCoupon(Long userId, boolean used) {
+		List<Coupon> coupons = couponRepository.findUnusedCoupon(userId, used);
+		return new CouponSearchResponses(
+			coupons.stream()
+				.map(couponMapper::toCouponSearchResponse)
+				.collect(Collectors.toList()));
+	}
 }
