@@ -16,7 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -44,19 +43,15 @@ public class Order extends AbstractTimeColumn {
 	@JoinColumn(name = "coupon_id")
 	private Coupon coupon;
 
-	@NotNull
 	@Column(name = "user_id", nullable = false)
 	private Long userId;
 
-	@NotNull
 	@Column(name = "store_id", nullable = false)
 	private String storeId;
 
-	@NotNull
 	@Column(name = "total_price", nullable = false)
 	private Integer totalPrice = 0;
 
-	@NotNull
 	@Column(name = "order_status", nullable = false)
 	private OrderStatus orderStatus;
 

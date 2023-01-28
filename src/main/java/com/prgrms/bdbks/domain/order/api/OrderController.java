@@ -29,6 +29,13 @@ public class OrderController {
 
 	private final OrderFacadeService orderService;
 
+	/**
+	 * <pre>
+	 *     주문 생성
+	 * </pre>
+	 * @param orderCreateRequest
+	 * @return status : created, body : 생성된 주문 단건 조회 redirectUri
+	 */
 	@PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> createOrder(@RequestBody @Valid OrderCreateRequest orderCreateRequest) {
 		OrderCreateResponse response = orderService.createOrder(orderCreateRequest);
@@ -39,6 +46,13 @@ public class OrderController {
 		return ResponseEntity.created(URI.create(redirectUri)).body(response);
 	}
 
+	/**
+	 * <pre>
+	 *     주문 단건 조회
+	 * </pre>
+	 * @param orderId - 조회할 주문 id
+	 * @return status : ok, body : OrderDetailResponse
+	 */
 	@GetMapping(value = "/{orderId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<OrderDetailResponse> findOrderById(@PathVariable String orderId) {
 		return ResponseEntity.ok().body(orderService.findOrderById(orderId));

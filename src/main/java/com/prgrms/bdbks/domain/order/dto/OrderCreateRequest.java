@@ -27,7 +27,7 @@ public class OrderCreateRequest {
 	private String storeId;
 
 	@NotNull(message = "주문 item이 선택되지않았습니다.")
-	@Size(min = 1, message = "주문할 아이템은 최소 {min} 다.니합야 여개")
+	@Size(min = 1, message = "주문할 아이템의 총 수량은 최소 {min}개 여야합니다.")
 	private List<Item> orderItems;
 
 	@NotNull(message = "결제 수단이 선택되지 않았습니다.")
@@ -38,7 +38,7 @@ public class OrderCreateRequest {
 	@AllArgsConstructor
 	public static class PaymentOption {
 
-		@NotNull
+		@NotNull(message = "결제 타입이 선택되지 않았습니다.")
 		private PaymentType paymentType;
 
 		private Long couponId;
@@ -51,18 +51,18 @@ public class OrderCreateRequest {
 	@AllArgsConstructor
 	public static class Item {
 
-		@NotNull
+		@NotNull(message = "상품 ID가 입력되지 않았습니다.")
 		private Long itemId;
 
-		@Min(1)
-		@NotNull
+		@Min(value = 1, message = "주문할 아이템은 최소 {min}개 여야합니다.")
+		@NotNull(message = "선택되지 않았습니다.")
 		private Integer quantity;
 
-		@Min(0)
-		@NotNull
-		private int price;
+		@Min(value = 0, message = "주문 가격은 음수일 수 없습니다.")
+		@NotNull(message = "가격이 입력되지안았습니다.")
+		private Integer price;
 
-		@NotNull
+		@NotNull(message = "상품 Option이 입력되지 않았습니다.")
 		private OrderCreateRequest.Item.Option option;
 
 		@Getter

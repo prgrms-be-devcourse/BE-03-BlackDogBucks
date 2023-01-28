@@ -13,7 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.util.StringUtils;
@@ -36,41 +35,32 @@ public class Item extends AbstractTimeColumn {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotNull
 	@Column(name = "name", nullable = false, length = 50)
 	private String name;
 
-	@NotNull
 	@Column(name = "english_name", nullable = false, length = 150)
 	private String englishName;
 
-	@NotNull
 	@Column(name = "price", nullable = false)
 	@ColumnDefault("0")
 	private Integer price = 0;
 
-	@NotNull
 	@Column(name = "image", nullable = false)
 	private String image;
 
-	@NotNull
 	@Column(name = "is_best", nullable = false, columnDefinition = "bit")
 	private Boolean isBest = false;
 
-	@NotNull
 	@Column(name = "is_new", nullable = false, columnDefinition = "bit")
 	private Boolean isNew = false;
 
-	@NotNull
 	@Column(name = "description", nullable = false)
 	private String description;
 
-	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id", nullable = false)
 	private ItemCategory category;
 
-	@NotNull
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "default_option_id")
 	private DefaultOption defaultOption;

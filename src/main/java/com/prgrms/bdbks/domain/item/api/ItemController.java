@@ -31,6 +31,13 @@ public class ItemController {
 
 	private final ItemService itemService;
 
+	/**
+	 * <pre>
+	 *     상품 셍성
+	 * </pre>
+	 * @param itemCreateRequest
+	 * @return status : created, body : 생성된 상품 단건 조회 redirectUri
+	 */
 	@PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<URI> createItem(@RequestBody @Valid ItemCreateRequest itemCreateRequest) {
 		Long itemId = itemService.createItem(itemCreateRequest);
@@ -40,6 +47,14 @@ public class ItemController {
 		return ResponseEntity.created(URI.create(createdURI)).build();
 	}
 
+	/**
+	 * <pre>
+	 *     카테고리에 따른 상품 리스트 조회
+	 * </pre>
+	 * @param itemType - 아이템 타입
+	 * @param categoryName - 아이템 카테고리
+	 * @return status : ok, body : ItemResponses
+	 */
 	@GetMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<ItemResponses> findAllBy(
 		@RequestParam("kinds") ItemType itemType,
@@ -48,6 +63,13 @@ public class ItemController {
 		return ResponseEntity.ok(itemService.findAllBy(itemType, categoryName));
 	}
 
+	/**
+	 * <pre>
+	 *     아이템 단건 조회
+	 * </pre>
+	 * @param itemId - 조회할 상품 id
+	 * @return status : ok, body : ItemDetailResponse
+	 */
 	@GetMapping(value = "/{itemId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<ItemDetailResponse> findItemDetail(@PathVariable Long itemId) {
 		return ResponseEntity.ok(itemService.findItemDetailBy(itemId));

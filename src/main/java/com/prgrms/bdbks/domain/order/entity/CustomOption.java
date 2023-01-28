@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
 import com.prgrms.bdbks.domain.item.entity.BeverageOption;
@@ -58,12 +57,10 @@ public class CustomOption extends AbstractTimeColumn {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "cup_size", length = 10)
-	@NotNull
 	private BeverageOption.Size cupSize;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "cup_type", length = 10)
-	@NotNull
 	private BeverageOption.CupType cupType;
 
 	@Builder

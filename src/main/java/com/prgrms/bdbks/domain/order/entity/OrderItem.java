@@ -13,7 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import com.prgrms.bdbks.domain.item.entity.DefaultOption;
 import com.prgrms.bdbks.domain.item.entity.Item;
@@ -38,21 +37,17 @@ public class OrderItem {
 	@JoinColumn(name = "order_id", nullable = false)
 	private Order order;
 
-	@NotNull
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "item_id")
 	private Item item;
 
-	@NotNull
 	@Column(name = "price", nullable = false)
 	private Integer price;
 
-	@NotNull
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "custom_option_id")
 	private CustomOption customOption;
 
-	@NotNull
 	@Column(name = "quantity", nullable = false)
 	private Integer quantity = 1;
 

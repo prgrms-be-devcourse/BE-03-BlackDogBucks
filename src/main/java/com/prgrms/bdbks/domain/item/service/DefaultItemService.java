@@ -84,7 +84,6 @@ public class DefaultItemService implements ItemService {
 		});
 	}
 
-	@Transactional(readOnly = true)
 	@Override
 	public List<CustomItem> customItems(List<OrderCreateRequest.Item> orderItems) {
 		return orderItems.stream()
