@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CardSearchResponse {
 
-	private String cardId;
+	private String chargeCardId;
 
 	private String name;
 

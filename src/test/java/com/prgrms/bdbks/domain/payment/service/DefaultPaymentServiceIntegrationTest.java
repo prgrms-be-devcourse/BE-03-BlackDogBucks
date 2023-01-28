@@ -49,7 +49,7 @@ public class DefaultPaymentServiceIntegrationTest {
 	private Card card;
 
 	private final Order order = OrderObjectProvider.createOrder();
-	
+
 	@BeforeEach
 	void setUp() {
 		userRepository.save(user);
@@ -64,7 +64,7 @@ public class DefaultPaymentServiceIntegrationTest {
 	@DisplayName("chargePay - 사용자의 충전카드에 금액을 충전할 수 있다. - 성공")
 	void chargePay_ValidPrice_Success(int totalPrice) {
 		//when
-		PaymentResult paymentResult = paymentService.chargePay(card.getId(), totalPrice);
+		PaymentResult paymentResult = paymentService.chargePay(card.getChargeCardId(), totalPrice);
 
 		//then
 		Optional<Payment> optionalPayment = paymentRepository.findById(paymentResult.getPaymentId());
@@ -74,9 +74,9 @@ public class DefaultPaymentServiceIntegrationTest {
 
 		assertThat(savedPayment)
 			.hasFieldOrPropertyWithValue("id", paymentResult.getPaymentId())
-			.hasFieldOrPropertyWithValue("chargeCardId", card.getId())
-			.hasFieldOrPropertyWithValue("paymentStatus",PaymentStatus.APPROVE)
-			.hasFieldOrPropertyWithValue("paymentType",PaymentType.CHARGE);
+			.hasFieldOrPropertyWithValue("chargeCardId", card.getChargeCardId())
+			.hasFieldOrPropertyWithValue("paymentStatus", PaymentStatus.APPROVE)
+			.hasFieldOrPropertyWithValue("paymentType", PaymentType.CHARGE);
 	}
 
 	@ParameterizedTest
@@ -84,6 +84,6 @@ public class DefaultPaymentServiceIntegrationTest {
 	@DisplayName("chargePay - 사용자의 충전카드에 한도를 벗어나는 금액은 충전할 수 없다. - 실패")
 	void chargePay_InvalidPrice_Success(int totalPrice) {
 
-		assertThrows(PaymentException.class, () -> paymentService.chargePay(card.getId(), totalPrice));
+		assertThrows(PaymentException.class, () -> paymentService.chargePay(card.getChargeCardId(), totalPrice));
 	}
 }
