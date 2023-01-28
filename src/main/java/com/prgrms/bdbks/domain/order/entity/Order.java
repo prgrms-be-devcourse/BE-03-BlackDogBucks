@@ -8,16 +8,19 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
+import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -36,34 +39,75 @@ public class Order extends AbstractTimeColumn {
 	@GenericGenerator(name = "order_id_generator", strategy = "com.prgrms.bdbks.domain.order.repository.OrderIdGenerator")
 	private String id;
 
-	// 추후 객체 참조로 변경
-	@Column(name = "coupon_id")
-	private Long coupon;
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "coupon_id")
+	private Coupon coupon;
 
-	@NotNull
 	@Column(name = "user_id", nullable = false)
 	private Long userId;
 
-	@NotNull
 	@Column(name = "store_id", nullable = false)
 	private String storeId;
 
-	@NotNull
 	@Column(name = "total_price", nullable = false)
-	private int totalPrice;
+	private Integer totalPrice = 0;
+
+	@Column(name = "order_status", nullable = false)
+	private OrderStatus orderStatus;
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderItem> orderItems = new ArrayList<>();
 
 	@Builder
-	protected Order(Long coupon, Long userId, String storeId, int totalPrice) {
+	protected Order(Coupon coupon, Long userId, String storeId, OrderStatus orderStatus) {
 		checkNotNull(userId, "userId 는 null 일 수 없습니다.");
 		checkNotNull(storeId, "storeId 는 null 일 수 없습니다.");
-		checkArgument(totalPrice >= 0, "totalPrice 는 0보다 작을 수 없습니다.");
+		checkNotNull(orderStatus, "orderStatus는 null 일 수 없습니다.");
 		this.coupon = coupon;
 		this.userId = userId;
 		this.storeId = storeId;
-		this.totalPrice = totalPrice;
+		this.orderStatus = orderStatus;
+	}
+
+	public static Order create(Coupon coupon, Long userId, String storeId) {
+
+		return Order.builder()
+			.userId(userId)
+			.coupon(coupon)
+			.storeId(storeId)
+			.orderStatus(OrderStatus.PAYMENT_COMPLETE)
+			.build();
+	}
+
+	private void validateTotalPrice(long totalPrice) {
+		checkArgument(totalPrice >= 0, "totalPrice 는 0보다 작을 수 없습니다.");
+	}
+
+	public void addOrderItem(OrderItem orderItem) {
+		checkNotNull(orderItem, "orderItem 은 null 일 수 없습니다.");
+
+		if (!this.orderItems.contains(orderItem)) {
+			this.orderItems.add(orderItem);
+			calculateTotalPrice();
+		}
+	}
+
+	private void calculateTotalPrice() {
+		int sumPrice = this.orderItems.stream()
+			.mapToInt(OrderItem::getTotalPrice)
+			.sum();
+
+		if (this.coupon != null) {
+			this.totalPrice = Math.max(sumPrice - coupon.getPrice(), 0);
+		} else {
+			this.totalPrice = sumPrice;
+		}
+
+		validateTotalPrice(this.totalPrice);
+	}
+
+	public int getTotalQuantity() {
+		return orderItems.stream().mapToInt(OrderItem::getQuantity).sum();
 	}
 
 }

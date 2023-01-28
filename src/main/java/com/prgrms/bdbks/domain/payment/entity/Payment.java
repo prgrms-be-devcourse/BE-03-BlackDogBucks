@@ -1,11 +1,11 @@
 package com.prgrms.bdbks.domain.payment.entity;
 
-import static com.google.common.base.Preconditions.*;
 import static com.prgrms.bdbks.domain.card.entity.Card.*;
 import static com.prgrms.bdbks.domain.payment.entity.PaymentStatus.*;
 import static javax.persistence.EnumType.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,7 +19,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
-import com.prgrms.bdbks.domain.card.entity.Card;
+import com.prgrms.bdbks.common.exception.PaymentException;
 import com.prgrms.bdbks.domain.order.entity.Order;
 
 import lombok.AccessLevel;
@@ -42,7 +42,7 @@ public class Payment extends AbstractTimeColumn {
 	@OneToOne(fetch = FetchType.LAZY)
 	private Order order;
 
-	private String cardId;
+	private String chargeCardId;
 
 	@Enumerated(value = STRING)
 	private PaymentType paymentType;
@@ -56,14 +56,15 @@ public class Payment extends AbstractTimeColumn {
 	private PaymentStatus paymentStatus;
 
 	@Builder
-	protected Payment(Order order, String cardId, PaymentType paymentType, int price, LocalDateTime paymentDateTime) {
-		validateCardId(cardId);
+	protected Payment(Order order, String chargeCardId, PaymentType paymentType, int price,
+		LocalDateTime paymentDateTime) {
+		validateCardId(chargeCardId);
 		validatePrice(price);
 		validatePaymentType(paymentType);
 		validatePaymentDateTime(paymentDateTime);
 
 		this.order = order;
-		this.cardId = cardId;
+		this.chargeCardId = chargeCardId;
 		this.paymentType = paymentType;
 		this.price = price;
 		this.paymentDateTime = paymentDateTime;
@@ -71,45 +72,56 @@ public class Payment extends AbstractTimeColumn {
 	}
 
 	private void validatePaymentType(PaymentType paymentType) {
-		checkNotNull(paymentType, "결제 타입을 입력해주세요");
+		if (Objects.isNull(paymentType)) {
+			throw new PaymentException("결제 타입을 입력해주세요");
+		}
 	}
 
 	private void validatePrice(int price) {
-		checkArgument(price >= 0, "결제 금액은 0원부터 가능합니다.");
+		if (price < 0) {
+			throw new PaymentException("결제 금액은 0원부터 가능합니다.");
+		}
 	}
 
 	private void validateCardId(String cardId) {
-		checkNotNull(cardId, "카드 아이디를 입력해주세요");
+		if (Objects.isNull(cardId)) {
+			throw new PaymentException("카드 아이디를 입력해주세요");
+		}
+
 	}
 
 	private void validatePaymentDateTime(LocalDateTime paymentDateTime) {
-		checkNotNull(paymentDateTime, "결제 시간을 입력해주세요");
+		if (Objects.isNull(paymentDateTime)) {
+			throw new PaymentException("결제 시간을 입력해주세요");
+		}
 	}
 
-	//TODO 주문 금액과 충전 카드의 금액을 비교해야 함(결제 가능한 경우 충전카드의 메소드 호출)
+	//TODO 주문 금액과 충전 카드의 금액을 비교해야 함
 
 	private static void validateChargeAmount(int amount) {
-		checkArgument(MIN_CHARGE_PRICE <= amount && amount <= MAX_CHARGE_PRICE, "충전 금액은 10,000~550,000원 까지 가능합니다.");
+		if (!(MIN_CHARGE_PRICE <= amount && amount <= MAX_CHARGE_PRICE)) {
+			throw new PaymentException("충전 금액은 10,000~550,000원 까지 가능합니다.");
+		}
 	}
 
-	public static Payment createChargePayment(String cardId, int price) {
+	public static Payment createChargePayment(String chargeCardId, int price) {
 		validateChargeAmount(price);
 
 		return Payment.builder()
 			.paymentType(PaymentType.CHARGE)
 			.price(price)
 			.paymentDateTime(LocalDateTime.now())
-			.cardId(cardId)
+			.chargeCardId(chargeCardId)
 			.build();
 	}
 
-	public static Payment createOrderPayment(Order order, Card card, int price) {
+	public static Payment createOrderPayment(Order order, String chargeCardId, int price) {
 		return Payment.builder()
 			.paymentType(PaymentType.ORDER)
 			.order(order)
 			.price(price)
 			.paymentDateTime(LocalDateTime.now())
-			.cardId(card.getId())
+			.chargeCardId(chargeCardId)
 			.build();
 	}
 }

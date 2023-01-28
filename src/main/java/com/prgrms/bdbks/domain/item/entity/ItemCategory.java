@@ -16,7 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.util.StringUtils;
 
@@ -37,15 +36,12 @@ public class ItemCategory {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotNull
 	@Column(name = "name", nullable = false)
 	private String name;
 
-	@NotNull
 	@Column(name = "english_name", nullable = false)
 	private String englishName;
 
-	@NotNull
 	@Column(name = "item_type", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private ItemType itemType;

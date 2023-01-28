@@ -5,12 +5,14 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.domain.item.dto.DefaultOptionCreateRequest;
 import com.prgrms.bdbks.domain.item.entity.BeverageOption;
 import com.prgrms.bdbks.domain.item.entity.DefaultOption;
+import com.prgrms.bdbks.domain.store.service.StoreService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +23,9 @@ import lombok.RequiredArgsConstructor;
 class DefaultOptionServiceTest {
 
 	private final DefaultOptionService defaultOptionService;
+
+	@MockBean
+	private StoreService storeService;
 
 	@DisplayName("생성 - DefaultOption 을 생성한다.")
 	@Test

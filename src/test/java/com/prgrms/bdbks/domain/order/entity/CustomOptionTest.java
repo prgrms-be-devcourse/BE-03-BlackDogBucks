@@ -6,7 +6,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import com.prgrms.bdbks.domain.item.entity.OptionPrice;
 
 @DisplayName("CustomOption 테스트")
 class CustomOptionTest {
@@ -99,6 +102,60 @@ class CustomOptionTest {
 			.cupType(cupType)
 			.cupSize(cupSize)
 			.build());
+	}
+
+	@DisplayName("생성 - calculateAddCosts() - customOption에 따른 추가요금을 정상 계산한다.")
+	@ParameterizedTest
+	@CsvSource(value = {
+		" , 3, 3, 3, 3, 4, 4, 4, 500, 500, 1500", // espressoShotCount is null
+		" , 4, 4, 4, 4, 4, 4, 4, 1000, 100, 0", // espressoShotCount is null
+		" , 3, 3, 3, 3, 0, 0, 0, 1000, 100, 0", // espressoShotCount is null
+		" , 9, 9, 9, 9, 0, 0, 0, 0, 0, 0", // espressoShotCount is null
+
+		"0, , 0, 0, 0, 0, 8, 8, 10000, 10000, 160000", // vanillaSyrupCount is null
+		"5, , 5, 5, 5, 5, 4, 4, 10000, 10000, 0", // vanillaSyrupCount is null
+		"0, , 2, 3, 5, 1, 4, 4, 600, 600, 4800", // vanillaSyrupCount is null
+		"5, , 5, 5, 9, 5, 9, 9, 600, 600, 7200", // vanillaSyrupCount is null
+		"5, , 5, 5, 4, 5, 3, 2, 600, 600, 0", // vanillaSyrupCount is null
+
+		"2, 3, , 5, 2, 2, 2, 2, 200, 200, 0", // classicSyrupCount is null
+		"2, 3, , 5, 4, 5, , 2, 400, 400, 1600", // classicSyrupCount is null
+		"2, 3, , 5, 3, 8, , 7, 8800, 800, 14400", // classicSyrupCount is null
+
+		"0, 3, 2, , 5, 1, 4, 4, 600, 600, 4200", // hazelnutSyrupCount is null
+		"9, 9, 9, , 9, 0, 0, 0, 0, 0, 0", // hazelnutSyrupCount is null
+		"0, 0, 0, , 3, 3, 3, 3, 1000, 1000, 9000", // hazelnutSyrupCount is null
+		"3, 3, 3, , 2, 2, 2, 2, 600, 600, 0", // hazelnutSyrupCount is null
+	}, delimiterString = ",")
+	void calculateAddCosts_calculateDefaultNullOption_success(
+		Integer defaultEspressoShotCount,
+		Integer defaultVanillaSyrupCount,
+		Integer defaultClassicSyrupCount,
+		Integer defaultHazelnutSyrupCount,
+		Integer espressoShotCount, Integer vanillaSyrupCount, Integer classicSyrupCount, Integer hazelnutSyrupCount,
+
+		int espressoPrice, int syrupPrice, Integer expectedCost) {
+
+		//given
+		OptionPrice optionPrice = new OptionPrice(espressoPrice, syrupPrice);
+
+		CustomOption customOption = CustomOption.builder()
+			.espressoType(espressoType)
+			.espressoShotCount(espressoShotCount)
+			.vanillaSyrupCount(vanillaSyrupCount)
+			.hazelnutSyrupCount(hazelnutSyrupCount)
+			.classicSyrupCount(classicSyrupCount)
+			.milkType(milkType)
+			.milkAmount(milkAmount)
+			.cupType(cupType)
+			.cupSize(cupSize)
+			.build();
+
+		int totalPrice = customOption.calculateAddCosts(defaultEspressoShotCount, defaultVanillaSyrupCount,
+			defaultClassicSyrupCount, defaultHazelnutSyrupCount, optionPrice);
+
+		//then
+		assertEquals(expectedCost, totalPrice);
 	}
 
 }

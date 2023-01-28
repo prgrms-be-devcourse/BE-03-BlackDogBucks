@@ -17,21 +17,23 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prgrms.bdbks.config.security.SecurityConfig;
 import com.prgrms.bdbks.domain.item.dto.DefaultOptionCreateRequest;
 import com.prgrms.bdbks.domain.item.dto.ItemCreateRequest;
 import com.prgrms.bdbks.domain.item.entity.ItemType;
-import com.prgrms.bdbks.domain.item.service.ItemCategoryService;
-import com.prgrms.bdbks.domain.item.service.ItemFacadeService;
+import com.prgrms.bdbks.domain.item.service.ItemService;
 
 import lombok.RequiredArgsConstructor;
 
-@AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest
+@Import(SecurityConfig.class)
+@AutoConfigureMockMvc
+@WebMvcTest(controllers = ItemController.class)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 class ItemControllerWebMvcTest {
@@ -39,15 +41,12 @@ class ItemControllerWebMvcTest {
 	private static final String BASE_REQUEST_URI = "/api/v1/items";
 
 	@MockBean
-	private final ItemFacadeService itemFacadeService;
+	private final ItemService itemService;
 
 	private final MockMvc mockMvc;
 
 	private final ObjectMapper objectMapper;
 
-	@MockBean
-	private final ItemCategoryService itemCategoryService;
-	
 	@DisplayName("생성 - Item 을 생성하고 생성된 Resource 의 URI 를 리턴한다 - 성공.")
 	@Test
 	void createItem_success() throws Exception {
@@ -73,7 +72,7 @@ class ItemControllerWebMvcTest {
 		);
 		Long returnId = 1L;
 
-		given(itemFacadeService.createItem(request))
+		given(itemService.createItem(request))
 			.willReturn(returnId);
 
 		//when
@@ -89,7 +88,7 @@ class ItemControllerWebMvcTest {
 			.andExpect(header().string("Location", containsString(BASE_REQUEST_URI + "/" + returnId)))
 			.andDo(print());
 
-		verify(itemFacadeService).createItem(request);
+		verify(itemService).createItem(request);
 	}
 
 	@DisplayName("생성 - ItemCreateRequest의 itemType이 null이면 응답에 실패하여 BadRequest를 반환한다. - 실패.")

@@ -12,14 +12,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PaymentObjectProvider {
 
-	public static Payment createPayment(Order order, String cardId, PaymentType paymentType, int price,
+	public static Payment createOrderPayment(Order order, String chargeCardId, PaymentType paymentType, int price,
 		LocalDateTime paymentDateTime) {
 		return Payment.builder()
 			.order(order)
-			.cardId(cardId)
+			.chargeCardId(chargeCardId)
 			.paymentType(paymentType)
 			.price(price)
 			.paymentDateTime(paymentDateTime)
 			.build();
 	}
+
+	public static Payment createChargePayment(String chargeCardId, PaymentType paymentType, int price,
+		LocalDateTime paymentDateTime) {
+		return Payment.builder()
+			.chargeCardId(chargeCardId)
+			.paymentType(paymentType)
+			.price(price)
+			.paymentDateTime(paymentDateTime)
+			.build();
+	}
+
 }
