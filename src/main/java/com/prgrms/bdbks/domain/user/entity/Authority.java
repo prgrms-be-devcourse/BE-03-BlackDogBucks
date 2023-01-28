@@ -2,10 +2,13 @@ package com.prgrms.bdbks.domain.user.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
+import com.prgrms.bdbks.domain.user.role.Role;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,5 +24,6 @@ public class Authority extends AbstractTimeColumn {
 
 	@Id
 	@Column(name = "authority_name", length = 10)
-	private String authorityName;
+	@Enumerated(EnumType.STRING)
+	private Role authorityName;
 }

@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class TokenProvider {
 
-	private static final String AUTHORITIES_KEY = "auth";
+	private final String authoritiesKey;
 
 	private final Key key;
 
@@ -51,8 +51,9 @@ public class TokenProvider {
 
 		byte[] keyBytes = Decoders.BASE64.decode(jwtConfigure.getSecret());
 
+		this.authoritiesKey = jwtConfigure.getAuthoritiesKey();
 		this.key = Keys.hmacShaKeyFor(keyBytes);
-		this.tokenValidityInSeconds = jwtConfigure.getTokenValidityInSeconds() * 1000;
+		this.tokenValidityInSeconds = jwtConfigure.getTokenValidityInSeconds();
 	}
 
 	public String generateToken(Authentication authentication, User user) {
@@ -64,7 +65,7 @@ public class TokenProvider {
 
 		return Jwts.builder()
 			.setSubject(authentication.getName())
-			.claim(AUTHORITIES_KEY, authorities)
+			.claim(authoritiesKey, authorities)
 			.claim("email", user.getEmail())
 			.signWith(key, SignatureAlgorithm.HS512)
 			.setExpiration(validity)
@@ -79,12 +80,11 @@ public class TokenProvider {
 			.parseClaimsJws(accessToken)
 			.getBody();
 
-		if (claims.get(AUTHORITIES_KEY) == null) {
-
+		if (claims.get(authoritiesKey) == null) {
 			throw new AuthorityNotFoundException("클레임에 권한정보가 존재하지 않습니다.");
 
 		} else {
-			List<String> roles = (List)claims.get(AUTHORITIES_KEY);
+			List<String> roles = (List)claims.get(authoritiesKey);
 
 			Collection<? extends GrantedAuthority> authorities =
 				roles.stream().map(SimpleGrantedAuthority::new)

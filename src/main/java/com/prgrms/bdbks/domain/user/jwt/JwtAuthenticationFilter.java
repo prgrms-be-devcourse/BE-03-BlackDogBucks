@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean {
+
 	private final TokenProvider tokenProvider;
 
 	@Override
@@ -30,12 +31,13 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 		ServletException {
 		HttpServletRequest httpServletRequest = (HttpServletRequest)servletRequest;
 		String jwt = resolveToken(httpServletRequest);
-		String requestURI = httpServletRequest.getRequestURI();
 
-		if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+		if (tokenProvider.validateToken(jwt)) {
 			Authentication authentication = tokenProvider.getAuthentication(jwt);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
+
 		} else {
+			String requestURI = httpServletRequest.getRequestURI();
 			log.debug("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
 		}
 
@@ -46,6 +48,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 		String bearerToken = request.getHeader("Authorization");
 
 		return Optional.of(bearerToken)
+			.filter(t -> StringUtils.hasText(bearerToken))
 			.filter(t -> t.startsWith("Bearer "))
 			.map(t -> t.substring(7))
 			.orElseThrow(() ->
