@@ -1,5 +1,6 @@
 package com.prgrms.bdbks.domain.star.service;
 
+import com.prgrms.bdbks.domain.star.dto.StarExchangeResponse;
 import com.prgrms.bdbks.domain.star.entity.Star;
 import com.prgrms.bdbks.domain.user.entity.User;
 
@@ -15,5 +16,5 @@ public interface StarService {
 
 	void decreaseCount(Long userId);
 
-	void exchangeCoupon(Long userId);
+	StarExchangeResponse exchangeCoupon(Long userId);
 }
