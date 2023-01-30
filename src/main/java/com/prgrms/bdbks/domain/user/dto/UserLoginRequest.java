@@ -21,4 +21,5 @@ public class UserLoginRequest {
 	@NotBlank(message = "비밀번호는 필수 입력사항입니다.")
 	@Size(min = 8, max = 20, message = "비밀번호의 길이는 8 ~ 20 글자까지 가능합니다.")
 	private String password;
+
 }

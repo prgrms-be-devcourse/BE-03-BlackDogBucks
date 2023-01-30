@@ -11,7 +11,7 @@ import com.prgrms.bdbks.domain.user.dto.UserFindResponse;
 import com.prgrms.bdbks.domain.user.entity.User;
 
 @Mapper(
-	unmappedSourcePolicy = ReportingPolicy.IGNORE,
+	unmappedTargetPolicy = ReportingPolicy.IGNORE,
 	nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL,
 	componentModel = "spring")
 public interface UserMapper {
@@ -22,4 +22,5 @@ public interface UserMapper {
 	User createRequestToEntity(UserCreateRequest userCreateRequest);
 
 	UserFindResponse entityToFindResponse(User user);
+
 }

@@ -96,4 +96,5 @@ public class DefaultOption {
 			throw new IllegalArgumentException("잘못된 주문 옵션입니다.");
 		}
 	}
+
 }

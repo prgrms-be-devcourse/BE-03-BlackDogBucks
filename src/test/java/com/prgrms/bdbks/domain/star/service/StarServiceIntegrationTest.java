@@ -36,6 +36,9 @@ class StarServiceIntegrationTest {
 
 	private final User user = UserObjectProvider.createUser();
 
+	@MockBean
+	private StoreService storeService;
+
 	@BeforeEach
 	void setup() {
 		userRepository.save(user);

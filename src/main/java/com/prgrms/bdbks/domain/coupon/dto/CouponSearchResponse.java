@@ -2,7 +2,7 @@ package com.prgrms.bdbks.domain.coupon.dto;
 
 import java.time.LocalDateTime;
 
-import com.prgrms.bdbks.common.annotation.LocalDateTimeFormat;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,6 +19,7 @@ public class CouponSearchResponse {
 
 	private int price;
 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	private LocalDateTime expireDate;
 
 	private boolean used;

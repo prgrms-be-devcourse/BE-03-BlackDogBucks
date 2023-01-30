@@ -94,4 +94,5 @@ public class Coupon extends AbstractTimeColumn {
 
 		this.used = true;
 	}
+
 }

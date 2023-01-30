@@ -18,4 +18,5 @@ public class CouponSaveResponse {
 	private int price;
 
 	private LocalDateTime expireDate;
+
 }

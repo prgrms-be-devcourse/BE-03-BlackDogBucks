@@ -15,6 +15,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.util.StringUtils;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
 import com.prgrms.bdbks.domain.user.entity.User;
@@ -28,6 +29,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "cards")
 @NoArgsConstructor(access = PROTECTED)
 public class Card extends AbstractTimeColumn {
+
 	public static final int MIN_CHARGE_PRICE = 10000;
 	public static final int MAX_CHARGE_PRICE = 550000;
 
@@ -35,7 +37,7 @@ public class Card extends AbstractTimeColumn {
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	@Column(name = "card_id")
-	private String id;
+	private String chargeCardId;
 
 	@Column(name = "name", length = 30, nullable = false)
 	private String name;
@@ -50,6 +52,7 @@ public class Card extends AbstractTimeColumn {
 	@Builder
 	protected Card(User user, String name) {
 		validateUser(user);
+		validateName(name);
 
 		this.user = user;
 		this.name = name;
@@ -61,6 +64,10 @@ public class Card extends AbstractTimeColumn {
 
 	private void validateUser(User user) {
 		checkNotNull(user, "user를 입력해주세요.");
+	}
+
+	private void validateName(String name) {
+		checkArgument(StringUtils.hasText(name), "카드명을 입력해주세요.");
 	}
 
 	private void compareAmount(int amount) {
@@ -84,6 +91,14 @@ public class Card extends AbstractTimeColumn {
 
 	public void compareUser(Long userId) {
 		checkArgument(Objects.equals(this.user.getId(), userId));
+	}
+
+	public static Card createCard(User user, String name) {
+
+		return Card.builder()
+			.user(user)
+			.name(name)
+			.build();
 	}
 
 }
