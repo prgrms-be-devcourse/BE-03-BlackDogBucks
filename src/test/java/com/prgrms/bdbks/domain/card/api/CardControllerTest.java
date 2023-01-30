@@ -42,7 +42,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 class CardControllerTest {
 
-	private static final String BASE_REQUEST_URI = "/api/v1/cards/";
+	private static final String BASE_REQUEST_URI = "/api/v1/cards";
 
 	private final HttpSession httpSession;
 
@@ -79,7 +79,7 @@ class CardControllerTest {
 
 		String jsonRequest = objectMapper.writeValueAsString(cardSaveRequest);
 
-		mockMvc.perform(post("/api/v1/cards")
+		mockMvc.perform(post(BASE_REQUEST_URI)
 				.sessionAttr("user", user)
 				.contentType(APPLICATION_JSON)
 				.content(jsonRequest)
@@ -108,7 +108,7 @@ class CardControllerTest {
 
 		String jsonResponse = objectMapper.writeValueAsString(cardSaveResponse);
 
-		mockMvc.perform(get("/api/v1/cards/{cardId}", cardId)
+		mockMvc.perform(get(BASE_REQUEST_URI + "/{cardId}", cardId)
 				.sessionAttr("user", user)
 				.accept(APPLICATION_JSON))
 			.andExpect(status().isOk())

@@ -2,6 +2,8 @@ package com.prgrms.bdbks.domain.card.api;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +39,7 @@ public class CardController {
 	 * @return status : created , body : CardSaveResponse
 	 */
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<CardSaveResponse> create(@RequestBody CardSaveRequest cardSaveRequest,
+	public ResponseEntity<CardSaveResponse> create(@RequestBody @Valid CardSaveRequest cardSaveRequest,
 		@SessionAttribute("user") User user) {
 		CardSaveResponse cardSaveResponse = cardService.create(user.getId(), cardSaveRequest);
 
