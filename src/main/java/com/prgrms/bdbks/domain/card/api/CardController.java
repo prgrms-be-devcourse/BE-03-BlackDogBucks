@@ -53,13 +53,11 @@ public class CardController {
 	 * <pre>
 	 *     충전 카드 단건 조회
 	 * </pre>
-	 * @param user - 조회할 충전카드의 User
 	 * @param cardId - 조회할 충전카드의 Id
 	 * @return status : ok, body : CardSearchResponse
 	 */
 	@GetMapping(value = "/{cardId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<CardSearchResponse> getCard(@SessionAttribute("user") User user,
-		@PathVariable String cardId) {
+	public ResponseEntity<CardSearchResponse> getCard(@PathVariable String cardId) {
 		CardSearchResponse cardSearchResponse = cardService.findByCardId(cardId);
 
 		return ResponseEntity.ok(cardSearchResponse);

@@ -158,7 +158,6 @@ include::{snippets}/coupon-findAll/http-response.adoc[]
 
 include::{snippets}/coupon-findAll/response-fields.adoc[]
 
-
 === find-Unused
 
 ==== HTTP request
@@ -172,7 +171,7 @@ include::{snippets}/coupon-findUnused/http-response.adoc[]
 ==== response fields
 
 include::{snippets}/coupon-findUnused/response-fields.adoc[]
-=======
+
 == Order
 
 === read-one

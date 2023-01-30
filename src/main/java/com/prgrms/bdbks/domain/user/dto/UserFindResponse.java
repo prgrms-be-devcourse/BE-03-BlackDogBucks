@@ -23,4 +23,5 @@ public class UserFindResponse {
 	private String email;
 
 	private String role;
+
 }

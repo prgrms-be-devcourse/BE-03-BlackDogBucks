@@ -27,7 +27,9 @@ import lombok.RequiredArgsConstructor;
 public class DefaultCardService implements CardService {
 
 	private final CardRepository cardRepository;
+
 	private final UserRepository userRepository;
+
 	private final CardMapper cardMapper;
 
 	@Override

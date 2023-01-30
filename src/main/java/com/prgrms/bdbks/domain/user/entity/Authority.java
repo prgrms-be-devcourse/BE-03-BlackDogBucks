@@ -26,4 +26,5 @@ public class Authority extends AbstractTimeColumn {
 	@Column(name = "authority_name", length = 10)
 	@Enumerated(EnumType.STRING)
 	private Role authorityName;
+
 }

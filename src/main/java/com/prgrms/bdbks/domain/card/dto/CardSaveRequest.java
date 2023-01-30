@@ -14,4 +14,5 @@ public class CardSaveRequest {
 
 	@NotBlank(message = "카드 이름은 필수 입력사항입니다.")
 	private String name;
+
 }

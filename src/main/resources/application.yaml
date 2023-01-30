@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    include:
+      - db
+
+
+server:
+  shutdown: graceful
+  port: 8080
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true

@@ -12,11 +12,4 @@ public class DuplicateException extends BusinessException {
 		super(message, cause);
 	}
 
-	public DuplicateException(Throwable cause) {
-		super(cause);
-	}
-
-	public DuplicateException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
 }

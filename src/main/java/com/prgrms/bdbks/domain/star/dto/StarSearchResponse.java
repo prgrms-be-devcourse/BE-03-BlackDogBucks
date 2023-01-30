@@ -1,8 +1,10 @@
 package com.prgrms.bdbks.domain.star.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class StarSearchResponse {
 
 	private Long starId;
@@ -11,9 +13,4 @@ public class StarSearchResponse {
 
 	private short count;
 
-	public StarSearchResponse(Long starId, Long userId, short count) {
-		this.starId = starId;
-		this.userId = userId;
-		this.count = count;
-	}
 }

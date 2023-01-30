@@ -2,16 +2,17 @@ package com.prgrms.bdbks.domain.star.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.domain.star.repository.StarRepository;
+import com.prgrms.bdbks.domain.store.service.StoreService;
 import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
 import com.prgrms.bdbks.domain.user.entity.User;
 import com.prgrms.bdbks.domain.user.repository.UserRepository;
@@ -31,6 +32,9 @@ class StarServiceIntegrationTest {
 	private final StarService starService;
 
 	private final User user = UserObjectProvider.createUser();
+
+	@MockBean
+	private StoreService storeService;
 
 	@BeforeEach
 	void setup() {

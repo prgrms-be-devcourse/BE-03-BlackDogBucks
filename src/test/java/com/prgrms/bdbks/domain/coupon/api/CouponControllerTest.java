@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 import com.prgrms.bdbks.domain.coupon.repository.CouponRepository;
+import com.prgrms.bdbks.domain.store.service.StoreService;
 import com.prgrms.bdbks.domain.user.entity.User;
 import com.prgrms.bdbks.domain.user.repository.UserRepository;
 
@@ -56,6 +58,9 @@ class CouponControllerTest {
 	private User user;
 
 	private List<Coupon> coupons;
+
+	@MockBean
+	private StoreService storeService;
 
 	@BeforeEach
 	void setUp() {
@@ -96,7 +101,7 @@ class CouponControllerTest {
 						.description("쿠폰 소유자 Id"),
 					fieldWithPath("couponSearchResponses.[].name").type(JsonFieldType.STRING).description("쿠폰 이름"),
 					fieldWithPath("couponSearchResponses.[].price").type(JsonFieldType.NUMBER).description("쿠폰 할인 가격"),
-					fieldWithPath("couponSearchResponses.[].expireDate").type(JsonFieldType.ARRAY)
+					fieldWithPath("couponSearchResponses.[].expireDate").type(JsonFieldType.STRING)
 						.description("쿠폰 만료일"),
 					fieldWithPath("couponSearchResponses.[].used").type(JsonFieldType.BOOLEAN).description("쿠폰 사용 여부")
 				)
@@ -127,10 +132,11 @@ class CouponControllerTest {
 						.description("쿠폰 소유자 Id"),
 					fieldWithPath("couponSearchResponses.[].name").type(JsonFieldType.STRING).description("쿠폰 이름"),
 					fieldWithPath("couponSearchResponses.[].price").type(JsonFieldType.NUMBER).description("쿠폰 할인 가격"),
-					fieldWithPath("couponSearchResponses.[].expireDate").type(JsonFieldType.ARRAY)
+					fieldWithPath("couponSearchResponses.[].expireDate").type(JsonFieldType.STRING)
 						.description("쿠폰 만료일"),
 					fieldWithPath("couponSearchResponses.[].used").type(JsonFieldType.BOOLEAN).description("쿠폰 사용 여부")
 				)
 			));
 	}
+	
 }
