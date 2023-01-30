@@ -454,7 +454,7 @@ class OrderFacadeServiceSliceTest {
 		given(paymentFacadeService.orderPay(orderPayment))
 			.willReturn(paymentResult);
 
-		doNothing().when(starService).updateCount(userId, order.getTotalQuantity());
+		doNothing().when(starService).increaseCount(userId);
 
 		//when
 		OrderCreateResponse response = orderFacadeService.createOrder(request);
@@ -469,7 +469,7 @@ class OrderFacadeServiceSliceTest {
 		verify(paymentFacadeService).orderPay(orderPayment);
 		verify(itemService).customItems(request.getOrderItems());
 		verify(orderService).createOrder(null, userId, storeId, customItems);
-		verify(starService).updateCount(userId, order.getTotalQuantity());
+		verify(starService).increaseCount(userId);
 	}
 
 }

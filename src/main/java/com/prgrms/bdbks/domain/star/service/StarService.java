@@ -11,5 +11,9 @@ public interface StarService {
 
 	void delete(Long userId);
 
-	void updateCount(Long userId, int count);
+	void increaseCount(Long userId);
+
+	void decreaseCount(Long userId);
+
+	void exchangeCoupon(Long userId);
 }

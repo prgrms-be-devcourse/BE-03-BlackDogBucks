@@ -62,7 +62,7 @@ public class OrderFacadeService {
 			new OrderPayment(order, request.getPaymentOption().getChargeCardId(),
 				request.getPaymentOption().getPaymentType()));
 
-		updateStar(request.getUserId(), coupon, order.getTotalQuantity());
+		increaseStar(request.getUserId(), coupon);
 
 		return new OrderCreateResponse(order.getId(), paymentResult.getPaymentId());
 	}
@@ -75,9 +75,9 @@ public class OrderFacadeService {
 		return null;
 	}
 
-	private void updateStar(long userId, Coupon coupon, int totalOrderCount) {
+	private void increaseStar(long userId, Coupon coupon) {
 		if (Objects.isNull(coupon)) {
-			starService.updateCount(userId, totalOrderCount);
+			starService.increaseCount(userId);
 		}
 	}
 

@@ -44,9 +44,18 @@ public class DefaultStarService implements StarService {
 	}
 
 	@Override
-	@Transactional
-	public void updateCount(Long userId, int totalCount) {
-		findByUserId(userId).updateCount(totalCount);
+	public void increaseCount(Long userId) {
+		findByUserId(userId).increaseCount();
+	}
+
+	@Override
+	public void decreaseCount(Long userId) {
+		findByUserId(userId).decreaseCount();
+	}
+
+	@Override
+	public void exchangeCoupon(Long userId) {
+		findByUserId(userId).exchangeCoupon();
 	}
 
 	//TODO 거래 취소, 반품 시 별은 원상복구(원래 상태로 감소)
