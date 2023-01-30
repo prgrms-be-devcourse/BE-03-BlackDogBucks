@@ -60,6 +60,7 @@ public class Star extends AbstractTimeColumn {
 
 	public void decreaseCount() {
 		this.count -= 1;
+		validateCount(count);
 	}
 
 	public int exchangeCoupon() {

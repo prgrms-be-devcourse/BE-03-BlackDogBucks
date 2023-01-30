@@ -45,16 +45,19 @@ public class DefaultStarService implements StarService {
 	}
 
 	@Override
+	@Transactional
 	public void increaseCount(Long userId) {
 		findByUserId(userId).increaseCount();
 	}
 
 	@Override
+	@Transactional
 	public void decreaseCount(Long userId) {
 		findByUserId(userId).decreaseCount();
 	}
 
 	@Override
+	@Transactional
 	public StarExchangeResponse exchangeCoupon(Long userId) {
 		Star star = findByUserId(userId);
 		int exchangeCoupon = star.exchangeCoupon();
