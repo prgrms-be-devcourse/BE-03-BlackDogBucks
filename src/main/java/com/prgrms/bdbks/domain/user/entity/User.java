@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
@@ -22,7 +23,6 @@ import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
-import com.prgrms.bdbks.domain.user.role.Role;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -92,10 +92,9 @@ public class User extends AbstractTimeColumn {
 		).collect(Collectors.toList());
 	}
 
-	public boolean isStoreManager() {
-		return this.userAuthorities.stream()
-			.anyMatch(userAuthority ->
-				userAuthority.getAuthority().getAuthorityName() == Role.ROLE_STORE_MANAGER);
+	public boolean hasStore(String storeId) {
+		return userAuthorities.stream()
+			.anyMatch(userAuthority -> Objects.equals(userAuthority.getStore().getId(), storeId));
 	}
 
 	private void validateLoginId(String loginId) {
