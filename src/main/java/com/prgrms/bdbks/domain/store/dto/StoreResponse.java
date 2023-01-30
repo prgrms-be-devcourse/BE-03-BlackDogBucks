@@ -12,11 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class StoreResponse {
-
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class StoreInformation {
+	public static class Information {
 
 		private String id;
 
@@ -28,7 +27,7 @@ public class StoreResponse {
 
 		private PointInformation pointInformation;
 
-		public StoreInformation(Store store) {
+		public Information(Store store) {
 			this.id = store.getId();
 			this.name = store.getName();
 			this.lotNumberAddress = store.getLotNumberAddress();

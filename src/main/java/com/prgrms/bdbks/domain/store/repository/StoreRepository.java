@@ -18,9 +18,9 @@ public interface StoreRepository extends JpaRepository<Store, String> {
 
 	@Query(nativeQuery = true, value =
 		"SELECT *, ST_DISTANCE_SPHERE(ST_POINTFROMTEXT(:#{#location.toPointText()}, 4326), ST_SRID(stores.position, 4326)) dist FROM stores "
-			+ "WHERE ST_DISTANCE_SPHERE(ST_POINTFROMTEXT(:#{#location.toPointText()}, 4326), ST_SRID(stores.position, 4326)) < :distance"
+			+ "WHERE ST_DISTANCE_SPHERE(ST_POINTFROMTEXT(:#{#location.toPointText()}, 4326), ST_SRID(stores.position, 4326)) < :distance "
 			+ "ORDER BY dist ASC")
-	List<Store> findAllByDistance(@Param("location") Location location, int distance);
+	List<Store> findAllByDistance(@Param("location") Location location, @Param("distance") int distance);
 
 	@Query(nativeQuery = true,
 		value =

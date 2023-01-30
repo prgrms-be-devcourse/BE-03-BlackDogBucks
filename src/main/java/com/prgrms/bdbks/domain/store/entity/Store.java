@@ -2,6 +2,8 @@ package com.prgrms.bdbks.domain.store.entity;
 
 import static com.google.common.base.Preconditions.*;
 
+import java.nio.charset.StandardCharsets;
+
 import javax.persistence.AttributeConverter;
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -98,7 +100,8 @@ public class Store extends AbstractTimeColumn {
 		@Override
 		public Point convertToEntityAttribute(String dbData) {
 			try {
-				return (Point)wktReader.read(dbData);
+				String decoded = new String(dbData.getBytes(), StandardCharsets.UTF_8);
+				return (Point)wktReader.read(decoded);
 			} catch (ParseException e) {
 				throw new PointParseException(String.format("위경도 파싱에 실패했습니다. %s", dbData));
 			}

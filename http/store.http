@@ -18,6 +18,6 @@ GET http://localhost:8080/api/v1/stores?district=종로구
 GET http://localhost:8080/api/v1/stores/20585779
 
 ### 현재 위치로 조회
-
+GET http://localhost:8080/api/v1/stores/location?latitude=37.4843861241449&longitude=127.014197798445
 
 

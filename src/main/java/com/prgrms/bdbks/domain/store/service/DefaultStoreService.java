@@ -1,13 +1,13 @@
 package com.prgrms.bdbks.domain.store.service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.common.exception.PointParseException;
@@ -24,8 +24,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DefaultStoreService implements StoreService {
 
-	private static final int distance = 10000;
+	private static final int DISTANCE = 10000;
 	private final StoreRepository storeRepository;
+	private final StoreMapper storeMapper;
 
 	@Override
 	public Store findById(String storeId) {
@@ -33,16 +34,16 @@ public class DefaultStoreService implements StoreService {
 	}
 
 	@Override
-	public StoreResponse.StoreInformation findStoreById(String storeId) {
-		Optional<Store> store = storeRepository.findById(storeId);
-		if (store.isPresent()) {
-			return new StoreResponse.StoreInformation(store.get());
-		} else {
-			throw new EntityNotFoundException(Store.class, storeId);
-		}
+	@Transactional
+	public StoreResponse.Information findStoreById(String storeId) {
+		Store store = storeRepository.findById(storeId)
+			.orElseThrow(() -> new EntityNotFoundException(Store.class, storeId));
+
+		return new StoreResponse.Information(store);
 	}
 
 	@Override
+	@Transactional
 	public String createStore(StoreCreateRequest storeCreateRequest) {
 		String pointWKT = String.format("POINT(%s %s)", storeCreateRequest.getLongitude(),
 			storeCreateRequest.getLatitude());
@@ -67,26 +68,24 @@ public class DefaultStoreService implements StoreService {
 	}
 
 	@Override
-	public List<StoreResponse.StoreInformation> findAllByDisStrictName(String district) {
+	@Transactional
+	public List<StoreResponse.Information> findAllByDisStrictName(String district) {
 		List<Store> storeList = storeRepository.findTop10StoresByLotNumberAddress(district);
 
-		List<StoreResponse.StoreInformation> storeResponseList = new ArrayList<>();
-		for (Store store : storeList) {
-			storeResponseList.add(new StoreResponse.StoreInformation(store));
-		}
-		return storeResponseList;
+		return storeList.stream()
+			.map(StoreResponse.Information::new)
+			.collect(Collectors.toList());
 	}
 
 	@Override
-	public List<StoreResponse.StoreInformation> findAllByPoint(double latitude, double longitude) {
+	@Transactional
+	public List<StoreResponse.Information> findAllByPoint(double latitude, double longitude) {
 		Location location = new Location(latitude, longitude);
-		List<Store> storeList = storeRepository.findAllByDistance(location, distance);
+		List<Store> storeList = storeRepository.findAllByDistance(location, DISTANCE);
 
-		List<StoreResponse.StoreInformation> storeResponseList = new ArrayList<>();
-		for (Store store : storeList) {
-			storeResponseList.add(new StoreResponse.StoreInformation(store));
-		}
-		return storeResponseList;
+		return storeList.stream()
+			.map(StoreResponse.Information::new)
+			.collect(Collectors.toList());
 	}
 
 	@Override

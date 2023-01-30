@@ -1,6 +1,7 @@
 package com.prgrms.bdbks.domain.store.dto;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -26,9 +27,9 @@ public class StoreCreateRequest {
 	@NotBlank(message = "매장 도로명 주소는 필수로 입력 해야 합니다.")
 	private String roadNameAddress;
 
-	@NotBlank(message = "위도는 필수로 입력 해야 합니다.")
+	@NotNull(message = "위도는 필수로 입력 해야 합니다.")
 	private double latitude;
 
-	@NotBlank(message = "경도는 필수로 입력 해야 합니다.")
+	@NotNull(message = "경도는 필수로 입력 해야 합니다.")
 	private double longitude;
 }

@@ -10,13 +10,13 @@ public interface StoreService {
 
 	Store findById(String storeId);
 
-	StoreResponse.StoreInformation findStoreById(String storeId);
+	StoreResponse.Information findStoreById(String storeId);
 
 	String createStore(StoreCreateRequest storeCreateRequest);
 
-	List<StoreResponse.StoreInformation> findAllByDisStrictName(String district);
+	List<StoreResponse.Information> findAllByDisStrictName(String district);
 
-	List<StoreResponse.StoreInformation> findAllByPoint(double latitude, double longitude);
+	List<StoreResponse.Information> findAllByPoint(double latitude, double longitude);
 
 	boolean existsById(String storeId);
 

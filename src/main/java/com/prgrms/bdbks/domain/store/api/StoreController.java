@@ -3,6 +3,8 @@ package com.prgrms.bdbks.domain.store.api;
 import java.net.URI;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,29 +30,29 @@ public class StoreController {
 	private final StoreService storeService;
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<URI> createStore(@RequestBody StoreCreateRequest storeCreateRequest) {
+	public ResponseEntity<URI> createStore(@RequestBody @Valid StoreCreateRequest storeCreateRequest) {
 		String currentURI = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
 		String createdURI = String.format("%s/%s", currentURI, storeService.createStore(storeCreateRequest));
 		return ResponseEntity.created(URI.create(createdURI)).build();
 	}
 
 	@GetMapping(value = "/{storeId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<StoreResponse.StoreInformation> findStoreById(@PathVariable String storeId) {
-		StoreResponse.StoreInformation storeResponse = storeService.findStoreById(storeId);
+	public ResponseEntity<StoreResponse.Information> findStoreById(@PathVariable String storeId) {
+		StoreResponse.Information storeResponse = storeService.findStoreById(storeId);
 		return ResponseEntity.ok(storeResponse);
 	}
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<StoreResponse.StoreInformation>> findStoresByDistrict(
+	public ResponseEntity<List<StoreResponse.Information>> findStoresByDistrict(
 		@RequestParam String district) {
-		List<StoreResponse.StoreInformation> stores = storeService.findAllByDisStrictName(district);
+		List<StoreResponse.Information> stores = storeService.findAllByDisStrictName(district);
 		return ResponseEntity.ok(stores);
 	}
 
-	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<StoreResponse.StoreInformation>> findStoresByLocation(
-		@RequestParam long latitude, @RequestParam long longitude) {
-		List<StoreResponse.StoreInformation> stores = storeService.findAllByPoint(latitude, longitude);
+	@GetMapping(value = "/location", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<StoreResponse.Information>> findStoresByLocation(
+		@RequestParam Double latitude, @RequestParam Double longitude) {
+		List<StoreResponse.Information> stores = storeService.findAllByPoint(latitude, longitude);
 		return ResponseEntity.ok(stores);
 	}
 
