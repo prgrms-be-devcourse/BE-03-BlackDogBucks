@@ -74,4 +74,20 @@ class CardTest {
 		card.chargeAmount(10000);
 		assertThrows(IllegalArgumentException.class, () -> card.payAmount(amount));
 	}
+
+	@DisplayName("refund() - 0원 이상의 금액을 환불한다. - 성공")
+	@ParameterizedTest
+	@ValueSource(ints = {20000, 30000, 50000})
+	void refund_validAmount_ExceptionDoesNotThrown(int amount) {
+		Card card = createCard(user);
+		assertDoesNotThrow(() -> card.refundAmount(amount));
+	}
+
+	@DisplayName("refund() - 0원 이하의 금액은 환불할 수 없다. - 실패")
+	@ParameterizedTest
+	@ValueSource(ints = {-20000, -30000, -50000})
+	void refund_InvalidAmount_ExceptionThrown(int amount) {
+		Card card = createCard(user);
+		assertThrows(IllegalArgumentException.class, () -> card.refundAmount(amount));
+	}
 }
