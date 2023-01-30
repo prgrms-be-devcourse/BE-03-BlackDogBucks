@@ -209,3 +209,17 @@ include::{snippets}/order-create/http-response.adoc[]
 ==== response fields
 
 include::{snippets}/order-create/response-fields.adoc[]
+
+== read-all
+
+==== HTTP request
+
+include::{snippets}/orders-by-store/http-request.adoc[]
+
+include::{snippets}/orders-by-store/request-parameters.adoc[]
+
+==== HTTP response
+
+include::{snippets}/orders-by-store/http-response.adoc[]
+
+include::{snippets}/orders-by-store/response-fields.adoc[]

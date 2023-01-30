@@ -4,4 +4,7 @@ import com.prgrms.bdbks.domain.store.entity.Store;
 
 public interface StoreService {
 	Store findById(String storeId);
+
+	Store findByUserId(Long userId);
+
 }

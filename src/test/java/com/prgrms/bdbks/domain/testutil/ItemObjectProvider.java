@@ -99,6 +99,28 @@ public class ItemObjectProvider {
 			.build();
 	}
 
+	public static Item createCaffeLatte(ItemCategory itemCategory) {
+		String name = "카페 라떼";
+		String description = "풍부하고 진한 에스프레소가 신선한 스팀 밀크를 만나 부드러워진 커피 위에 우유 거품을 살짝 얹은 대표적인 커피 라떼";
+		String englishName = "Iced Caffe Americano";
+		Integer price = 5000;
+		DefaultOption defaultOption = createDefaultOption(1, 0, 0, 0,
+			BeverageOption.Milk.NORMAL, BeverageOption.Coffee.ESPRESSO,
+			BeverageOption.MilkAmount.MEDIUM);
+
+		String image = "https://hkbks.com/api/image.jpg";
+
+		return com.prgrms.bdbks.domain.item.entity.Item.builder()
+			.description(description)
+			.name(name)
+			.category(itemCategory)
+			.englishName(englishName)
+			.price(price)
+			.image(image)
+			.defaultOption(defaultOption)
+			.build();
+	}
+
 	public static Item createItem(String name, ItemCategory category, String englishName, int price, String image,
 		String description) {
 
