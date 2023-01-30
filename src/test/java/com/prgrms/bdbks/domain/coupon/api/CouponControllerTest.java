@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 import com.prgrms.bdbks.domain.coupon.repository.CouponRepository;
+import com.prgrms.bdbks.domain.store.service.StoreService;
 import com.prgrms.bdbks.domain.user.entity.User;
 import com.prgrms.bdbks.domain.user.repository.UserRepository;
 
@@ -40,6 +42,9 @@ import lombok.RequiredArgsConstructor;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 class CouponControllerTest {
+
+	@MockBean
+	private final StoreService storeService;
 
 	private final HttpSession httpSession;
 
@@ -74,7 +79,7 @@ class CouponControllerTest {
 				.accept(APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.couponSearchResponses").exists())
-			.andExpect(jsonPath("$.couponSearchResponses[0].couponId").value(coupons.get(0).getCouponId()))
+			.andExpect(jsonPath("$.couponSearchResponses[0].id").value(coupons.get(0).getId()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].userId").value(coupons.get(0).getUserId()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].name").value(coupons.get(0).getName()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].price").value(coupons.get(0).getPrice()))
@@ -109,7 +114,7 @@ class CouponControllerTest {
 				.accept(APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.couponSearchResponses").exists())
-			.andExpect(jsonPath("$.couponSearchResponses[0].couponId").value(coupons.get(0).getCouponId()))
+			.andExpect(jsonPath("$.couponSearchResponses[0].id").value(coupons.get(0).getId()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].userId").value(coupons.get(0).getUserId()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].name").value(coupons.get(0).getName()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].price").value(coupons.get(0).getPrice()))

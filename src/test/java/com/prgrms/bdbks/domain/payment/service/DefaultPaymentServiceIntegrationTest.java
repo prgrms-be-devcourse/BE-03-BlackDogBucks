@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ import com.prgrms.bdbks.domain.payment.entity.PaymentStatus;
 import com.prgrms.bdbks.domain.payment.entity.PaymentType;
 import com.prgrms.bdbks.domain.payment.model.PaymentResult;
 import com.prgrms.bdbks.domain.payment.repository.PaymentRepository;
+import com.prgrms.bdbks.domain.store.service.StoreService;
 import com.prgrms.bdbks.domain.testutil.OrderObjectProvider;
 import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
 import com.prgrms.bdbks.domain.user.entity.User;
@@ -35,6 +37,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class DefaultPaymentServiceIntegrationTest {
+
+	@MockBean
+	private final StoreService storeService;
 
 	private final PaymentService paymentService;
 
@@ -49,7 +54,7 @@ public class DefaultPaymentServiceIntegrationTest {
 	private Card card;
 
 	private final Order order = OrderObjectProvider.createOrder();
-	
+
 	@BeforeEach
 	void setUp() {
 		userRepository.save(user);
@@ -75,8 +80,8 @@ public class DefaultPaymentServiceIntegrationTest {
 		assertThat(savedPayment)
 			.hasFieldOrPropertyWithValue("id", paymentResult.getPaymentId())
 			.hasFieldOrPropertyWithValue("chargeCardId", card.getId())
-			.hasFieldOrPropertyWithValue("paymentStatus",PaymentStatus.APPROVE)
-			.hasFieldOrPropertyWithValue("paymentType",PaymentType.CHARGE);
+			.hasFieldOrPropertyWithValue("paymentStatus", PaymentStatus.APPROVE)
+			.hasFieldOrPropertyWithValue("paymentType", PaymentType.CHARGE);
 	}
 
 	@ParameterizedTest

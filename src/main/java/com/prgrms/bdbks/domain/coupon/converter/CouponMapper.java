@@ -12,7 +12,7 @@ import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 public interface CouponMapper {
 
 	@Mappings({
-		@Mapping(source = "couponId", target = "couponId"),
+		@Mapping(source = "id", target = "couponId"),
 		@Mapping(source = "userId", target = "userId"),
 		@Mapping(source = "name", target = "name"),
 		@Mapping(source = "price", target = "price"),
@@ -22,7 +22,7 @@ public interface CouponMapper {
 	CouponSearchResponse toCouponSearchResponse(Coupon coupon);
 
 	@Mappings({
-		@Mapping(source = "couponId", target = "couponId"),
+		@Mapping(source = "id", target = "couponId"),
 		@Mapping(source = "userId", target = "userId"),
 		@Mapping(source = "name", target = "name"),
 		@Mapping(source = "price", target = "price"),

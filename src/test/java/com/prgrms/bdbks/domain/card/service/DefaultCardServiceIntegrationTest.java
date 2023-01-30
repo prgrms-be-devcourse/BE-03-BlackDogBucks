@@ -14,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ import com.prgrms.bdbks.domain.card.dto.CardSearchResponse;
 import com.prgrms.bdbks.domain.card.dto.CardSearchResponses;
 import com.prgrms.bdbks.domain.card.entity.Card;
 import com.prgrms.bdbks.domain.card.repository.CardRepository;
+import com.prgrms.bdbks.domain.store.service.StoreService;
 import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
 import com.prgrms.bdbks.domain.user.entity.User;
 import com.prgrms.bdbks.domain.user.repository.UserRepository;
@@ -35,6 +37,9 @@ import lombok.RequiredArgsConstructor;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 class DefaultCardServiceIntegrationTest {
+
+	@MockBean
+	private final StoreService storeService;
 
 	private final UserRepository userRepository;
 
