@@ -41,6 +41,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 class CouponControllerTest {
 
+	private static final String BASE_REQUEST_URI = "/api/v1/coupons";
+
 	private final HttpSession httpSession;
 
 	private final UserRepository userRepository;
@@ -68,7 +70,7 @@ class CouponControllerTest {
 	@Test
 	void findUnusedCoupon_ValidUser_Success() throws Exception {
 
-		mockMvc.perform(get("/api/v1/coupons/detail")
+		mockMvc.perform(get(BASE_REQUEST_URI + "/detail")
 				.param("used", "false")
 				.sessionAttr("user", user)
 				.accept(APPLICATION_JSON))
@@ -104,7 +106,7 @@ class CouponControllerTest {
 	@DisplayName("findAll - 사용자의 모든 쿠폰을 조회한다. - 성공")
 	@Test
 	void findAll_ValidUser_Success() throws Exception {
-		mockMvc.perform(get("/api/v1/coupons")
+		mockMvc.perform(get(BASE_REQUEST_URI)
 				.sessionAttr("user", user)
 				.accept(APPLICATION_JSON))
 			.andExpect(status().isOk())

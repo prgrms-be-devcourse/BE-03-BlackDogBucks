@@ -5,11 +5,8 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CardSearchResponse {
+public class CardSaveResponse {
 
-	private String chargeCardId;
+	private final String chargeCardId;
 
-	private String name;
-
-	private int amount;
 }

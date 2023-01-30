@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CardChargeResponse {
 
-	private final String cardId;
+	private final String chargeCardId;
 
 	private final int amount;
 }

@@ -200,7 +200,7 @@ class OrderControllerTest {
 		Card chargeCard = CardObjectProvider.createCard(user);
 		chargeCard.chargeAmount(10000);
 
-		String chargeCardId = cardRepository.save(chargeCard).getId();
+		String chargeCardId = cardRepository.save(chargeCard).getChargeCardId();
 
 		OrderCreateRequest.Item.Option option = new OrderCreateRequest.Item.Option(
 			1, 0, 0, 0,
@@ -306,14 +306,14 @@ class OrderControllerTest {
 			.hasFieldOrPropertyWithValue("paymentStatus", PaymentStatus.APPROVE)
 			.hasFieldOrPropertyWithValue("order", order);
 
-		Card findCard = cardRepository.findById(chargeCard.getId()).get();
+		Card findCard = cardRepository.findById(chargeCard.getChargeCardId()).get();
 
 		assertThat(findCard)
 			.hasFieldOrPropertyWithValue("amount", 10000 - payment.getPrice());
 
 		assertThat(star)
 			.hasFieldOrPropertyWithValue("count", Short.valueOf("2"));
-		
+
 		verify(storeService).findById(storeId);
 	}
 
@@ -338,7 +338,7 @@ class OrderControllerTest {
 		Card chargeCard = CardObjectProvider.createCard(user);
 		chargeCard.chargeAmount(10000);
 
-		String chargeCardId = cardRepository.save(chargeCard).getId();
+		String chargeCardId = cardRepository.save(chargeCard).getChargeCardId();
 
 		OrderCreateRequest.Item.Option option = new OrderCreateRequest.Item.Option(
 			1, 0, 0, 0,
@@ -356,7 +356,7 @@ class OrderControllerTest {
 		starRepository.save(star);
 
 		OrderCreateRequest.PaymentOption paymentOption = new OrderCreateRequest.PaymentOption(PaymentType.ORDER,
-			coupon.getId(), chargeCardId);
+			coupon.getCouponId(), chargeCardId);
 
 		OrderCreateRequest request = new OrderCreateRequest(user.getId(), storeId, orderItemRequests, paymentOption);
 
@@ -418,12 +418,12 @@ class OrderControllerTest {
 			.hasFieldOrPropertyWithValue("paymentStatus", PaymentStatus.APPROVE)
 			.hasFieldOrPropertyWithValue("order", order);
 
-		Card findCard = cardRepository.findById(chargeCard.getId()).get();
+		Card findCard = cardRepository.findById(chargeCard.getChargeCardId()).get();
 
 		assertThat(findCard)
 			.hasFieldOrPropertyWithValue("amount", 10000 - payment.getPrice());
 
-		Coupon findCoupon = couponRepository.findById(order.getCoupon().getId()).get();
+		Coupon findCoupon = couponRepository.findById(order.getCoupon().getCouponId()).get();
 
 		assertThat(findCoupon)
 			.hasFieldOrPropertyWithValue("used", true);
@@ -455,7 +455,7 @@ class OrderControllerTest {
 		Card chargeCard = CardObjectProvider.createCard(user);
 		chargeCard.chargeAmount(10000);
 
-		String chargeCardId = cardRepository.save(chargeCard).getId();
+		String chargeCardId = cardRepository.save(chargeCard).getChargeCardId();
 
 		OrderCreateRequest.Item.Option option = new OrderCreateRequest.Item.Option(
 			1, 0, 0, 0,
@@ -473,7 +473,7 @@ class OrderControllerTest {
 		starRepository.save(star);
 
 		OrderCreateRequest.PaymentOption paymentOption = new OrderCreateRequest.PaymentOption(PaymentType.ORDER,
-			coupon.getId(), chargeCardId);
+			coupon.getCouponId(), chargeCardId);
 
 		OrderCreateRequest request = new OrderCreateRequest(user.getId(), storeId, orderItemRequests, paymentOption);
 
@@ -535,12 +535,12 @@ class OrderControllerTest {
 			.hasFieldOrPropertyWithValue("paymentStatus", PaymentStatus.APPROVE)
 			.hasFieldOrPropertyWithValue("order", order);
 
-		Card findCard = cardRepository.findById(chargeCard.getId()).get();
+		Card findCard = cardRepository.findById(chargeCard.getChargeCardId()).get();
 
 		assertThat(findCard)
 			.hasFieldOrPropertyWithValue("amount", 10000 - payment.getPrice());
 
-		Coupon findCoupon = couponRepository.findById(order.getCoupon().getId()).get();
+		Coupon findCoupon = couponRepository.findById(order.getCoupon().getCouponId()).get();
 
 		assertThat(findCoupon)
 			.hasFieldOrPropertyWithValue("used", true);
