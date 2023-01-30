@@ -43,9 +43,6 @@ public class DefaultCouponIntegrationServiceTest {
 
 	private final User user = UserObjectProvider.createUser();
 
-	@MockBean
-	private StoreService storeService;
-	
 	@BeforeEach
 	void setUp() {
 		userRepository.save(user);

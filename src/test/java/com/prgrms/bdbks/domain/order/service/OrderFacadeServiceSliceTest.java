@@ -354,7 +354,7 @@ class OrderFacadeServiceSliceTest {
 
 		Long couponId = 1L;
 		Coupon coupon = createCoupon(userId);
-		ReflectionTestUtils.setField(coupon, "couponId", couponId);
+		ReflectionTestUtils.setField(coupon, "id", couponId);
 
 		OrderCreateRequest.Item.Option option = new OrderCreateRequest.Item.Option(
 			1, 0, 0, 0,

@@ -54,9 +54,6 @@ class DefaultCardServiceIntegrationTest {
 
 	private Card card;
 
-	@MockBean
-	private StoreService storeService;
-	
 	@BeforeEach
 	void setUp() {
 		userRepository.save(user);
