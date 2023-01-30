@@ -6,6 +6,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,7 +41,7 @@ public class UserController {
 		}
 	}
 
-	@GetMapping(value = {"/users/{loginId}"})
+	@GetMapping(value = {"/users/{loginId}"}, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserFindResponse> readUser(@PathVariable String loginId) {
 		Optional<User> user = this.userService.findUser(loginId);
 		return user.map(value -> ResponseEntity.ok(userMapper.entityToFindResponse(value)))
@@ -78,5 +79,5 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 	}
-  
+
 }
