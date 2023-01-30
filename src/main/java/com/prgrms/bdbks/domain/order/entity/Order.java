@@ -110,4 +110,12 @@ public class Order extends AbstractTimeColumn {
 		return orderItems.stream().mapToInt(OrderItem::getQuantity).sum();
 	}
 
+	public void accept() {
+		this.orderStatus = OrderStatus.PREPARING;
+	}
+
+	public void reject() {
+		this.orderStatus = OrderStatus.STORE_CANCEL;
+	}
+
 }

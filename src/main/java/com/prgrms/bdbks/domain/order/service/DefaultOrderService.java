@@ -48,4 +48,11 @@ public class DefaultOrderService implements OrderService {
 		return orderRepository.save(newOrder);
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public Order findById(String orderId) {
+		return orderRepository.findById(orderId)
+			.orElseThrow(() -> new EntityNotFoundException(Order.class, orderId));
+	}
+
 }

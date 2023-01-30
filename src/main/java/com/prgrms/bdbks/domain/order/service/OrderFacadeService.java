@@ -95,4 +95,47 @@ public class OrderFacadeService {
 			store.getName(), user.getNickname());
 	}
 
+	// @Transactional
+	// public void acceptOrder(String orderId, Long userId) {
+	// 	User user = userService.findUserById(userId);
+	//
+	// 	Order order = orderService.findById(orderId);
+	//
+	// 	user.getUserAuthorities().filter(it -> it.getStore().getId == order.getStoreId()).findOne().orElseThrows();
+	//
+	// 	boolean hasStore = user.hasStore(storeId);
+	//
+	// 	user.validateStore(storeId);
+	//
+	// 	if (!hasStore) {
+	// 		throw new RuntimeException(;
+	// 	}
+	//
+	// 	order.accept();
+	//
+	// 	starService.createCoupon(userId);
+	// }
+	//
+	// @Transactional
+	// public void rejectOrder(String orderId, Long userId) {
+	// 	User user = userService.findUserById(userId);
+	//
+	// 	Order order = orderService.findById(orderId);
+	//
+	// 	user.getUserAuthorities().filter(it -> it.getStore().getId == order.getStoreId()).findOne().orElseThrows();
+	//
+	// 	boolean hasStore = user.hasStore(storeId);
+	//
+	// 	user.validateStore(storeId);
+	//
+	// 	if (!hasStore) {
+	// 		throw new RuntimeException(;
+	// 	}
+	//
+	// 	order.reject();
+	//
+	// 	// payment 취소
+	// 	// star 취소
+	// }
+
 }

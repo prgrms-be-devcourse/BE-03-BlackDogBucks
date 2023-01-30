@@ -33,11 +33,12 @@ public class OrderController {
 	 * <pre>
 	 *     주문 생성
 	 * </pre>
+	 *
 	 * @param orderCreateRequest
 	 * @return status : created, body : 생성된 주문 단건 조회 redirectUri
 	 */
 	@PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> createOrder(@RequestBody @Valid OrderCreateRequest orderCreateRequest) {
+	public ResponseEntity<OrderCreateResponse> createOrder(@RequestBody @Valid OrderCreateRequest orderCreateRequest) {
 		OrderCreateResponse response = orderService.createOrder(orderCreateRequest);
 
 		String redirectUri =
@@ -50,6 +51,7 @@ public class OrderController {
 	 * <pre>
 	 *     주문 단건 조회
 	 * </pre>
+	 *
 	 * @param orderId - 조회할 주문 id
 	 * @return status : ok, body : OrderDetailResponse
 	 */
@@ -57,5 +59,21 @@ public class OrderController {
 	public ResponseEntity<OrderDetailResponse> findOrderById(@PathVariable String orderId) {
 		return ResponseEntity.ok().body(orderService.findOrderById(orderId));
 	}
+
+	// @PatchMapping(value = "/{orderId}/accept",
+	// 	consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+	// public ResponseEntity<?> acceptOrder(@PathVariable String orderId,
+	// 	@RequestBody @Valid OrderAcceptRequest request
+	// ) {
+	// 	orderService.acceptOrder(orderId, request.getUserId());
+	// }
+	//
+	// @PatchMapping(value = "/{orderId}/reject",
+	// 	consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+	// public ResponseEntity<?> acceptOrder(@PathVariable String orderId,
+	// 	@RequestBody @Valid OrderRejectRequest request
+	// ) {
+	// 	orderService.rejectOrder(orderId, request.getUserId());
+	// }
 
 }
