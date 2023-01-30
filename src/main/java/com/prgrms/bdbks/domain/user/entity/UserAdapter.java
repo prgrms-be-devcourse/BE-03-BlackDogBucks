@@ -23,7 +23,7 @@ public class UserAdapter extends User {
 			user.getNickname(),
 			user.getBirthDate(),
 			user.getPhone(),
-			user.getPhone());
+			user.getEmail());
 
 		this.loginId = user.getLoginId();
 		this.nickname = user.getNickname();

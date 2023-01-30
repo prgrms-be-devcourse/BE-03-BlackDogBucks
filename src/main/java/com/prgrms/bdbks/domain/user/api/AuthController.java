@@ -43,6 +43,7 @@ public class AuthController {
 		if (userService.findUser(userCreateRequest.getLoginId()).isPresent()) {
 			return new ResponseEntity<>("Sign Up Failed", HttpStatus.BAD_REQUEST);
 		} else {
+			userService.register(userCreateRequest);
 			return ResponseEntity.ok("Sign Up Completed");
 		}
 	}

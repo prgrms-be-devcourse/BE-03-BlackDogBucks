@@ -36,9 +36,6 @@ public class UserController {
 
 	@GetMapping(value = {"/me"})
 	public ResponseEntity<String> getMe(@AuthenticationPrincipal CustomUserDetails user) {
-		System.out.println("ID = " + user.getUsername());
-		System.out.println("PW = " + user.getPassword());
-
 		if (user != null) {
 			return ResponseEntity.ok(user.getPassword());
 		} else {

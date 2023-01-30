@@ -41,7 +41,7 @@ public class SecurityConfig {
 			.csrf().disable()
 
 			.authorizeRequests()
-			// .antMatchers("/**").permitAll()
+			.antMatchers("/**").permitAll()
 			// .anyRequest().permitAll()
 			.anyRequest().authenticated()
 			.and()
@@ -58,8 +58,8 @@ public class SecurityConfig {
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
-		return web -> web.ignoring()
-			.antMatchers("/**", "/api/v1/**");
+		return web -> web.ignoring().and();
+		// .antMatchers("/**", "/api/v1/**");
 	}
 
 	@Bean
