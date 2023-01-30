@@ -1,7 +1,5 @@
 package com.prgrms.bdbks.domain.user.entity;
 
-import com.prgrms.bdbks.domain.user.role.Role;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,15 +7,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserAdapter extends User {
 
-	private String loginId;
+	String loginId;
 
-	private String nickname;
+	String nickname;
 
-	private String password;
+	String password;
 
-	private String email;
-
-	private Role role;
+	String email;
 
 	public UserAdapter(User user) {
 
@@ -27,13 +23,11 @@ public class UserAdapter extends User {
 			user.getNickname(),
 			user.getBirthDate(),
 			user.getPhone(),
-			user.getPhone(),
-			user.getRole());
+			user.getPhone());
 
 		this.loginId = user.getLoginId();
 		this.nickname = user.getNickname();
 		this.password = user.getPassword();
 		this.email = user.getEmail();
-		this.role = user.getRole();
 	}
 }
