@@ -8,5 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CardSearchResponses {
+
 	private final List<CardSearchResponse> cardSearchResponses;
+
 }

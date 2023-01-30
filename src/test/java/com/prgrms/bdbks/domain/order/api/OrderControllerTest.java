@@ -125,16 +125,16 @@ class OrderControllerTest {
 		Item icedAmericano = createIcedAmericano(itemCategory);// defaultOption
 		itemRepository.save(icedAmericano);
 
-		Order order = OrderObjectProvider.createOrder();
+		User user = UserObjectProvider.createUser();
+		userRepository.save(user);
+
+		Order order = OrderObjectProvider.createOrder(user.getId());
 		CustomOption customOption = OrderObjectProvider.createCustomOption();
 		OrderItem.create(order, icedAmericano, customOption, 1, new OptionPrice());
 
 		orderRepository.save(order);
 
 		String storeId = order.getStoreId();
-		User user = UserObjectProvider.createUser(order.getUserId());
-		userRepository.save(user);
-
 		Store store = StoreObjectProvider.creatStore(storeId);
 		given(storeService.findById(storeId))
 			.willReturn(store);

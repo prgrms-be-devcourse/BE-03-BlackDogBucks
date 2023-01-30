@@ -9,15 +9,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserAdapter extends User {
 
-	String loginId;
+	private String loginId;
 
-	String nickname;
+	private String nickname;
 
-	String password;
+	private String password;
 
-	String email;
+	private String email;
 
-	Role role;
+	private Role role;
 
 	public UserAdapter(User user) {
 

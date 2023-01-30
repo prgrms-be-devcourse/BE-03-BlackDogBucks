@@ -28,6 +28,15 @@ public class OrderObjectProvider {
 			.build();
 	}
 
+	public static Order createOrder(Long userId) {
+		return Order.builder()
+			.coupon(null)
+			.userId(userId)
+			.storeId("123456789")
+			.orderStatus(OrderStatus.PAYMENT_COMPLETE)
+			.build();
+	}
+
 	public static CustomOption createCustomOption(Integer espressoShotCount, Integer vanillaSyrupCount,
 		Integer classicSyrupCount, Integer hazelnutSyrupCount, BeverageOption.Milk milkType,
 		BeverageOption.Coffee espressoType,

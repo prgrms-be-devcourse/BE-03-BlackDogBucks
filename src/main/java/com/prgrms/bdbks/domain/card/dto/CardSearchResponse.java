@@ -12,4 +12,5 @@ public class CardSearchResponse {
 	private String name;
 
 	private int amount;
+
 }

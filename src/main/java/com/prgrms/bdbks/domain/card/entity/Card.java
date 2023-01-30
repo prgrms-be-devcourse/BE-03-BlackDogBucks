@@ -29,6 +29,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "cards")
 @NoArgsConstructor(access = PROTECTED)
 public class Card extends AbstractTimeColumn {
+
 	public static final int MIN_CHARGE_PRICE = 10000;
 	public static final int MAX_CHARGE_PRICE = 550000;
 

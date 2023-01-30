@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestConstructor;
 
 import com.prgrms.bdbks.domain.coupon.dto.CouponSaveResponse;
@@ -17,6 +18,7 @@ import com.prgrms.bdbks.domain.coupon.dto.CouponSearchResponse;
 import com.prgrms.bdbks.domain.coupon.dto.CouponSearchResponses;
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 import com.prgrms.bdbks.domain.coupon.repository.CouponRepository;
+import com.prgrms.bdbks.domain.store.service.StoreService;
 import com.prgrms.bdbks.domain.testutil.CouponObjectProvider;
 import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
 import com.prgrms.bdbks.domain.user.entity.User;
@@ -38,6 +40,9 @@ public class DefaultCouponIntegrationServiceTest {
 
 	private final User user = UserObjectProvider.createUser();
 
+	@MockBean
+	private StoreService storeService;
+	
 	@BeforeEach
 	void setUp() {
 		userRepository.save(user);

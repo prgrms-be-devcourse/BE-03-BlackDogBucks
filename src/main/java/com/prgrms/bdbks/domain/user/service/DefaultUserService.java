@@ -20,8 +20,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class DefaultUserService implements UserService {
+
 	private final UserRepository userRepository;
+
 	private final PasswordEncoder passwordEncoder;
+
 	private final UserMapper userMapper;
 
 	@Override

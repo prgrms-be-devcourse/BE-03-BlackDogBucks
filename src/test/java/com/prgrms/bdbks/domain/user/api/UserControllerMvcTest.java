@@ -1,4 +1,4 @@
-package com.prgrms.bdbks.domain.user.controller;
+package com.prgrms.bdbks.domain.user.api;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
@@ -24,7 +24,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.prgrms.bdbks.common.exception.DuplicateInsertException;
 import com.prgrms.bdbks.config.security.SecurityConfig;
 import com.prgrms.bdbks.domain.user.converter.UserMapper;
 import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
@@ -33,7 +32,7 @@ import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
 import com.prgrms.bdbks.domain.user.entity.User;
 import com.prgrms.bdbks.domain.user.repository.UserRepository;
 import com.prgrms.bdbks.domain.user.role.Role;
-import com.prgrms.bdbks.domain.user.service.DefaultUserService;
+import com.prgrms.bdbks.domain.user.service.UserService;
 
 @AutoConfigureRestDocs
 @Import(SecurityConfig.class)
@@ -41,7 +40,7 @@ import com.prgrms.bdbks.domain.user.service.DefaultUserService;
 class UserControllerMvcTest {
 
 	private final String USER_API_PATH = "/api/v1/users/";
-	private final String AUTH_API_PATH = "/api/v1/auth/";
+	// private final String AUTH_API_PATH = "/api/v1/auth/";
 
 	private final String USER_LOGIN_ID = "blackdog";
 
@@ -60,13 +59,14 @@ class UserControllerMvcTest {
 	private User emptyUser;
 
 	@MockBean
-	private DefaultUserService defaultUserService;
+	private UserService defaultUserService;
 
 	@MockBean
 	private UserRepository userRepository;
 
 	@MockBean
 	private UserMapper userMapper;
+
 	@MockBean
 	private HttpSession session;
 
@@ -86,7 +86,7 @@ class UserControllerMvcTest {
 		UserCreateRequest userCreateRequest = new UserCreateRequest(USER_LOGIN_ID, USER_PASSWORD, USER_NAME,
 			USER_BIRTH_DATE, USER_PHONE, USER_EMAIL, USER_ROLE);
 
-		mockMvc.perform(post(AUTH_API_PATH + "/signup")
+		mockMvc.perform(post("/api/v1/users/auth/signup")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(userCreateRequest)))
 			.andDo(print())
@@ -107,7 +107,7 @@ class UserControllerMvcTest {
 
 		when(defaultUserService.findUser(userCreateRequest.getLoginId())).thenReturn(Optional.of(emptyUser));
 
-		mockMvc.perform(post(AUTH_API_PATH + "/signup")
+		mockMvc.perform(post("/api/v1/users/auth/signup")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(userCreateRequest)))
 			.andExpect(status().isBadRequest());
@@ -118,8 +118,10 @@ class UserControllerMvcTest {
 	void login_success() throws Exception {
 		UserLoginRequest request = new UserLoginRequest(USER_LOGIN_ID, USER_PASSWORD);
 
-		when(defaultUserService.login(request.getLoginId(), request.getPassword())).thenReturn(Optional.of(emptyUser));
-		mockMvc.perform(post(AUTH_API_PATH + "/login")
+		when(defaultUserService.login(request.getLoginId(), request.getPassword()))
+			.thenReturn(Optional.of(emptyUser));
+
+		mockMvc.perform(post("/api/v1/users/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request))
 				.sessionAttr("user", emptyUser)
@@ -139,7 +141,7 @@ class UserControllerMvcTest {
 
 		when(defaultUserService.login(request.getLoginId(), request.getPassword())).thenReturn(Optional.empty());
 
-		mockMvc.perform(post(AUTH_API_PATH + "/login")
+		mockMvc.perform(post("/api/v1/users/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request))
 				.sessionAttr("user", emptyUser)
@@ -159,9 +161,8 @@ class UserControllerMvcTest {
 		when(defaultUserService.findUser(USER_LOGIN_ID)).thenReturn(Optional.of(emptyUser));
 		when(userMapper.entityToFindResponse(emptyUser)).thenReturn(findResponse);
 
-		mockMvc.perform(get(USER_API_PATH + USER_LOGIN_ID))
+		mockMvc.perform(get("/api/v1/users/users/{loginId}", USER_LOGIN_ID))
 			.andDo(print())
-			.andDo(document("find_user"))
 			.andExpect(status().isOk())
 			.andExpect(content().json(objectMapper.writeValueAsString(findResponse)));
 

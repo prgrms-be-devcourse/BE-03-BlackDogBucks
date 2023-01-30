@@ -10,4 +10,5 @@ public class CardChargeResponse {
 	private final String chargeCardId;
 
 	private final int amount;
+
 }

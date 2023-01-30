@@ -20,30 +20,30 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ItemCreateRequest {
 
-	@NotNull
+	@NotNull(message = "아이템 타입이 선택되지 않았습니다.")
 	private ItemType itemType;
 
-	@NotBlank
+	@NotBlank(message = "아이템 카테고리가 입력되지 않았습니다.")
 	private String categoryName;
 
-	@NotBlank
+	@NotBlank(message = "아이템 이름이 입력되지 않았습니다.")
 	private String name;
 
-	@NotBlank
+	@NotBlank(message = "아이템 영어 이름이 입력되지 않았습니다.")
 	private String englishName;
 
-	@NotNull
-	@Min(0)
+	@NotNull(message = "가격이 입력되지 않았습니다.")
+	@Min(value = 0, message = "가격은 0원 이상이여야합니다.")
 	private Integer price;
 
-	@URL
-	@NotBlank
+	@URL(message = "이미지가 잘못된 url 형식입니다.")
+	@NotBlank(message = "이미지가 입력되지 않았습니다.")
 	private String image;
 
-	@NotBlank
+	@NotBlank(message = "상품 설명이 입력되지않았습니다.")
 	private String description;
 
-	@NotNull
+	@NotNull(message = "아이템 default 옵션이 입력되지않았습니다.")
 	private DefaultOptionCreateRequest defaultOptionRequest;
 
 }
