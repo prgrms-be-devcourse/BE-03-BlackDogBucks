@@ -3,7 +3,6 @@ package com.prgrms.bdbks.domain.testutil;
 import java.time.LocalDateTime;
 
 import com.prgrms.bdbks.domain.user.entity.User;
-import com.prgrms.bdbks.domain.user.role.Role;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -19,7 +18,6 @@ public class UserObjectProvider {
 			.password("password1234")
 			.nickname("이디야화이팅")
 			.phone("01012341234")
-			.role(Role.USER)
 			.build();
 	}
 
@@ -32,7 +30,6 @@ public class UserObjectProvider {
 			.password("password1234")
 			.nickname("이디야화이팅")
 			.phone("01012341234")
-			.role(Role.USER)
 			.build();
 	}
 

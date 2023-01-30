@@ -30,12 +30,13 @@ import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
 import com.prgrms.bdbks.domain.user.dto.UserFindResponse;
 import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
 import com.prgrms.bdbks.domain.user.entity.User;
+import com.prgrms.bdbks.domain.user.jwt.TokenProvider;
 import com.prgrms.bdbks.domain.user.repository.UserRepository;
 import com.prgrms.bdbks.domain.user.role.Role;
 import com.prgrms.bdbks.domain.user.service.UserService;
 
 @AutoConfigureRestDocs
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, TokenProvider.class})
 @WebMvcTest(controllers = UserController.class)
 class UserControllerMvcTest {
 
@@ -48,7 +49,7 @@ class UserControllerMvcTest {
 
 	private final LocalDate USER_BIRTH_DATE = LocalDate.now();
 
-	private final Role USER_ROLE = Role.USER;
+	private final Role USER_ROLE = Role.ROLE_USER;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -84,7 +85,7 @@ class UserControllerMvcTest {
 		String USER_PHONE = "01012341234";
 		String USER_EMAIL = "blackdog@blackdog.com";
 		UserCreateRequest userCreateRequest = new UserCreateRequest(USER_LOGIN_ID, USER_PASSWORD, USER_NAME,
-			USER_BIRTH_DATE, USER_PHONE, USER_EMAIL, USER_ROLE);
+			USER_BIRTH_DATE, USER_PHONE, USER_EMAIL);
 
 		mockMvc.perform(post("/api/v1/users/auth/signup")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -103,7 +104,7 @@ class UserControllerMvcTest {
 		String USER_PHONE = "01012341234";
 		String USER_EMAIL = "blackdog@blackdog.com";
 		UserCreateRequest userCreateRequest = new UserCreateRequest(USER_LOGIN_ID, USER_PASSWORD, USER_NAME,
-			USER_BIRTH_DATE, USER_PHONE, USER_EMAIL, USER_ROLE);
+			USER_BIRTH_DATE, USER_PHONE, USER_EMAIL);
 
 		when(defaultUserService.findUser(userCreateRequest.getLoginId())).thenReturn(Optional.of(emptyUser));
 
