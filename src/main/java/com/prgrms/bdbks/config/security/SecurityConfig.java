@@ -8,10 +8,32 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.prgrms.bdbks.domain.user.jwt.JwtAccessDeniedHandler;
+import com.prgrms.bdbks.domain.user.jwt.JwtAuthenticationEntryPoint;
+import com.prgrms.bdbks.domain.user.jwt.JwtAuthenticationFilter;
+import com.prgrms.bdbks.domain.user.jwt.JwtSecurityConfig;
+import com.prgrms.bdbks.domain.user.jwt.TokenProvider;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+	private final TokenProvider tokenProvider;
+
+	@Bean
+	public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
+		return new JwtAuthenticationEntryPoint();
+	}
+
+	@Bean
+	public JwtAccessDeniedHandler jwtAccessDeniedHandler() {
+		return new JwtAccessDeniedHandler();
+	}
 
 	@Bean
 	public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
@@ -19,9 +41,18 @@ public class SecurityConfig {
 			.csrf().disable()
 
 			.authorizeRequests()
-			.antMatchers("/**").permitAll()
-			.anyRequest().permitAll()
+			// .antMatchers("/**").permitAll()
+			// .anyRequest().permitAll()
+			.anyRequest().authenticated()
 			.and()
+			.exceptionHandling()
+			.authenticationEntryPoint(jwtAuthenticationEntryPoint())
+			.accessDeniedHandler(jwtAccessDeniedHandler())
+			.and()
+			.apply(new JwtSecurityConfig(tokenProvider))
+			.and()
+
+			.addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
 			.build();
 	}
 

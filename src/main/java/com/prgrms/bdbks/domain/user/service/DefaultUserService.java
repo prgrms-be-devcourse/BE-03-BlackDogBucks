@@ -33,7 +33,7 @@ public class DefaultUserService implements UserService {
 		User user = userMapper.createRequestToEntity(userCreateRequest);
 		user.changePassword(this.passwordEncoder.encode(user.getPassword()));
 		if (!this.userRepository.existsByLoginId(user.getLoginId())) {
-			return new UserAdapter(this.userRepository.save(user));
+			return this.userRepository.save(user);
 		} else {
 			throw new DuplicateInsertException(String.format("이미 등록된 사용자 아이디 입니다. (%s)", user.getLoginId()));
 		}

@@ -7,8 +7,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.prgrms.bdbks.domain.user.role.Role;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,7 +37,5 @@ public class UserCreateRequest {
 	@NotNull(message = "이메일은 필수 입력사항입니다.")
 	@Email(message = "이메일 형식을 확인해주세요.")
 	private String email;
-
-	private Role role;
 
 }

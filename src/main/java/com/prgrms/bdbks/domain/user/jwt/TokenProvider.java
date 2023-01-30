@@ -12,12 +12,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import com.prgrms.bdbks.common.exception.AuthorityNotFoundException;
 import com.prgrms.bdbks.common.exception.JwtValidateException;
 import com.prgrms.bdbks.config.jwt.JwtConfigure;
 import com.prgrms.bdbks.domain.user.entity.User;
+import com.prgrms.bdbks.domain.user.service.AuthService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -34,6 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class TokenProvider {
 
+	private final AuthService authService;
+
 	private final String authoritiesKey;
 
 	private final Key key;
@@ -42,10 +46,9 @@ public class TokenProvider {
 
 	private final JwtConfigure jwtConfigure;
 
-	private org.springframework.security.core.userdetails.User principal;
-
-	public TokenProvider(JwtConfigure jwtConfigure) {
+	public TokenProvider(JwtConfigure jwtConfigure, AuthService authService) {
 		this.jwtConfigure = jwtConfigure;
+		this.authService = authService;
 
 		checkNotNull(jwtConfigure.getSecret(), "비밀키는 null일 수 없습니다.");
 		checkArgument(jwtConfigure.getTokenValidityInSeconds() > 0, "유효시간은 0보다 커야 합니다.");
@@ -57,15 +60,16 @@ public class TokenProvider {
 		this.tokenValidityInSeconds = jwtConfigure.getTokenValidityInSeconds();
 	}
 
-	public String generateToken(Authentication authentication, User user) {
-		List<String> authorities = authentication.getAuthorities().stream()
+	public String generateToken(User user) {
+		List<String> authorities = user.getAuthorities()
+			.stream()
 			.map(GrantedAuthority::getAuthority)
 			.collect(Collectors.toList());
 
 		Date validity = new Date(new Date().getTime() + tokenValidityInSeconds);
 
 		return Jwts.builder()
-			.setSubject(authentication.getName())
+			.setSubject(user.getLoginId())
 			.claim(authoritiesKey, authorities)
 			.claim("email", user.getEmail())
 			.signWith(key, SignatureAlgorithm.HS512)
@@ -91,9 +95,9 @@ public class TokenProvider {
 				roles.stream().map(SimpleGrantedAuthority::new)
 					.collect(Collectors.toList());
 
-			principal = new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities);
+			UserDetails userDetails = authService.loadUserByUsername(claims.getSubject());
 
-			return new UsernamePasswordAuthenticationToken(principal, accessToken, authorities);
+			return new UsernamePasswordAuthenticationToken(userDetails, accessToken, authorities);
 		}
 	}
 
