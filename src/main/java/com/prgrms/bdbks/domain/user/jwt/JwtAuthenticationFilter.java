@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -23,6 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final TokenProvider tokenProvider;
+
+	public static final String AUTHENTICATION_TYPE_PREFIX = "Bearer ";
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
@@ -42,11 +45,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	}
 
 	private String resolveToken(HttpServletRequest request) {
-		String bearerToken = request.getHeader("Authorization");
+		String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
 
 		return Optional.of(bearerToken)
 			.filter(t -> StringUtils.hasText(bearerToken))
-			.filter(t -> t.startsWith("Bearer "))
+			.filter(t -> t.startsWith(AUTHENTICATION_TYPE_PREFIX))
 			.map(t -> t.substring(7))
 			.orElseThrow(() ->
 				new JwtValidateException("유효한 형식의 JWT 토큰이 아닙니다."));

@@ -1,6 +1,6 @@
 package com.prgrms.bdbks.domain.user.api;
 
-import java.util.Optional;
+import static com.prgrms.bdbks.domain.user.jwt.JwtAuthenticationFilter.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -43,30 +43,13 @@ public class AuthController {
 		if (userService.findUser(userCreateRequest.getLoginId()).isPresent()) {
 			return new ResponseEntity<>("Sign Up Failed", HttpStatus.BAD_REQUEST);
 		} else {
-			return null;
+			return ResponseEntity.ok("Sign Up Completed");
 		}
-	}
-
-	@PostMapping(value = {"/login"})
-	public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest request, HttpSession session) {
-		Optional<User> user = userService.login(request.getLoginId(), request.getPassword());
-		if (user.isPresent()) {
-			session.setAttribute("user", user.get());
-			return new ResponseEntity<>("Login Succeeded", HttpStatus.OK);
-		}
-		return new ResponseEntity<>("Login Failed", HttpStatus.UNAUTHORIZED);
 	}
 
 	@PostMapping(value = {"/logout"})
 	public ResponseEntity<Void> logout(HttpSession session) {
-		User user = (User)session.getAttribute("user");
-		if (user != null) {
-			session.removeAttribute("user");
-			session.invalidate();
-			return ResponseEntity.noContent().build();
-		} else {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-		}
+		return ResponseEntity.noContent().build();
 	}
 
 	@PostMapping("/login")
@@ -79,11 +62,11 @@ public class AuthController {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		User user = userService.findUser(loginRequest.getLoginId())
-			.orElseThrow(() -> new UsernameNotFoundException("사용자가 없습니다."));
+			.orElseThrow(() -> new UsernameNotFoundException("잘못된 사용자 정보입니다."));
 		String jwt = tokenProvider.generateToken(user);
 
 		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add("Authorization", "Bearer " + jwt);
+		httpHeaders.add(HttpHeaders.AUTHORIZATION, AUTHENTICATION_TYPE_PREFIX + jwt);
 
 		return new ResponseEntity<>(new TokenResponse(jwt), httpHeaders, HttpStatus.OK);
 	}
