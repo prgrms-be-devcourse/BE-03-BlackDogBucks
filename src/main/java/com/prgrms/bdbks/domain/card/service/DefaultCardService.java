@@ -10,10 +10,14 @@ import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.domain.card.converter.CardMapper;
 import com.prgrms.bdbks.domain.card.dto.CardChargeResponse;
 import com.prgrms.bdbks.domain.card.dto.CardPayResponse;
+import com.prgrms.bdbks.domain.card.dto.CardSaveRequest;
+import com.prgrms.bdbks.domain.card.dto.CardSaveResponse;
 import com.prgrms.bdbks.domain.card.dto.CardSearchResponse;
 import com.prgrms.bdbks.domain.card.dto.CardSearchResponses;
 import com.prgrms.bdbks.domain.card.entity.Card;
 import com.prgrms.bdbks.domain.card.repository.CardRepository;
+import com.prgrms.bdbks.domain.user.entity.User;
+import com.prgrms.bdbks.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,12 +27,25 @@ import lombok.RequiredArgsConstructor;
 public class DefaultCardService implements CardService {
 
 	private final CardRepository cardRepository;
+	private final UserRepository userRepository;
 	private final CardMapper cardMapper;
 
 	@Override
 	@Transactional
+	public CardSaveResponse create(Long userId, CardSaveRequest cardSaveRequest) {
+		User findUser = userRepository.findById(userId)
+			.orElseThrow(() -> new EntityNotFoundException(User.class, userId));
+
+		Card card = Card.createCard(findUser, cardSaveRequest.getName());
+
+		cardRepository.save(card);
+
+		return cardMapper.toCardSaveResponse(card);
+	}
+
+	@Override
+	@Transactional
 	public CardChargeResponse charge(Long userId, String cardId, int amount) {
-		//TODO 5만원 이상 충전 시 쿠폰 생성로직 추가(FACADE)
 		Card card = cardRepository.findById(cardId)
 			.orElseThrow(() -> new EntityNotFoundException(Card.class, cardId));
 
@@ -50,15 +67,19 @@ public class DefaultCardService implements CardService {
 	}
 
 	@Override
-	public Card findByCardId(String cardId) {
-		return cardRepository.findById(cardId)
+	public CardSearchResponse findByCardId(String cardId) {
+		Card card = cardRepository.findById(cardId)
 			.orElseThrow(() -> new EntityNotFoundException(Card.class, cardId));
+
+		return cardMapper.toCardSearchResponse(card);
 	}
 
 	@Override
 	@Transactional
 	public CardPayResponse pay(Long userId, String cardId, int totalPrice) {
-		Card card = findByCardId(cardId);
+		Card card = cardRepository.findById(cardId)
+			.orElseThrow(() -> new EntityNotFoundException(Card.class, cardId));
+
 		card.compareUser(userId);
 		card.payAmount(totalPrice);
 
