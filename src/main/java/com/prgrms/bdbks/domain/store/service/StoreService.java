@@ -12,7 +12,7 @@ public interface StoreService {
 
 	Store findByUserId(Long userId);
 
-  StoreResponse.Information findStoreById(String storeId);
+	StoreResponse.Information findStoreById(String storeId);
 
 	String createStore(StoreCreateRequest storeCreateRequest);
 
@@ -21,8 +21,6 @@ public interface StoreService {
 	List<StoreResponse.Information> findAllByPoint(double latitude, double longitude);
 
 	boolean existsById(String storeId);
-
-	Store findByUserId(long userId);
 
 	Store findByLoginId(String loginId);
 
