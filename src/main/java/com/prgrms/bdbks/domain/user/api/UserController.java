@@ -3,6 +3,7 @@ package com.prgrms.bdbks.domain.user.api;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,14 +28,28 @@ public class UserController {
 
 	private final UserMapper userMapper;
 
-	@GetMapping(value = {"/users/{loginId}"})
+	/**
+	 * <pre>
+	 *     로그인
+	 * </pre>
+	 * @param loginId - 조회할 회원의 loginId
+	 * @return status : ok , body : UserFindResponse
+	 */
+	@GetMapping(value = "/{loginId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserFindResponse> readUser(@PathVariable String loginId) {
 		Optional<User> user = this.userService.findUser(loginId);
 		return user.map(value -> ResponseEntity.ok(userMapper.entityToFindResponse(value)))
 			.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 
-	@GetMapping(value = {"/me"})
+	/**
+	 * <pre>
+	 *     본인 정보 조회
+	 * </pre>
+	 * @param user
+	 * @return status : ok , body : UserFindResponse
+	 */
+	@GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getMe(@AuthenticationPrincipal CustomUserDetails user) {
 		if (user != null) {
 			return ResponseEntity.ok(user.getPassword());

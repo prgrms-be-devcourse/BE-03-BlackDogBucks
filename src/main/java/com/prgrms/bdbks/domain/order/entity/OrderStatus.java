@@ -1,5 +1,10 @@
 package com.prgrms.bdbks.domain.order.entity;
 
+import java.util.Arrays;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import lombok.Getter;
 
 @Getter
@@ -17,5 +22,14 @@ public enum OrderStatus {
 	OrderStatus(String korStatus) {
 		this.korStatus = korStatus;
 	}
+
+	@JsonCreator
+	public static OrderStatus orderStatus(String status) {
+		return Arrays.stream(values())
+			.filter(it -> Objects.equals(it.name(), status.toUpperCase()))
+			.findFirst()
+			.orElseThrow();
+	}
+
 }
 

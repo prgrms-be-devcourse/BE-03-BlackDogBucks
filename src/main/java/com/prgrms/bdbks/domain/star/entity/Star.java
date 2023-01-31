@@ -36,10 +36,10 @@ public class Star extends AbstractTimeColumn {
 	private User user;
 
 	@Column(nullable = false)
-	private short count;
+	private int count;
 
 	@Builder
-	protected Star(User user, short count) {
+	protected Star(User user, int count) {
 		validateCount(count);
 		validateUser(user);
 		this.user = user;
@@ -54,8 +54,13 @@ public class Star extends AbstractTimeColumn {
 		checkNotNull(user, "유저 정보를 입력해주세요");
 	}
 
-	public void updateCount(int itemCount) {
-		this.count += itemCount;
+	public void increaseCount() {
+		this.count += 1;
+	}
+
+	public void decreaseCount() {
+		this.count -= 1;
+		validateCount(count);
 	}
 
 	public int exchangeCoupon() {
