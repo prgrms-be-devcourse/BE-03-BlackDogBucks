@@ -31,8 +31,8 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends AbstractTimeColumn {
 
-	private static final String numberRegex = "[0-9]+";
-	private static final String emailRegex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+	private static final String NUMBER_REGEX = "[0-9]+";
+	private static final String EMAIL_REGEX = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
 
 	@Id
 	@Column(name = "user_id")
@@ -104,12 +104,12 @@ public class User extends AbstractTimeColumn {
 	private void validatePhone(String phone) {
 		checkArgument(StringUtils.hasText(phone), "핸드폰 번호를 입력해주세요.");
 		checkArgument(phone.length() == 11, "핸드폰 번호를 확인해주세요.");
-		checkArgument(phone.matches(numberRegex), "숫자를 입력해주세요.");
+		checkArgument(phone.matches(NUMBER_REGEX), "숫자를 입력해주세요.");
 	}
 
 	private void validateEmail(String email) {
 		checkArgument(StringUtils.hasText(email), "이메일을 입력해주세요.");
-		checkArgument(email.matches(emailRegex));
+		checkArgument(email.matches(EMAIL_REGEX));
 	}
 
 	private void validateAuthority(Role role) {

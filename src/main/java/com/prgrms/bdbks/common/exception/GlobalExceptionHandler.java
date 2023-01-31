@@ -41,9 +41,11 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
 	public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
 		MethodArgumentTypeMismatchException e, HttpServletRequest request) {
+
 		ErrorResponse errorResponse = ErrorResponse.badRequest(e.getParameter().getParameterName(),
 			request.getRequestURI(),
 			List.of(new FieldError(e.getName(), Objects.requireNonNull(e.getValue()).toString(), e.getMessage())));
+		
 		return ResponseEntity.badRequest().body(errorResponse);
 	}
 
@@ -57,8 +59,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ConstraintViolationException.class)
 	protected ResponseEntity<ErrorResponse> handleConstraintViolationException(
-		HttpServletRequest request,
-		ConstraintViolationException e) {
+		HttpServletRequest request, ConstraintViolationException e) {
 
 		return ResponseEntity.badRequest()
 			.body(ErrorResponse.badRequest(e.getMessage(), request.getRequestURI()
@@ -66,8 +67,8 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(RuntimeException.class)
-	public ResponseEntity<ErrorResponse> handleRuntimeException(HttpServletRequest request,
-		SQLIntegrityConstraintViolationException e) {
+	public ResponseEntity<ErrorResponse> handleRuntimeException(
+		HttpServletRequest request, SQLIntegrityConstraintViolationException e) {
 
 		return ResponseEntity.badRequest()
 			.body(ErrorResponse.badRequest(e.getMessage(), request.getRequestURI()));
@@ -75,8 +76,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(IllegalArgumentException.class)
 	protected ResponseEntity<ErrorResponse> handleIllegalArgumentException(
-		HttpServletRequest request,
-		IllegalArgumentException e) {
+		HttpServletRequest request, IllegalArgumentException e) {
 
 		return ResponseEntity.badRequest()
 			.body(ErrorResponse.badRequest(e.getMessage(), request.getRequestURI()));
@@ -84,8 +84,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
-		HttpServletRequest request,
-		MethodArgumentNotValidException e) {
+		HttpServletRequest request, MethodArgumentNotValidException e) {
 
 		return ResponseEntity.badRequest().body(ErrorResponse.badRequest(
 			e.getMessage(), request.getRequestURI(),
@@ -95,8 +94,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(InvalidFormatException.class)
 	protected ResponseEntity<ErrorResponse> handleInvalidFormatException(
-		HttpServletRequest request,
-		InvalidFormatException e) {
+		HttpServletRequest request, InvalidFormatException e) {
 
 		return ResponseEntity.badRequest()
 			.body(ErrorResponse.badRequest(e.getMessage(), request.getRequestURI()));

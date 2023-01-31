@@ -6,8 +6,4 @@ public class DuplicateInsertException extends DuplicateException {
 		super(message);
 	}
 
-	public DuplicateInsertException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
 }

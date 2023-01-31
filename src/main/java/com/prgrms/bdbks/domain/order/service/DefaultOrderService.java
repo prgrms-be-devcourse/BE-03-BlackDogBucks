@@ -41,6 +41,7 @@ public class DefaultOrderService implements OrderService {
 	@Override
 	public Order createOrder(Coupon coupon, Long userId, String storeId, List<CustomItem> customItems) {
 		Order newOrder = Order.create(coupon, userId, storeId);
+
 		customItems.forEach(it ->
 			OrderItem.create(newOrder, it.getItem(), it.getCustomOption(), it.getQuantity(), optionPrice));
 

@@ -40,7 +40,6 @@ import com.prgrms.bdbks.domain.order.dto.OrderDetailResponse;
 import com.prgrms.bdbks.domain.order.entity.CustomOption;
 import com.prgrms.bdbks.domain.order.entity.Order;
 import com.prgrms.bdbks.domain.order.entity.OrderItem;
-import com.prgrms.bdbks.domain.payment.dto.OrderPayment;
 import com.prgrms.bdbks.domain.payment.entity.PaymentType;
 import com.prgrms.bdbks.domain.payment.model.PaymentResult;
 import com.prgrms.bdbks.domain.payment.service.PaymentFacadeService;
@@ -248,8 +247,6 @@ class OrderFacadeServiceSliceTest {
 
 		OrderCreateRequest request = new OrderCreateRequest(userId, storeId, orderItemRequests, paymentOption);
 
-		OrderPayment orderPayment = new OrderPayment(order, request.getPaymentOption().getChargeCardId(),
-			request.getPaymentOption().getPaymentType());
 		Item icedAmericano = createIcedAmericano();
 
 		CustomOption customOption = createCustomOption(option);
@@ -264,7 +261,7 @@ class OrderFacadeServiceSliceTest {
 			.willReturn(customItems);
 		given(orderService.createOrder(null, userId, storeId, customItems))
 			.willReturn(order);
-		given(paymentFacadeService.orderPay(orderPayment))
+		given(paymentFacadeService.orderPay(any()))
 			.willThrow(PaymentException.class);
 
 		//when
@@ -274,7 +271,7 @@ class OrderFacadeServiceSliceTest {
 		//then
 		verify(storeService).findById(request.getStoreId());
 		verify(userService).findUserById(request.getUserId());
-		verify(paymentFacadeService).orderPay(orderPayment);
+		verify(paymentFacadeService).orderPay(any());
 		verify(itemService).customItems(request.getOrderItems());
 		verify(orderService).createOrder(null, userId, storeId, customItems);
 	}
@@ -371,9 +368,6 @@ class OrderFacadeServiceSliceTest {
 
 		OrderCreateRequest request = new OrderCreateRequest(userId, storeId, orderItemRequests, paymentOption);
 
-		OrderPayment orderPayment = new OrderPayment(order, request.getPaymentOption().getChargeCardId(),
-			request.getPaymentOption().getPaymentType());
-
 		PaymentResult paymentResult = new PaymentResult("paymentID");
 
 		Item icedAmericano = createIcedAmericano();
@@ -392,7 +386,7 @@ class OrderFacadeServiceSliceTest {
 			.willReturn(user);
 		given(couponService.getCouponByCouponId(couponId))
 			.willReturn(coupon);
-		given(paymentFacadeService.orderPay(orderPayment))
+		given(paymentFacadeService.orderPay(any()))
 			.willReturn(paymentResult);
 
 		//when
@@ -404,7 +398,7 @@ class OrderFacadeServiceSliceTest {
 		verify(storeService).findById(request.getStoreId());
 		verify(userService).findUserById(request.getUserId());
 		verify(couponService).getCouponByCouponId(couponId);
-		verify(paymentFacadeService).orderPay(orderPayment);
+		verify(paymentFacadeService).orderPay(any());
 		verify(itemService).customItems(request.getOrderItems());
 		verify(orderService).createOrder(coupon, userId, storeId, customItems);
 	}
@@ -432,9 +426,6 @@ class OrderFacadeServiceSliceTest {
 			null, chargeCardId);
 		OrderCreateRequest request = new OrderCreateRequest(userId, storeId, orderItemRequests, paymentOption);
 
-		OrderPayment orderPayment = new OrderPayment(order, request.getPaymentOption().getChargeCardId(),
-			request.getPaymentOption().getPaymentType());
-
 		PaymentResult paymentResult = new PaymentResult("paymentID");
 
 		Item icedAmericano = createIcedAmericano();
@@ -451,10 +442,10 @@ class OrderFacadeServiceSliceTest {
 			.willReturn(order);
 		given(userService.findUserById(request.getUserId()))
 			.willReturn(user);
-		given(paymentFacadeService.orderPay(orderPayment))
+		given(paymentFacadeService.orderPay(any()))
 			.willReturn(paymentResult);
 
-		doNothing().when(starService).updateCount(userId, order.getTotalQuantity());
+		doNothing().when(starService).increaseCount(userId);
 
 		//when
 		OrderCreateResponse response = orderFacadeService.createOrder(request);
@@ -466,10 +457,10 @@ class OrderFacadeServiceSliceTest {
 
 		verify(storeService).findById(request.getStoreId());
 		verify(userService).findUserById(request.getUserId());
-		verify(paymentFacadeService).orderPay(orderPayment);
+		verify(paymentFacadeService).orderPay(any());
 		verify(itemService).customItems(request.getOrderItems());
 		verify(orderService).createOrder(null, userId, storeId, customItems);
-		verify(starService).updateCount(userId, order.getTotalQuantity());
+		verify(starService).increaseCount(userId);
 	}
 
 }

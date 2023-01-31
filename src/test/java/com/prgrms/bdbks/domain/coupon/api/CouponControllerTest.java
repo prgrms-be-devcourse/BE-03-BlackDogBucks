@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 import com.prgrms.bdbks.domain.coupon.repository.CouponRepository;
+import com.prgrms.bdbks.domain.store.service.StoreService;
 import com.prgrms.bdbks.domain.user.entity.User;
 import com.prgrms.bdbks.domain.user.repository.UserRepository;
 
@@ -40,6 +42,8 @@ import lombok.RequiredArgsConstructor;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 class CouponControllerTest {
+
+	private static final String BASE_REQUEST_URI = "/api/v1/coupons";
 
 	private final HttpSession httpSession;
 
@@ -55,6 +59,9 @@ class CouponControllerTest {
 
 	private List<Coupon> coupons;
 
+	@MockBean
+	private StoreService storeService;
+
 	@BeforeEach
 	void setUp() {
 		user = createUser();
@@ -68,13 +75,13 @@ class CouponControllerTest {
 	@Test
 	void findUnusedCoupon_ValidUser_Success() throws Exception {
 
-		mockMvc.perform(get("/api/v1/coupons/detail")
+		mockMvc.perform(get(BASE_REQUEST_URI + "/detail")
 				.param("used", "false")
 				.sessionAttr("user", user)
 				.accept(APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.couponSearchResponses").exists())
-			.andExpect(jsonPath("$.couponSearchResponses[0].couponId").value(coupons.get(0).getCouponId()))
+			.andExpect(jsonPath("$.couponSearchResponses[0].id").value(coupons.get(0).getId()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].userId").value(coupons.get(0).getUserId()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].name").value(coupons.get(0).getName()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].price").value(coupons.get(0).getPrice()))
@@ -94,7 +101,7 @@ class CouponControllerTest {
 						.description("쿠폰 소유자 Id"),
 					fieldWithPath("couponSearchResponses.[].name").type(JsonFieldType.STRING).description("쿠폰 이름"),
 					fieldWithPath("couponSearchResponses.[].price").type(JsonFieldType.NUMBER).description("쿠폰 할인 가격"),
-					fieldWithPath("couponSearchResponses.[].expireDate").type(JsonFieldType.ARRAY)
+					fieldWithPath("couponSearchResponses.[].expireDate").type(JsonFieldType.STRING)
 						.description("쿠폰 만료일"),
 					fieldWithPath("couponSearchResponses.[].used").type(JsonFieldType.BOOLEAN).description("쿠폰 사용 여부")
 				)
@@ -104,12 +111,12 @@ class CouponControllerTest {
 	@DisplayName("findAll - 사용자의 모든 쿠폰을 조회한다. - 성공")
 	@Test
 	void findAll_ValidUser_Success() throws Exception {
-		mockMvc.perform(get("/api/v1/coupons")
+		mockMvc.perform(get(BASE_REQUEST_URI)
 				.sessionAttr("user", user)
 				.accept(APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.couponSearchResponses").exists())
-			.andExpect(jsonPath("$.couponSearchResponses[0].couponId").value(coupons.get(0).getCouponId()))
+			.andExpect(jsonPath("$.couponSearchResponses[0].id").value(coupons.get(0).getId()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].userId").value(coupons.get(0).getUserId()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].name").value(coupons.get(0).getName()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].price").value(coupons.get(0).getPrice()))
@@ -125,10 +132,11 @@ class CouponControllerTest {
 						.description("쿠폰 소유자 Id"),
 					fieldWithPath("couponSearchResponses.[].name").type(JsonFieldType.STRING).description("쿠폰 이름"),
 					fieldWithPath("couponSearchResponses.[].price").type(JsonFieldType.NUMBER).description("쿠폰 할인 가격"),
-					fieldWithPath("couponSearchResponses.[].expireDate").type(JsonFieldType.ARRAY)
+					fieldWithPath("couponSearchResponses.[].expireDate").type(JsonFieldType.STRING)
 						.description("쿠폰 만료일"),
 					fieldWithPath("couponSearchResponses.[].used").type(JsonFieldType.BOOLEAN).description("쿠폰 사용 여부")
 				)
 			));
 	}
+
 }

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ import com.prgrms.bdbks.domain.payment.entity.PaymentStatus;
 import com.prgrms.bdbks.domain.payment.entity.PaymentType;
 import com.prgrms.bdbks.domain.payment.model.PaymentResult;
 import com.prgrms.bdbks.domain.payment.repository.PaymentRepository;
+import com.prgrms.bdbks.domain.store.service.StoreService;
 import com.prgrms.bdbks.domain.testutil.OrderObjectProvider;
 import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
 import com.prgrms.bdbks.domain.user.entity.User;
@@ -49,7 +51,10 @@ public class DefaultPaymentServiceIntegrationTest {
 	private Card card;
 
 	private final Order order = OrderObjectProvider.createOrder();
-	
+
+	@MockBean
+	private StoreService storeService;
+
 	@BeforeEach
 	void setUp() {
 		userRepository.save(user);
@@ -64,7 +69,7 @@ public class DefaultPaymentServiceIntegrationTest {
 	@DisplayName("chargePay - 사용자의 충전카드에 금액을 충전할 수 있다. - 성공")
 	void chargePay_ValidPrice_Success(int totalPrice) {
 		//when
-		PaymentResult paymentResult = paymentService.chargePay(card.getId(), totalPrice);
+		PaymentResult paymentResult = paymentService.chargePay(card.getChargeCardId(), totalPrice);
 
 		//then
 		Optional<Payment> optionalPayment = paymentRepository.findById(paymentResult.getPaymentId());
@@ -74,9 +79,9 @@ public class DefaultPaymentServiceIntegrationTest {
 
 		assertThat(savedPayment)
 			.hasFieldOrPropertyWithValue("id", paymentResult.getPaymentId())
-			.hasFieldOrPropertyWithValue("chargeCardId", card.getId())
-			.hasFieldOrPropertyWithValue("paymentStatus",PaymentStatus.APPROVE)
-			.hasFieldOrPropertyWithValue("paymentType",PaymentType.CHARGE);
+			.hasFieldOrPropertyWithValue("chargeCardId", card.getChargeCardId())
+			.hasFieldOrPropertyWithValue("paymentStatus", PaymentStatus.APPROVE)
+			.hasFieldOrPropertyWithValue("paymentType", PaymentType.CHARGE);
 	}
 
 	@ParameterizedTest
@@ -84,6 +89,6 @@ public class DefaultPaymentServiceIntegrationTest {
 	@DisplayName("chargePay - 사용자의 충전카드에 한도를 벗어나는 금액은 충전할 수 없다. - 실패")
 	void chargePay_InvalidPrice_Success(int totalPrice) {
 
-		assertThrows(PaymentException.class, () -> paymentService.chargePay(card.getId(), totalPrice));
+		assertThrows(PaymentException.class, () -> paymentService.chargePay(card.getChargeCardId(), totalPrice));
 	}
 }

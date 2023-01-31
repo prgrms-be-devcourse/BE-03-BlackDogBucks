@@ -7,8 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CouponSearchResponses {
+public class CouponSaveResponses {
 
-	private List<CouponSearchResponse> couponSearchResponses;
-
+	private List<CouponSaveResponse> couponSaveResponses;
 }

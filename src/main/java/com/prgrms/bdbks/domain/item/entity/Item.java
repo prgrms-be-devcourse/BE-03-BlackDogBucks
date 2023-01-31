@@ -18,7 +18,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.springframework.util.StringUtils;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
-import com.prgrms.bdbks.global.util.UrlValidator;
+import com.prgrms.bdbks.common.util.UrlValidator;
 
 import lombok.AccessLevel;
 import lombok.Builder;

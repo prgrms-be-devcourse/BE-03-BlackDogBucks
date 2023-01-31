@@ -1,4 +1,4 @@
-package com.prgrms.bdbks.domain.user.controller;
+package com.prgrms.bdbks.domain.user.api;
 
 import java.util.Optional;
 
@@ -28,7 +28,9 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 public class UserController {
+
 	private final UserService userService;
+
 	private final UserMapper userMapper;
 
 	@PostMapping(value = {"/auth/signup"})

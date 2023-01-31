@@ -53,7 +53,7 @@ public class DefaultCardServiceSliceTest {
 		verify(cardRepository).findById(cardId);
 
 		assertThat(response)
-			.hasFieldOrPropertyWithValue("cardId", cardChargeRequest.getCardId())
+			.hasFieldOrPropertyWithValue("chargeCardId", cardChargeRequest.getChargeCardId())
 			.hasFieldOrPropertyWithValue("amount", cardChargeRequest.getAmount());
 	}
 }

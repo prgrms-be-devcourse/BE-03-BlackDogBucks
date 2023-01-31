@@ -1,19 +1,20 @@
 package com.prgrms.bdbks.domain.coupon.service;
 
-import java.util.Optional;
-
 import com.prgrms.bdbks.domain.coupon.dto.CouponSaveResponse;
+import com.prgrms.bdbks.domain.coupon.dto.CouponSaveResponses;
 import com.prgrms.bdbks.domain.coupon.dto.CouponSearchResponses;
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 
 public interface CouponService {
+
 	CouponSaveResponse create(Long userId);
 
-	CouponSearchResponses findAllByUserId(Long userId);
+	CouponSaveResponses createByStar(Long userId, int couponCount);
 
-	Optional<Coupon> getOptionalCouponByCouponId(Long couponId);
+	CouponSearchResponses findAllByUserId(Long userId);
 
 	Coupon getCouponByCouponId(Long couponId);
 
 	CouponSearchResponses findUnusedCoupon(Long userId, boolean used);
+
 }

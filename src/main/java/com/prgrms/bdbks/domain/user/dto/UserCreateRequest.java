@@ -41,4 +41,5 @@ public class UserCreateRequest {
 	private String email;
 
 	private Role role;
+
 }
