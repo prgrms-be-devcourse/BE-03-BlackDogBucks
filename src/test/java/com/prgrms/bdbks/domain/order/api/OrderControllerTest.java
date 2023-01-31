@@ -333,7 +333,7 @@ class OrderControllerTest {
 
 	}
 
-	@DisplayName("주문 생성 - 쿠폰을 사용하면 주문금액을 쿠폰 금액만큼 감소시키고 주문 금액이 이원이여도 주문을 정상 생성한다.")
+	@DisplayName("주문 생성 - 쿠폰을 사용하면 주문금액을 쿠폰 금액만큼 감소시키고 주문 금액이 0원이여도 주문을 정상 생성한다.")
 	@Test
 	void createOrder_useCouponPriceThen0_Success() throws Exception {
 		//given
