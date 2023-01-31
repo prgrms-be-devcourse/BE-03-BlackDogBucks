@@ -19,9 +19,7 @@ public class Location {
 		this.longitude = longitude;
 
 		try {
-			this.point = (Point)new WKTReader().read(
-				String.format("POINT(%f %f)", latitude, longitude)
-			);
+			this.point = (Point)new WKTReader().read(String.format("POINT(%f %f)", latitude, longitude));
 		} catch (ParseException e) {
 			throw new PointParseException(String.format("위경도 파싱에 실패했습니다. %s,%s", latitude, longitude));
 		}

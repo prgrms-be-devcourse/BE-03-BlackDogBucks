@@ -29,12 +29,13 @@ public class DefaultStoreService implements StoreService {
 	private final StoreMapper storeMapper;
 
 	@Override
+	@Transactional(readOnly = true)
 	public Store findById(String storeId) {
 		return storeRepository.findById(storeId).orElseThrow(() -> new EntityNotFoundException(Store.class, storeId));
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public StoreResponse.Information findStoreById(String storeId) {
 		Store store = storeRepository.findById(storeId)
 			.orElseThrow(() -> new EntityNotFoundException(Store.class, storeId));
@@ -68,7 +69,7 @@ public class DefaultStoreService implements StoreService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<StoreResponse.Information> findAllByDisStrictName(String district) {
 		List<Store> storeList = storeRepository.findTop10StoresByLotNumberAddress(district);
 
@@ -78,7 +79,7 @@ public class DefaultStoreService implements StoreService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<StoreResponse.Information> findAllByPoint(double latitude, double longitude) {
 		Location location = new Location(latitude, longitude);
 		List<Store> storeList = storeRepository.findAllByDistance(location, DISTANCE);
@@ -89,11 +90,13 @@ public class DefaultStoreService implements StoreService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public boolean existsById(String storeId) {
 		return storeRepository.existsById(storeId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Store findByUserId(long userId) {
 		return storeRepository.findStoreByUserId(userId)
 			.orElseThrow(() -> new EntityNotFoundException(Store.class, userId));

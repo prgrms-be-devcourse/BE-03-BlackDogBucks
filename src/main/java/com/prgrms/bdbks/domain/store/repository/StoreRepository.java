@@ -29,7 +29,11 @@ public interface StoreRepository extends JpaRepository<Store, String> {
 				+ "FROM stores ")
 	List<Integer> findDistance(@Param("location") Location location);
 
+	@Query(nativeQuery = true, value = "SELECT * FROM stores LIMIT 1")
+		//TODO : UserAuthority 반영
 	Optional<Store> findStoreByUserId(long id);
 
+	@Query(nativeQuery = true, value = "SELECT * FROM stores LIMIT 1")
+		//TODO : UserAuthority 반영
 	Optional<Store> findStoreByLoginId(String longId);
 }

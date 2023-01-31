@@ -25,14 +25,14 @@ public class StoreResponse {
 
 		private String roadNameAddress;
 
-		private PointInformation pointInformation;
+		private PointInformation point;
 
 		public Information(Store store) {
 			this.id = store.getId();
 			this.name = store.getName();
 			this.lotNumberAddress = store.getLotNumberAddress();
 			this.roadNameAddress = store.getRoadNameAddress();
-			this.pointInformation = new PointInformation(store.getPosition());
+			this.point = new PointInformation(store.getPosition());
 		}
 	}
 
