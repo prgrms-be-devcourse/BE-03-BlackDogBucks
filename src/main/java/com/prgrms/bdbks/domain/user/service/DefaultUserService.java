@@ -2,10 +2,9 @@ package com.prgrms.bdbks.domain.user.service;
 
 import java.util.Optional;
 
-import javax.transaction.Transactional;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.common.exception.DuplicateInsertException;
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
@@ -17,6 +16,7 @@ import com.prgrms.bdbks.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
+@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class DefaultUserService implements UserService {
@@ -63,5 +63,11 @@ public class DefaultUserService implements UserService {
 	@Transactional
 	public User findUserById(Long userId) {
 		return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(User.class, userId));
+	}
+
+	public boolean hasStore(Long userId, String storeId) {
+		User user = findUserById(userId);
+		user.validateStore(storeId);
+		return true;
 	}
 }

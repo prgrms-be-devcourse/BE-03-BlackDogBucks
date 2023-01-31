@@ -14,4 +14,6 @@ public interface UserService {
 	Optional<User> login(String loginId, String password);
 
 	User findUserById(Long id);
+
+	boolean hasStore(Long id, String storeId);
 }
