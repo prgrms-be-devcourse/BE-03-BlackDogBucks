@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
 import com.prgrms.bdbks.common.exception.CouponAlreadyUsedException;
+import com.prgrms.bdbks.common.exception.CouponUnUsedException;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -93,6 +94,14 @@ public class Coupon extends AbstractTimeColumn {
 		}
 
 		this.used = true;
+	}
+
+	public void refund() {
+		if (!used) {
+			throw new CouponUnUsedException("사용하지 않은 쿠폰입니다.");
+		}
+
+		this.used = false;
 	}
 
 }
