@@ -5,6 +5,7 @@ import static com.prgrms.bdbks.domain.testutil.UserObjectProvider.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -15,27 +16,26 @@ class StarTest {
 	User user = createUser();
 
 	@ParameterizedTest
-	@ValueSource(shorts = {0, 1, 5})
+	@ValueSource(ints = {0, 1, 5})
 	@DisplayName("validateCount() - 별 생성 - 성공")
-	void validateCount_validNumber_ExceptionDoesNotThrown(short count) {
+	void validateCount_validNumber_ExceptionDoesNotThrown(int count) {
 		assertDoesNotThrow(() -> createStar(user, count));
 	}
 
 	@ParameterizedTest
-	@ValueSource(shorts = {-1, -2, -5})
+	@ValueSource(ints = {-1, -2, -5})
 	@DisplayName("validateCount() - 별 생성 - 실패")
-	void validateCount_InvalidNumber_ExceptionThrown(short count) {
+	void validateCount_InvalidNumber_ExceptionThrown(int count) {
 		assertThrows(IllegalArgumentException.class, () -> createStar(user, count));
 	}
 
-	@ParameterizedTest
-	@ValueSource(shorts = {1, 12, -1, -2, -5})
 	@DisplayName("increaseCount() - 별 추가 - 성공")
-	void increaseCount_InvalidItemCount_ExceptionThrown(short updateCount) {
+	@Test
+	void increaseCount_InvalidItemCount_ExceptionThrown() {
 		short count = 5;
 		Star star = createStar(user, count);
-		int expectCount = count + updateCount;
-		star.updateCount(updateCount);
+		int expectCount = count + 1;
+		star.increaseCount();
 
 		assertEquals(expectCount, star.getCount());
 	}

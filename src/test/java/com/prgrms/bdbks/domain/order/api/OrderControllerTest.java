@@ -327,13 +327,13 @@ class OrderControllerTest {
 			.hasFieldOrPropertyWithValue("amount", 10000 - payment.getPrice());
 
 		assertThat(star)
-			.hasFieldOrPropertyWithValue("count", Short.valueOf("1"));
+			.hasFieldOrPropertyWithValue("count", Integer.valueOf("2"));
 
 		verify(storeService).findById(storeId);
 
 	}
 
-	@DisplayName("주문 생성 - 쿠폰을 사용하면 주문금액을 쿠폰 금액만큼 감소시키고 주문 금액이 이원이여도 주문을 정상 생성한다.")
+	@DisplayName("주문 생성 - 쿠폰을 사용하면 주문금액을 쿠폰 금액만큼 감소시키고 주문 금액이 0원이여도 주문을 정상 생성한다.")
 	@Test
 	void createOrder_useCouponPriceThen0_Success() throws Exception {
 		//given
@@ -372,7 +372,7 @@ class OrderControllerTest {
 		starRepository.save(star);
 
 		OrderCreateRequest.PaymentOption paymentOption = new OrderCreateRequest.PaymentOption(PaymentType.ORDER,
-			coupon.getCouponId(), chargeCardId);
+			coupon.getId(), chargeCardId);
 
 		OrderCreateRequest request = new OrderCreateRequest(user.getId(), storeId, orderItemRequests, paymentOption);
 
@@ -439,13 +439,13 @@ class OrderControllerTest {
 		assertThat(findCard)
 			.hasFieldOrPropertyWithValue("amount", 10000 - payment.getPrice());
 
-		Coupon findCoupon = couponRepository.findById(order.getCoupon().getCouponId()).get();
+		Coupon findCoupon = couponRepository.findById(order.getCoupon().getId()).get();
 
 		assertThat(findCoupon)
 			.hasFieldOrPropertyWithValue("used", true);
 
 		assertThat(star)
-			.hasFieldOrPropertyWithValue("count", (short)1);
+			.hasFieldOrPropertyWithValue("count", 1);
 
 		verify(storeService).findById(storeId);
 	}
@@ -489,7 +489,7 @@ class OrderControllerTest {
 		starRepository.save(star);
 
 		OrderCreateRequest.PaymentOption paymentOption = new OrderCreateRequest.PaymentOption(PaymentType.ORDER,
-			coupon.getCouponId(), chargeCardId);
+			coupon.getId(), chargeCardId);
 
 		OrderCreateRequest request = new OrderCreateRequest(user.getId(), storeId, orderItemRequests, paymentOption);
 
@@ -556,13 +556,13 @@ class OrderControllerTest {
 		assertThat(findCard)
 			.hasFieldOrPropertyWithValue("amount", 10000 - payment.getPrice());
 
-		Coupon findCoupon = couponRepository.findById(order.getCoupon().getCouponId()).get();
+		Coupon findCoupon = couponRepository.findById(order.getCoupon().getId()).get();
 
 		assertThat(findCoupon)
 			.hasFieldOrPropertyWithValue("used", true);
 
 		assertThat(star)
-			.hasFieldOrPropertyWithValue("count", (short)1);
+			.hasFieldOrPropertyWithValue("count", 1);
 
 		verify(storeService).findById(storeId);
 	}

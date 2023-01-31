@@ -22,7 +22,7 @@ public enum OrdersBy {
 		return Arrays.stream(values())
 			.filter(it -> Objects.equals(it.getFieldName().toUpperCase(), by.toUpperCase()))
 			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("bind Error orders By"));
+			.orElseThrow(() -> new IllegalArgumentException(String.format("Invalid ordersBy value : bind Error orders By [%s] ",by)));
 	}
 
 }

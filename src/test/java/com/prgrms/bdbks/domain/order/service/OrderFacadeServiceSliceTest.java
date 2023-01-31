@@ -354,7 +354,7 @@ class OrderFacadeServiceSliceTest {
 
 		Long couponId = 1L;
 		Coupon coupon = createCoupon(userId);
-		ReflectionTestUtils.setField(coupon, "couponId", couponId);
+		ReflectionTestUtils.setField(coupon, "id", couponId);
 
 		OrderCreateRequest.Item.Option option = new OrderCreateRequest.Item.Option(
 			1, 0, 0, 0,
@@ -445,7 +445,7 @@ class OrderFacadeServiceSliceTest {
 		given(paymentFacadeService.orderPay(any()))
 			.willReturn(paymentResult);
 
-		doNothing().when(starService).updateCount(userId, order.getTotalQuantity());
+		doNothing().when(starService).increaseCount(userId);
 
 		//when
 		OrderCreateResponse response = orderFacadeService.createOrder(request);
@@ -460,7 +460,7 @@ class OrderFacadeServiceSliceTest {
 		verify(paymentFacadeService).orderPay(any());
 		verify(itemService).customItems(request.getOrderItems());
 		verify(orderService).createOrder(null, userId, storeId, customItems);
-		verify(starService).updateCount(userId, order.getTotalQuantity());
+		verify(starService).increaseCount(userId);
 	}
 
 }

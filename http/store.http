@@ -1,0 +1,23 @@
+### 매장 저장
+POST http://localhost:8080/api/v1/stores
+Content-Type: application/json
+
+{
+  "id": "20585779",
+  "name": "스타벅스 동숭로아트점",
+  "lotNumberAddress": "서울특별시 종로구 동숭동 30",
+  "roadNameAddress": "서울특별시 종로구 동숭길 110",
+  "latitude": "127.00388696535",
+  "longitude": "37.5829644184897"
+}
+
+### 매장 구이름으로 조회
+GET http://localhost:8080/api/v1/stores?district=종로구
+
+### 매장 아이디로 조회
+GET http://localhost:8080/api/v1/stores/20585779
+
+### 현재 위치로 조회
+GET http://localhost:8080/api/v1/stores/location?latitude=37.4843861241449&longitude=127.014197798445
+
+
