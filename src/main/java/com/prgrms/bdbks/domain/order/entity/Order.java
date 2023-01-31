@@ -8,6 +8,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -21,6 +23,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
+import com.prgrms.bdbks.domain.order.exception.AlreadyProgressOrderException;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -53,6 +56,7 @@ public class Order extends AbstractTimeColumn {
 	private Integer totalPrice = 0;
 
 	@Column(name = "order_status", nullable = false)
+	@Enumerated(EnumType.STRING)
 	private OrderStatus orderStatus;
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -111,10 +115,18 @@ public class Order extends AbstractTimeColumn {
 	}
 
 	public void accept() {
+		if (orderStatus != OrderStatus.PAYMENT_COMPLETE) {
+			throw new AlreadyProgressOrderException("이미 진행중인 주문입니다.");
+		}
+
 		this.orderStatus = OrderStatus.PREPARING;
 	}
 
 	public void reject() {
+		if (orderStatus != OrderStatus.PAYMENT_COMPLETE) {
+			throw new AlreadyProgressOrderException("이미 진행중인 주문입니다.");
+		}
+
 		this.orderStatus = OrderStatus.STORE_CANCEL;
 	}
 

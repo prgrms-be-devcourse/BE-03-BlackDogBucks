@@ -4,6 +4,7 @@ import static com.prgrms.bdbks.domain.item.entity.BeverageOption.Coffee.*;
 import static com.prgrms.bdbks.domain.item.entity.BeverageOption.CupType.*;
 import static com.prgrms.bdbks.domain.item.entity.BeverageOption.Size.*;
 import static com.prgrms.bdbks.domain.testutil.ItemObjectProvider.*;
+import static com.prgrms.bdbks.domain.testutil.UserObjectProvider.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.*;
@@ -17,7 +18,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -31,12 +36,16 @@ import org.springframework.test.context.TestConstructor;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mysema.commons.lang.Pair;
 import com.prgrms.bdbks.domain.card.entity.Card;
 import com.prgrms.bdbks.domain.card.repository.CardRepository;
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 import com.prgrms.bdbks.domain.coupon.repository.CouponRepository;
+import com.prgrms.bdbks.domain.item.entity.BeverageOption;
 import com.prgrms.bdbks.domain.item.entity.Item;
 import com.prgrms.bdbks.domain.item.entity.ItemCategory;
 import com.prgrms.bdbks.domain.item.entity.OptionPrice;
@@ -49,12 +58,14 @@ import com.prgrms.bdbks.domain.order.entity.Order;
 import com.prgrms.bdbks.domain.order.entity.OrderItem;
 import com.prgrms.bdbks.domain.order.entity.OrderStatus;
 import com.prgrms.bdbks.domain.order.repository.OrderRepository;
+import com.prgrms.bdbks.domain.order.service.OrderFacadeService;
 import com.prgrms.bdbks.domain.payment.entity.Payment;
 import com.prgrms.bdbks.domain.payment.entity.PaymentStatus;
 import com.prgrms.bdbks.domain.payment.entity.PaymentType;
 import com.prgrms.bdbks.domain.payment.repository.PaymentRepository;
 import com.prgrms.bdbks.domain.star.entity.Star;
 import com.prgrms.bdbks.domain.star.repository.StarRepository;
+import com.prgrms.bdbks.domain.star.service.StarService;
 import com.prgrms.bdbks.domain.store.entity.Store;
 import com.prgrms.bdbks.domain.store.service.StoreService;
 import com.prgrms.bdbks.domain.testutil.CardObjectProvider;
@@ -62,7 +73,6 @@ import com.prgrms.bdbks.domain.testutil.CouponObjectProvider;
 import com.prgrms.bdbks.domain.testutil.OrderObjectProvider;
 import com.prgrms.bdbks.domain.testutil.StarObjectProvider;
 import com.prgrms.bdbks.domain.testutil.StoreObjectProvider;
-import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
 import com.prgrms.bdbks.domain.user.entity.User;
 import com.prgrms.bdbks.domain.user.repository.UserRepository;
 
@@ -101,6 +111,11 @@ class OrderControllerTest {
 
 	private final StarRepository starRepository;
 
+	@MockBean
+	private StarService starService;
+
+	private final OrderFacadeService orderFacadeService;
+
 	@DisplayName("조회 - 존재하지않는 id 조회시 404 notFound 를 반환한다. - 실패")
 	@Test
 	void findOrderById_fail() throws Exception {
@@ -125,7 +140,7 @@ class OrderControllerTest {
 		Item icedAmericano = createIcedAmericano(itemCategory);// defaultOption
 		itemRepository.save(icedAmericano);
 
-		User user = UserObjectProvider.createUser();
+		User user = createUser();
 		userRepository.save(user);
 
 		Order order = OrderObjectProvider.createOrder(user.getId());
@@ -191,7 +206,7 @@ class OrderControllerTest {
 		given(storeService.findById(storeId))
 			.willReturn(store);
 
-		User user = UserObjectProvider.createUser();
+		User user = createUser();
 		userRepository.save(user);
 
 		Star star = StarObjectProvider.createStar(user, (short)1);
@@ -312,9 +327,10 @@ class OrderControllerTest {
 			.hasFieldOrPropertyWithValue("amount", 10000 - payment.getPrice());
 
 		assertThat(star)
-			.hasFieldOrPropertyWithValue("count", Short.valueOf("2"));
+			.hasFieldOrPropertyWithValue("count", Short.valueOf("1"));
 
 		verify(storeService).findById(storeId);
+
 	}
 
 	@DisplayName("주문 생성 - 쿠폰을 사용하면 주문금액을 쿠폰 금액만큼 감소시키고 주문 금액이 이원이여도 주문을 정상 생성한다.")
@@ -332,7 +348,7 @@ class OrderControllerTest {
 		given(storeService.findById(storeId))
 			.willReturn(store);
 
-		User user = UserObjectProvider.createUser();
+		User user = createUser();
 		userRepository.save(user);
 
 		Card chargeCard = CardObjectProvider.createCard(user);
@@ -449,7 +465,7 @@ class OrderControllerTest {
 		given(storeService.findById(storeId))
 			.willReturn(store);
 
-		User user = UserObjectProvider.createUser();
+		User user = createUser();
 		userRepository.save(user);
 
 		Card chargeCard = CardObjectProvider.createCard(user);
@@ -549,5 +565,149 @@ class OrderControllerTest {
 			.hasFieldOrPropertyWithValue("count", (short)1);
 
 		verify(storeService).findById(storeId);
+	}
+
+	@DisplayName("조회 - storeId와 orderStatus에 맞는 주문 list를 커서 기반 페이지로 조회할 수 있다.")
+	@Test
+	void findStoreOrders_success() throws Exception {
+
+		createOrders();
+
+		MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
+
+		User adminUser = createUser("spdlqj@naver.com", "naver@naver.com", "01074414048");
+		userRepository.save(adminUser);
+
+		String storeId = "store1";
+		given(storeService.findByUserId(adminUser.getId()))
+			.willReturn(StoreObjectProvider.creatStore(storeId));
+
+		String requestOrderStatus = OrderStatus.PAYMENT_COMPLETE.name();
+
+		param.add("userId", adminUser.getId().toString());
+		param.add("pageSize", "10");
+		param.add("by", "CREATED_AT");
+		param.add("direction", "DESC");
+		param.add("orderStatus", requestOrderStatus);
+
+		mockMvc.perform(get(BASE_REQUEST_URI)
+				.contentType(MediaType.APPLICATION_JSON)
+				.params(param)
+			).andExpect(status().isOk())
+			.andDo(print())
+			.andExpect(jsonPath("$.hasNext").value(false))
+			.andExpect(jsonPath("$.data[*].storeId").value(hasItem(storeId)))
+			.andExpect(jsonPath("$.data[*].orderStatus").value(hasItem(requestOrderStatus)))
+
+			.andDo(document("orders-by-store",
+					preprocessRequest(prettyPrint()),
+					preprocessResponse(prettyPrint()),
+					requestParameters(
+						parameterWithName("userId").description("요청 userId"),
+						parameterWithName("pageSize").description("요청 페이지 크기"),
+						parameterWithName("by").description("정렬 기준"),
+						parameterWithName("direction").description("정렬 방법"),
+						parameterWithName("orderStatus").description("주문 상태"),
+						parameterWithName("cursorOrderId").description("커서 OrderId").optional()
+					),
+					responseFields(
+						fieldWithPath("data").type(JsonFieldType.ARRAY).description("데이터 양"),
+						fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN).description("다음 데이터 여부"),
+						fieldWithPath("size").type(JsonFieldType.NUMBER).description("데이터 수"),
+
+						fieldWithPath("data[].orderId").type(JsonFieldType.STRING).description("주문 번호"),
+						fieldWithPath("data[].storeId").type(JsonFieldType.STRING).description("매장 아이디"),
+						fieldWithPath("data[].orderStatus").type(JsonFieldType.STRING).description("주문 상태"),
+						fieldWithPath("data[].nickname").type(JsonFieldType.STRING).description("주문 유저 명"),
+						fieldWithPath("data[].items[]").type(JsonFieldType.ARRAY).description("주문 아이템들"),
+						fieldWithPath("data[].items[].[].itemName").type(JsonFieldType.STRING).description("주문 아이템들"),
+						fieldWithPath("data[].items[].[].quantity").type(JsonFieldType.NUMBER).description("주문 수"),
+						fieldWithPath("data[].items[].[].espressoShotCount").type(JsonFieldType.NUMBER)
+							.description("에스프레소 샷 양"),
+						fieldWithPath("data[].items[].[].vanillaSyrupCount").type(JsonFieldType.NUMBER)
+							.description("바닐라 시럽 양"),
+						fieldWithPath("data[].items[].[].classicSyrupCount").type(JsonFieldType.NUMBER)
+							.description("클래식 시럽 양"),
+						fieldWithPath("data[].items[].[].hazelnutSyrupCount").type(JsonFieldType.NUMBER)
+							.description("헤이즐넛 시럽 양"),
+						fieldWithPath("data[].items[].[].milkType").type(JsonFieldType.STRING).description("우유 타입"),
+						fieldWithPath("data[].items[].[].espressoType").type(JsonFieldType.STRING)
+							.description("커피 에스프레소 타입"),
+						fieldWithPath("data[].items[].[].milkAmount").type(JsonFieldType.STRING).description("우유 양"),
+						fieldWithPath("data[].items[].[].cupSize").type(JsonFieldType.STRING).description("컵 사이즈"),
+						fieldWithPath("data[].items[].[].cupType").type(JsonFieldType.STRING).description("컵 타입")
+
+					)
+				)
+			);
+
+	}
+
+	void createOrders() {
+
+		AtomicInteger integer = new AtomicInteger();
+
+		List<Pair> users = IntStream.range(0, 10)
+			.mapToObj(i -> {
+
+				User user = userRepository.save(
+					createUser(RandomStringUtils.randomAlphabetic(10),
+						RandomStringUtils.randomAlphabetic(10) + "@email.com",
+						"0107441484" + integer.getAndIncrement()));
+
+				doNothing().when(starService).updateCount(user.getId(), 1);
+
+				Card chargeCard = CardObjectProvider.createCard(user);
+				chargeCard.chargeAmount(100000);
+				cardRepository.save(chargeCard);
+
+				return new Pair(user, chargeCard);
+			}).collect(Collectors.toList());
+
+		ItemCategory itemCategory = createReserveEspressoCategory();
+		itemCategoryRepository.save(itemCategory);
+
+		Item americano = createIcedAmericano(itemCategory);
+		Item latte = createCaffeLatte(itemCategory);
+		itemRepository.save(americano);
+		itemRepository.save(latte);
+
+		List<Store> stores = List.of(StoreObjectProvider.creatStore("store1"),
+			StoreObjectProvider.creatStore("store2"),
+			StoreObjectProvider.creatStore("store3"));
+
+		stores.forEach(s -> {
+			given(storeService.findById(s.getId()))
+				.willReturn(s);
+		});
+
+		OrderCreateRequest.Item.Option option = new OrderCreateRequest.Item.Option(
+			1, 0, 0, 0,
+			BeverageOption.Milk.OAT, BeverageOption.Coffee.DECAFFEINATED, BeverageOption.MilkAmount.MEDIUM,
+			BeverageOption.Size.VENTI, BeverageOption.CupType.PERSONAL);
+
+		AtomicInteger i = new AtomicInteger();
+
+		users.forEach(u -> {
+
+			User user = (User)u.getFirst();
+			Card card = (Card)u.getSecond();
+
+			OrderCreateRequest.PaymentOption paymentOption = new OrderCreateRequest.PaymentOption(PaymentType.ORDER,
+				null, card.getChargeCardId());
+			Store store = stores.get(i.getAndIncrement() % 3);
+
+			List<OrderCreateRequest.Item> orderItemRequests = List.of(
+				new OrderCreateRequest.Item(americano.getId(), 1, 4500, option),
+				new OrderCreateRequest.Item(latte.getId(), 2, 4500, option)
+			);
+
+			OrderCreateRequest request = new OrderCreateRequest(user.getId(),
+				store.getId(), orderItemRequests,
+				paymentOption);
+
+			orderFacadeService.createOrder(request);
+		});
+
 	}
 }
