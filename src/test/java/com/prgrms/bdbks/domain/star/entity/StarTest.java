@@ -41,17 +41,19 @@ class StarTest {
 	}
 
 	@ParameterizedTest
-	@ValueSource(shorts = {12, 24, 55, 120, 240})
-	@DisplayName("exchangeCoupon() - 별을 쿠폰으로 교환 - 성공")
-	void exchangeCoupon_CountOver12_Success(short count) {
+	@ValueSource(ints = {1, 2, 3, 4, 5})
+	@DisplayName("exchangeCoupon() - 별을 쿠폰으로 교환 - 실패")
+	void exchangeCoupon_CountOver12_Fail(int count) {
 		Star star = createStar(user, count);
-		int exchangeCount = star.exchangeCoupon();
+		assertFalse(star.canExchange());
+	}
 
-		int expectCount = count / 12;
-		int restCount = count % 12;
-
-		assertEquals(expectCount, exchangeCount);
-		assertEquals(restCount, star.getCount());
+	@ParameterizedTest
+	@ValueSource(ints = {12})
+	@DisplayName("exchangeCoupon() - 별을 쿠폰으로 교환 - 성공")
+	void exchangeCoupon_CountOver12_Success(int count) {
+		Star star = createStar(user, count);
+		assertTrue(star.canExchange());
 	}
 
 }
