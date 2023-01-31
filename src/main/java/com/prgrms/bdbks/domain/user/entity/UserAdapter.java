@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserAdapter extends User {
 
-	String loginId;
+	private String loginId;
 
-	String nickname;
+	private String nickname;
 
-	String password;
+	private String password;
 
-	String email;
+	private String email;
 
 	public UserAdapter(User user) {
 
@@ -23,7 +23,7 @@ public class UserAdapter extends User {
 			user.getNickname(),
 			user.getBirthDate(),
 			user.getPhone(),
-			user.getEmail());
+			user.getPhone());
 
 		this.loginId = user.getLoginId();
 		this.nickname = user.getNickname();

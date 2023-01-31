@@ -2,16 +2,25 @@ package com.prgrms.bdbks.domain.store.entity;
 
 import static com.google.common.base.Preconditions.*;
 
+import java.nio.charset.StandardCharsets;
+
+import javax.persistence.AttributeConverter;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.ColumnTransformer;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
+import com.prgrms.bdbks.common.exception.PointParseException;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -21,6 +30,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "stores")
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Store extends AbstractTimeColumn {
 
@@ -40,8 +50,10 @@ public class Store extends AbstractTimeColumn {
 	@Column(name = "road_name_address", length = 100, nullable = false)
 	private String roadNameAddress;
 
+	@Convert(converter = PointConverter.class)
+	@ColumnTransformer(write = "ST_PointFromText(?, 4326)", read = "ST_AsText(position)")
 	@NotNull
-	@Column(name = "position", columnDefinition = "point", nullable = false)
+	@Column(name = "position", columnDefinition = "POINT SRID 4326", nullable = false)
 	private Point position;
 
 	@Builder
@@ -74,5 +86,25 @@ public class Store extends AbstractTimeColumn {
 	private void validationName(String name) {
 		checkArgument(StringUtils.hasText(name), "storeName의 길이는 0 이상이여야 합니다.");
 		checkArgument(name.length() <= 50, "storeName은 50자를 넘을 수 없습니다.");
+	}
+
+	@Component
+	protected static class PointConverter implements AttributeConverter<Point, String> {
+		static WKTReader wktReader = new WKTReader();
+
+		@Override
+		public String convertToDatabaseColumn(Point attribute) {
+			return attribute.toText();
+		}
+
+		@Override
+		public Point convertToEntityAttribute(String dbData) {
+			try {
+				String decoded = new String(dbData.getBytes(), StandardCharsets.UTF_8);
+				return (Point)wktReader.read(decoded);
+			} catch (ParseException e) {
+				throw new PointParseException(String.format("위경도 파싱에 실패했습니다. %s", dbData));
+			}
+		}
 	}
 }

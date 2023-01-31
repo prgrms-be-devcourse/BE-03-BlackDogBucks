@@ -11,6 +11,6 @@ public class StarSearchResponse {
 
 	private Long userId;
 
-	private short count;
+	private int count;
 
 }

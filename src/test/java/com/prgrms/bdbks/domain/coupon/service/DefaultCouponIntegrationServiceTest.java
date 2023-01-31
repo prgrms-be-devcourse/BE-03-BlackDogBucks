@@ -32,6 +32,9 @@ import lombok.RequiredArgsConstructor;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class DefaultCouponIntegrationServiceTest {
 
+	@MockBean
+	private final StoreService storeService;
+
 	private final CouponService couponService;
 
 	private final CouponRepository couponRepository;
@@ -40,9 +43,6 @@ public class DefaultCouponIntegrationServiceTest {
 
 	private final User user = UserObjectProvider.createUser();
 
-	@MockBean
-	private StoreService storeService;
-	
 	@BeforeEach
 	void setUp() {
 		userRepository.save(user);

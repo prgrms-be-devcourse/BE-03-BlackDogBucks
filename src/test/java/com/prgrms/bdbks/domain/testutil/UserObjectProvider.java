@@ -33,4 +33,15 @@ public class UserObjectProvider {
 			.build();
 	}
 
+	public static User createUser(String loginId, String email, String phone) {
+		return User.builder()
+			.birthDate(LocalDateTime.now().minusYears(26L).toLocalDate())
+			.email(email)
+			.loginId(loginId)
+			.password("password1234")
+			.nickname("이디야화이팅")
+			.phone(phone)
+			.build();
+	}
+
 }

@@ -8,6 +8,8 @@ public interface CouponService {
 
 	CouponSaveResponse create(Long userId);
 
+	void createByStar(Long userId, boolean canExchange);
+
 	CouponSearchResponses findAllByUserId(Long userId);
 
 	Coupon getCouponByCouponId(Long couponId);

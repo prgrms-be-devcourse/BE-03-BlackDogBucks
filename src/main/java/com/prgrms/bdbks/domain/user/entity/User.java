@@ -23,6 +23,8 @@ import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
+import com.prgrms.bdbks.common.exception.AuthorityNotFoundException;
+import com.prgrms.bdbks.domain.user.role.Role;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -92,9 +94,11 @@ public class User extends AbstractTimeColumn {
 		).collect(Collectors.toList());
 	}
 
-	public boolean hasStore(String storeId) {
-		return userAuthorities.stream()
-			.anyMatch(userAuthority -> Objects.equals(userAuthority.getStore().getId(), storeId));
+	public void validateStore(String storeId) {
+		userAuthorities.stream()
+			.filter(userAuthority -> Objects.equals(userAuthority.getStore().getId(), storeId))
+			.findAny()
+			.orElseThrow(() -> new AuthorityNotFoundException("해당 유저에게 권한이 없습니다."));
 	}
 
 	private void validateLoginId(String loginId) {
@@ -128,9 +132,12 @@ public class User extends AbstractTimeColumn {
 		checkArgument(email.matches(EMAIL_REGEX));
 	}
 
+	private void validateAuthority(Role role) {
+		checkNotNull(role, "권한을 입력해주세요.");
+	}
+
 	public void changePassword(String password) {
 		validatePassword(password);
 		this.password = password;
 	}
-
 }
