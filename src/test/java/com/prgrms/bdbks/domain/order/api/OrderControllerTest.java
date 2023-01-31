@@ -312,7 +312,7 @@ class OrderControllerTest {
 			.hasFieldOrPropertyWithValue("amount", 10000 - payment.getPrice());
 
 		assertThat(star)
-			.hasFieldOrPropertyWithValue("count", Short.valueOf("2"));
+			.hasFieldOrPropertyWithValue("count", Integer.valueOf("2"));
 
 		verify(storeService).findById(storeId);
 	}
@@ -356,7 +356,7 @@ class OrderControllerTest {
 		starRepository.save(star);
 
 		OrderCreateRequest.PaymentOption paymentOption = new OrderCreateRequest.PaymentOption(PaymentType.ORDER,
-			coupon.getCouponId(), chargeCardId);
+			coupon.getId(), chargeCardId);
 
 		OrderCreateRequest request = new OrderCreateRequest(user.getId(), storeId, orderItemRequests, paymentOption);
 
@@ -423,13 +423,13 @@ class OrderControllerTest {
 		assertThat(findCard)
 			.hasFieldOrPropertyWithValue("amount", 10000 - payment.getPrice());
 
-		Coupon findCoupon = couponRepository.findById(order.getCoupon().getCouponId()).get();
+		Coupon findCoupon = couponRepository.findById(order.getCoupon().getId()).get();
 
 		assertThat(findCoupon)
 			.hasFieldOrPropertyWithValue("used", true);
 
 		assertThat(star)
-			.hasFieldOrPropertyWithValue("count", (short)1);
+			.hasFieldOrPropertyWithValue("count", 1);
 
 		verify(storeService).findById(storeId);
 	}
@@ -473,7 +473,7 @@ class OrderControllerTest {
 		starRepository.save(star);
 
 		OrderCreateRequest.PaymentOption paymentOption = new OrderCreateRequest.PaymentOption(PaymentType.ORDER,
-			coupon.getCouponId(), chargeCardId);
+			coupon.getId(), chargeCardId);
 
 		OrderCreateRequest request = new OrderCreateRequest(user.getId(), storeId, orderItemRequests, paymentOption);
 
@@ -540,13 +540,13 @@ class OrderControllerTest {
 		assertThat(findCard)
 			.hasFieldOrPropertyWithValue("amount", 10000 - payment.getPrice());
 
-		Coupon findCoupon = couponRepository.findById(order.getCoupon().getCouponId()).get();
+		Coupon findCoupon = couponRepository.findById(order.getCoupon().getId()).get();
 
 		assertThat(findCoupon)
 			.hasFieldOrPropertyWithValue("used", true);
 
 		assertThat(star)
-			.hasFieldOrPropertyWithValue("count", (short)1);
+			.hasFieldOrPropertyWithValue("count", 1);
 
 		verify(storeService).findById(storeId);
 	}

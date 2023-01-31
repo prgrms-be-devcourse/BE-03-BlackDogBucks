@@ -11,7 +11,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CouponSearchResponse {
 
-	private Long couponId;
+	private Long id;
 
 	private Long userId;
 
