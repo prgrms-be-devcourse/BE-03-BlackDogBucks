@@ -5,18 +5,22 @@ import java.util.Objects;
 
 import javax.annotation.Nullable;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.prgrms.bdbks.common.dto.SliceResponse;
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 import com.prgrms.bdbks.domain.coupon.service.CouponService;
 import com.prgrms.bdbks.domain.item.dto.CustomItem;
 import com.prgrms.bdbks.domain.item.service.ItemService;
 import com.prgrms.bdbks.domain.order.converter.OrderMapper;
+import com.prgrms.bdbks.domain.order.dto.OrderByStoreResponse;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateRequest;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateResponse;
 import com.prgrms.bdbks.domain.order.dto.OrderDetailResponse;
 import com.prgrms.bdbks.domain.order.entity.Order;
+import com.prgrms.bdbks.domain.order.entity.OrderStatus;
 import com.prgrms.bdbks.domain.payment.dto.OrderPayment;
 import com.prgrms.bdbks.domain.payment.model.PaymentResult;
 import com.prgrms.bdbks.domain.payment.service.PaymentFacadeService;
@@ -95,4 +99,12 @@ public class OrderFacadeService {
 			store.getName(), user.getNickname());
 	}
 
+	@Transactional(readOnly = true)
+	public SliceResponse<OrderByStoreResponse> findAllStoreOrdersBy(Long userId, OrderStatus orderStatus,
+		String cursorOrderId, Pageable pageable) {
+
+		Store store = storeService.findByUserId(userId);
+
+		return orderService.findAllStoreOrdersBy(store.getId(), orderStatus, cursorOrderId, pageable);
+	}
 }
