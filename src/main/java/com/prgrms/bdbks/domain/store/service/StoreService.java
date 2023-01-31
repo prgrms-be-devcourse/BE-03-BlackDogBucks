@@ -20,4 +20,8 @@ public interface StoreService {
 
 	boolean existsById(String storeId);
 
+	Store findByUserId(long userId);
+
+	Store findByLoginId(String loginId);
+
 }

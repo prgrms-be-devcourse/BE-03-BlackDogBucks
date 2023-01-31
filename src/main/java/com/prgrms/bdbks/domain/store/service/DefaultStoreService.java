@@ -92,4 +92,16 @@ public class DefaultStoreService implements StoreService {
 	public boolean existsById(String storeId) {
 		return storeRepository.existsById(storeId);
 	}
+
+	@Override
+	public Store findByUserId(long userId) {
+		return storeRepository.findStoreByUserId(userId)
+			.orElseThrow(() -> new EntityNotFoundException(Store.class, userId));
+	}
+
+	@Override
+	public Store findByLoginId(String loginId) {
+		return storeRepository.findStoreByLoginId(loginId)
+			.orElseThrow(() -> new EntityNotFoundException(Store.class, loginId));
+	}
 }

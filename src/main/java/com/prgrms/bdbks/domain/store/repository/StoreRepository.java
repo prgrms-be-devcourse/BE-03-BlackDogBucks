@@ -1,6 +1,7 @@
 package com.prgrms.bdbks.domain.store.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -28,4 +29,7 @@ public interface StoreRepository extends JpaRepository<Store, String> {
 				+ "FROM stores ")
 	List<Integer> findDistance(@Param("location") Location location);
 
+	Optional<Store> findStoreByUserId(long id);
+
+	Optional<Store> findStoreByLoginId(String longId);
 }
