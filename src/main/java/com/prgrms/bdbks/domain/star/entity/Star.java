@@ -26,6 +26,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 public class Star extends AbstractTimeColumn {
 
+	private static final int EXCHANGE_COUNT = 12;
+
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "star_id")
@@ -36,10 +38,10 @@ public class Star extends AbstractTimeColumn {
 	private User user;
 
 	@Column(nullable = false)
-	private short count;
+	private int count;
 
 	@Builder
-	protected Star(User user, short count) {
+	protected Star(User user, int count) {
 		validateCount(count);
 		validateUser(user);
 		this.user = user;
@@ -54,13 +56,16 @@ public class Star extends AbstractTimeColumn {
 		checkNotNull(user, "유저 정보를 입력해주세요");
 	}
 
-	public void updateCount(int itemCount) {
-		this.count += itemCount;
+	public void increaseCount() {
+		this.count += 1;
 	}
 
-	public int exchangeCoupon() {
-		int couponCount = count / 12;
-		this.count %= 12;
-		return couponCount;
+	public void decreaseCount() {
+		this.count -= 1;
+		validateCount(count);
+	}
+
+	public boolean canExchange() {
+		return count >= EXCHANGE_COUNT;
 	}
 }

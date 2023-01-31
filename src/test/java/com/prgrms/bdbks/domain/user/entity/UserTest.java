@@ -23,7 +23,7 @@ class UserTest {
 	private final LocalDate validBirthDate = LocalDate.now().minusYears(10L);
 
 	private User createUser(String loginId, String password, String nickname, LocalDate birthDate, String phone,
-		String email, Role role) {
+		String email) {
 
 		return User.builder()
 			.loginId(loginId)
@@ -32,7 +32,6 @@ class UserTest {
 			.birthDate(birthDate)
 			.phone(phone)
 			.email(email)
-			.role(role)
 			.build();
 	}
 
@@ -41,8 +40,7 @@ class UserTest {
 	void builder_validBuilder_Success() {
 
 		assertDoesNotThrow(
-			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, validPhone, validEmail,
-				validRole));
+			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, validPhone, validEmail));
 	}
 
 	@ParameterizedTest
@@ -51,8 +49,7 @@ class UserTest {
 	@DisplayName("validateLoginId - 유저의 Id값이 존재하지 않는 경우 - 생성 실패")
 	void validateLoginId_EmptyValue_ExceptionThrown(String invalidUserId) {
 		assertThrows(IllegalArgumentException.class,
-			() -> createUser(invalidUserId, validPassword, validNickname, validBirthDate, validPhone, validEmail,
-				validRole));
+			() -> createUser(invalidUserId, validPassword, validNickname, validBirthDate, validPhone, validEmail));
 	}
 
 	@ParameterizedTest
@@ -60,8 +57,7 @@ class UserTest {
 	@DisplayName("validateLoginId - 유저의 Id 길이가 제한 길이를 벗어나는 경우 - 생성 실패")
 	void validateLoginId_NotValidLength_ExceptionThrown(String invalidUserId) {
 		assertThrows(IllegalArgumentException.class,
-			() -> createUser(invalidUserId, validPassword, validNickname, validBirthDate, validPhone, validEmail,
-				validRole));
+			() -> createUser(invalidUserId, validPassword, validNickname, validBirthDate, validPhone, validEmail));
 	}
 
 	@ParameterizedTest
@@ -70,8 +66,7 @@ class UserTest {
 	@DisplayName("validateLoginId - 유저의 password 값이 존재하지 않는 경우 - 생성 실패")
 	void validatePassword_EmptyValue_ExceptionThrown(String invalidPassword) {
 		assertThrows(IllegalArgumentException.class,
-			() -> createUser(validLoginId, invalidPassword, validNickname, validBirthDate, validPhone, validEmail,
-				validRole));
+			() -> createUser(validLoginId, invalidPassword, validNickname, validBirthDate, validPhone, validEmail));
 	}
 
 	@ParameterizedTest
@@ -79,8 +74,7 @@ class UserTest {
 	@DisplayName("validatePassword - 유저의 password 길이가 제한 길이를 벗어나는 경우 - 생성 실패")
 	void validatePassword_NotValidLength_ExceptionThrown(String invalidPassword) {
 		assertThrows(IllegalArgumentException.class,
-			() -> createUser(invalidPassword, invalidPassword, validNickname, validBirthDate, validPhone, validEmail,
-				validRole));
+			() -> createUser(invalidPassword, invalidPassword, validNickname, validBirthDate, validPhone, validEmail));
 	}
 
 	@ParameterizedTest
@@ -89,8 +83,7 @@ class UserTest {
 	@DisplayName("validateNickname - 유저의 nickname 길이가 제한 길이를 벗어나는 경우 - 생성 실패")
 	void validateNickname_EmptyValue_ExceptionThrown(String invalidPassword) {
 		assertThrows(IllegalArgumentException.class,
-			() -> createUser(validLoginId, validPassword, invalidPassword, validBirthDate, validPhone, validEmail,
-				validRole));
+			() -> createUser(validLoginId, validPassword, invalidPassword, validBirthDate, validPhone, validEmail));
 	}
 
 	@ParameterizedTest
@@ -98,8 +91,7 @@ class UserTest {
 	@DisplayName("validatePassword - 유저의 nickname 길이가 제한 길이를 벗어나는 경우 - 생성 실패")
 	void validateNickname_NotValidLength_ExceptionThrown(String invalidNickname) {
 		assertThrows(IllegalArgumentException.class,
-			() -> createUser(validLoginId, validPassword, invalidNickname, validBirthDate, validPhone, validEmail,
-				validRole));
+			() -> createUser(validLoginId, validPassword, invalidNickname, validBirthDate, validPhone, validEmail));
 	}
 
 	@Test
@@ -108,8 +100,7 @@ class UserTest {
 		LocalDate invalidBirthDate = LocalDate.now().plusDays(1);
 
 		assertThrows(IllegalArgumentException.class,
-			() -> createUser(validLoginId, validPassword, validNickname, invalidBirthDate, validPhone, validEmail,
-				validRole));
+			() -> createUser(validLoginId, validPassword, validNickname, invalidBirthDate, validPhone, validEmail));
 	}
 
 	@ParameterizedTest
@@ -118,8 +109,7 @@ class UserTest {
 	@DisplayName("validatePhone - 유저의 phone 값이 존재하지 않는 경우 - 생성 실패")
 	void validatePhone_EmptyValue_ExceptionThrown(String invalidPhone) {
 		assertThrows(IllegalArgumentException.class,
-			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, invalidPhone, validEmail,
-				validRole));
+			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, invalidPhone, validEmail));
 	}
 
 	@ParameterizedTest
@@ -127,8 +117,7 @@ class UserTest {
 	@DisplayName("validatePhone - 유저의 phone 값의 길이가 올바르지 않는 경우 - 생성 실패")
 	void validatePhone_NotValidLength_ExceptionThrown(String invalidPhone) {
 		assertThrows(IllegalArgumentException.class,
-			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, invalidPhone, validEmail,
-				validRole));
+			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, invalidPhone, validEmail));
 	}
 
 	@ParameterizedTest
@@ -136,8 +125,7 @@ class UserTest {
 	@DisplayName("validatePhone - 유저의 phone 값에 문자열이 섞여있는 경우 - 생성 실패")
 	void validatePhone_NotDigit_ExceptionThrown(String invalidPhone) {
 		assertThrows(IllegalArgumentException.class,
-			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, invalidPhone, validEmail,
-				validRole));
+			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, invalidPhone, validEmail));
 	}
 
 	@ParameterizedTest
@@ -146,8 +134,7 @@ class UserTest {
 	@DisplayName("validateEmail - 유저의 email 값이 존재하지 않는 경우 - 생성 실패")
 	void validateEmail_EmptyValue_ExceptionThrown(String invalidEmail) {
 		assertThrows(IllegalArgumentException.class,
-			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, validPhone, invalidEmail,
-				validRole));
+			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, validPhone, invalidEmail));
 	}
 
 	@ParameterizedTest
@@ -155,17 +142,6 @@ class UserTest {
 	@DisplayName("validateEmail - 유저의 email 형식이 올바르지 않은 경우 - 생성 실패")
 	void validateEmail_NotValidFormat_ExceptionThrown(String invalidEmail) {
 		assertThrows(IllegalArgumentException.class,
-			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, validPhone, invalidEmail,
-				validRole));
-	}
-
-	@Test
-	@DisplayName("validateRole - 유저의 Role이 null인 경우 - 생성 실패")
-	void validateRole_EmptyValue_ExceptionThrown() {
-		Role invalidRole = null;
-
-		assertThrows(NullPointerException.class,
-			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, validPhone, validEmail,
-				invalidRole));
+			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, validPhone, invalidEmail));
 	}
 }

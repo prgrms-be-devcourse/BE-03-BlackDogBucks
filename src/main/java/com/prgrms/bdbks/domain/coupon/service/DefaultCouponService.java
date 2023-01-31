@@ -35,6 +35,14 @@ public class DefaultCouponService implements CouponService {
 		return couponMapper.toCouponSaveResponse(saveCoupon);
 	}
 
+	@Transactional
+	@Override
+	public void createByStar(Long userId, boolean canExchange) {
+		if (canExchange) {
+			create(userId);
+		}
+	}
+
 	@Override
 	public CouponSearchResponses findAllByUserId(Long userId) {
 		List<Coupon> coupons = couponRepository.findByUserId(userId);

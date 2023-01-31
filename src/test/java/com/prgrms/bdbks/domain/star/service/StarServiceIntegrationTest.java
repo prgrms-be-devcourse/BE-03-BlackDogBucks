@@ -25,6 +25,9 @@ import lombok.RequiredArgsConstructor;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 class StarServiceIntegrationTest {
 
+	@MockBean
+	private final StoreService storeService;
+
 	private final UserRepository userRepository;
 
 	private final StarRepository starRepository;
@@ -32,9 +35,6 @@ class StarServiceIntegrationTest {
 	private final StarService starService;
 
 	private final User user = UserObjectProvider.createUser();
-
-	@MockBean
-	private StoreService storeService;
 
 	@BeforeEach
 	void setup() {

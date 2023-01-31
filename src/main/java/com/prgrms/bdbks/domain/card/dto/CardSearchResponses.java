@@ -9,6 +9,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CardSearchResponses {
 
-	private final List<CardSearchResponse> cardSearchResponses;
+	private final List<CardSearchResponse> cards;
 
 }

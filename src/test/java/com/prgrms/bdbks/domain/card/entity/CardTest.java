@@ -11,7 +11,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.prgrms.bdbks.domain.user.entity.User;
-import com.prgrms.bdbks.domain.user.role.Role;
 
 class CardTest {
 
@@ -23,7 +22,6 @@ class CardTest {
 		.email("mailmail@naver.com")
 		.birthDate(LocalDateTime.now().minusYears(10L).toLocalDate())
 		.phone("01012341234")
-		.role(Role.USER)
 		.build();
 
 	@DisplayName("validateUser() - 유저의 정보가 유효하면 충전카드가 생성된다. - 성공")
