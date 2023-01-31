@@ -6,6 +6,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,46 +33,14 @@ public class UserController {
 
 	private final UserMapper userMapper;
 
-	@PostMapping(value = {"/auth/signup"})
-	public ResponseEntity<String> signup(@RequestBody @Valid UserCreateRequest userCreateRequest) {
-		if (userService.findUser(userCreateRequest.getLoginId()).isPresent()) {
-			return new ResponseEntity<>("Sign Up Failed", HttpStatus.BAD_REQUEST);
-		} else {
-			this.userService.register(userCreateRequest);
-			return new ResponseEntity<>("Sign Up Completed", HttpStatus.CREATED);
-		}
-	}
-
-	@GetMapping(value = {"/users/{loginId}"})
+	@GetMapping(value = {"/{loginId}"}, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserFindResponse> readUser(@PathVariable String loginId) {
 		Optional<User> user = this.userService.findUser(loginId);
 		return user.map(value -> ResponseEntity.ok(userMapper.entityToFindResponse(value)))
 			.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 
-	@PostMapping(value = {"/auth/login"})
-	public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest request, HttpSession session) {
-		Optional<User> user = this.userService.login(request.getLoginId(), request.getPassword());
-		if (user.isPresent()) {
-			session.setAttribute("user", user.get());
-			return new ResponseEntity<>("Login Succeeded", HttpStatus.OK);
-		}
-		return new ResponseEntity<>("Login Failed", HttpStatus.UNAUTHORIZED);
-	}
-
-	@PostMapping(value = {"/auth/logout"})
-	public ResponseEntity<Void> logout(HttpSession session) {
-		User user = (User)session.getAttribute("user");
-		if (user != null) {
-			session.removeAttribute("user");
-			session.invalidate();
-			return ResponseEntity.noContent().build();
-		} else {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-		}
-	}
-
-	@GetMapping(value = {"/users/me"})
+	@GetMapping(value = {"/me"})
 	public ResponseEntity<UserFindResponse> getMe(HttpSession session) {
 		User user = (User)session.getAttribute("user");
 		if (user != null) {
