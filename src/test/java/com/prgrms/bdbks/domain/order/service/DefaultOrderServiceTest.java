@@ -119,7 +119,7 @@ class DefaultOrderServiceTest {
 						RandomStringUtils.randomAlphabetic(10) + "@email.com",
 						"0107441484" + integer.getAndIncrement()));
 
-				doNothing().when(starService).updateCount(user.getId(), 1);
+				doNothing().when(starService).increaseCount(user.getId());
 
 				Card chargeCard = CardObjectProvider.createCard(user);
 				chargeCard.chargeAmount(100000);

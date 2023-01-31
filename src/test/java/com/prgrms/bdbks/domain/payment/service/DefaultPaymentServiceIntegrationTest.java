@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,10 +16,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.common.exception.PaymentException;
 import com.prgrms.bdbks.domain.card.entity.Card;
 import com.prgrms.bdbks.domain.card.repository.CardRepository;
 import com.prgrms.bdbks.domain.order.entity.Order;
+import com.prgrms.bdbks.domain.order.repository.OrderRepository;
+import com.prgrms.bdbks.domain.payment.dto.PaymentRefundResult;
 import com.prgrms.bdbks.domain.payment.entity.Payment;
 import com.prgrms.bdbks.domain.payment.entity.PaymentStatus;
 import com.prgrms.bdbks.domain.payment.entity.PaymentType;
@@ -46,6 +50,8 @@ public class DefaultPaymentServiceIntegrationTest {
 
 	private final UserRepository userRepository;
 
+	private final OrderRepository orderRepository;
+
 	private final User user = UserObjectProvider.createUser();
 
 	private Card card;
@@ -53,13 +59,13 @@ public class DefaultPaymentServiceIntegrationTest {
 	private final Order order = OrderObjectProvider.createOrder();
 
 	@MockBean
-	private StoreService storeService;
+	private final StoreService storeService;
 
 	@BeforeEach
 	void setUp() {
 		userRepository.save(user);
+		orderRepository.save(order);
 		card = cardRepository.save(createCard(user));
-
 	}
 
 	//TODO Order Repository 만들어지먼 orderPay 테스트 작성
@@ -90,5 +96,40 @@ public class DefaultPaymentServiceIntegrationTest {
 	void chargePay_InvalidPrice_Success(int totalPrice) {
 
 		assertThrows(PaymentException.class, () -> paymentService.chargePay(card.getChargeCardId(), totalPrice));
+	}
+
+	@DisplayName("orderPayRefund - 주문으로 결제 내역을 조회하여 결제상태를 환불로 변경한다. - 성공")
+	@Test
+	void orderPayRefund_validOrder_Success() {
+
+		int orderPrice = 5000;
+
+		Payment payment = Payment.createOrderPayment(order, card.getChargeCardId(), orderPrice);
+		paymentRepository.save(payment);
+		PaymentRefundResult paymentRefundResult = paymentService.orderPayRefund(payment.getOrder().getId());
+
+		Optional<Payment> optionalPayment = paymentRepository.findById(payment.getId());
+		assertTrue(optionalPayment.isPresent());
+
+		Payment savedPayment = optionalPayment.get();
+
+		assertThat(paymentRefundResult)
+			.hasFieldOrPropertyWithValue("id", savedPayment.getId())
+			.hasFieldOrPropertyWithValue("chargeCardId", savedPayment.getChargeCardId())
+			.hasFieldOrPropertyWithValue("price", savedPayment.getPrice());
+
+	}
+
+	@DisplayName("orderPayRefund - 유효하지 않는 주문은 환불이 불가능하다. - 실패")
+	@Test
+	void orderPayRefund_inValidOrder_Fail() {
+
+		int orderPrice = 5000;
+		String inValidId = "wrongId";
+		Payment payment = Payment.createOrderPayment(order, card.getChargeCardId(), orderPrice);
+		paymentRepository.save(payment);
+
+		assertThrows(EntityNotFoundException.class, () -> paymentService.orderPayRefund(inValidId));
+
 	}
 }

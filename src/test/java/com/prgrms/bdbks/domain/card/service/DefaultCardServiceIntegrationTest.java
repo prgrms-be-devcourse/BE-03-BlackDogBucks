@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.domain.card.dto.CardChargeResponse;
+import com.prgrms.bdbks.domain.card.dto.CardRefundResponse;
 import com.prgrms.bdbks.domain.card.dto.CardSaveRequest;
 import com.prgrms.bdbks.domain.card.dto.CardSaveResponse;
 import com.prgrms.bdbks.domain.card.dto.CardSearchResponse;
@@ -41,9 +42,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 class DefaultCardServiceIntegrationTest {
 
-	@MockBean
-	private final StoreService storeService;
-
 	private final UserRepository userRepository;
 
 	private final CardRepository cardRepository;
@@ -53,6 +51,9 @@ class DefaultCardServiceIntegrationTest {
 	private final User user = UserObjectProvider.createUser();
 
 	private Card card;
+
+	@MockBean
+	private StoreService storeService;
 
 	@BeforeEach
 	void setUp() {
@@ -162,5 +163,26 @@ class DefaultCardServiceIntegrationTest {
 
 		//when & then
 		assertThrows(EntityNotFoundException.class, () -> defaultCardService.create(unknownUserId, cardSaveRequest));
+	}
+
+	@DisplayName("refund - 0원 이상의 금액 환불 요청을 성공한다. - 성공")
+	@ParameterizedTest
+	@ValueSource(ints = {10000, 20000, 50000, 300000, 650000})
+	void refund_validCardId_Success(int amount) {
+		CardRefundResponse cardRefundResponse = defaultCardService.refund(card.getChargeCardId(), amount);
+
+		assertThat(cardRefundResponse)
+			.hasFieldOrPropertyWithValue("chargeCardId", card.getChargeCardId())
+			.hasFieldOrPropertyWithValue("refundPrice", amount)
+			.hasFieldOrPropertyWithValue("rest", card.getAmount());
+
+	}
+
+	@DisplayName("refund - 0원 이상의 금액 환불 요청을 실패한다. - 실패")
+	@ParameterizedTest
+	@ValueSource(ints = {-10000, -20000, -50000, -300000, -650000})
+	void refund_inValidCardId_Success(int amount) {
+		assertThrows(IllegalArgumentException.class, () -> defaultCardService.refund(card.getChargeCardId(), amount));
+
 	}
 }
