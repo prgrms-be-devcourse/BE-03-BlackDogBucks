@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -43,23 +44,27 @@ public class SecurityConfig {
 			.authorizeRequests()
 			.antMatchers("/**").permitAll()
 			// .anyRequest().permitAll()
-			.anyRequest().authenticated()
+			.anyRequest().permitAll()
 			.and()
+
 			.exceptionHandling()
 			.authenticationEntryPoint(jwtAuthenticationEntryPoint())
 			.accessDeniedHandler(jwtAccessDeniedHandler())
 			.and()
+
 			.apply(new JwtSecurityConfig(tokenProvider))
 			.and()
-
+			.sessionManagement()
+			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
 			.addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
 			.build();
 	}
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
-		return web -> web.ignoring().and();
-		// .antMatchers("/**", "/api/v1/**");
+		return web -> web.ignoring()
+			.antMatchers("/**", "/api/v1/**");
 	}
 
 	@Bean

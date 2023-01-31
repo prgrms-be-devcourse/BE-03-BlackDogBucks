@@ -2,11 +2,15 @@ package com.prgrms.bdbks.domain.user.api;
 
 import static com.prgrms.bdbks.domain.user.jwt.JwtAuthenticationFilter.*;
 
-import javax.servlet.http.HttpSession;
+import java.net.URI;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -23,6 +27,7 @@ import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
 import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
 import com.prgrms.bdbks.domain.user.entity.User;
 import com.prgrms.bdbks.domain.user.jwt.TokenProvider;
+import com.prgrms.bdbks.domain.user.service.AuthService;
 import com.prgrms.bdbks.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -36,24 +41,49 @@ public class AuthController {
 
 	private final UserService userService;
 
+	private final AuthService authService;
+
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-	@PostMapping(value = {"/signup"})
-	public ResponseEntity<?> signup(@RequestBody @Valid UserCreateRequest userCreateRequest) {
+	/**
+	 * <pre>
+	 *     회원 가입
+	 * </pre>
+	 * @param userCreateRequest - 등록할 회원의 정보
+	 * @return status : created , body : URI
+	 */
+	@PostMapping(value = "/signup", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<URI> signup(@Valid @RequestBody UserCreateRequest userCreateRequest) {
 		if (userService.findUser(userCreateRequest.getLoginId()).isPresent()) {
-			return new ResponseEntity<>("Sign Up Failed", HttpStatus.BAD_REQUEST);
-		} else {
-			userService.register(userCreateRequest);
-			return ResponseEntity.ok("Sign Up Completed");
+			return new ResponseEntity<>(URI.create("/signup"), HttpStatus.BAD_REQUEST);
 		}
+
+		userService.register(userCreateRequest);
+		return ResponseEntity.created(URI.create("/login")).build();
+
 	}
 
+	/**
+	 * <pre>
+	 *     로그아웃
+	 * </pre>
+	 * @param
+	 * @return status :  , body :
+	 */
 	@PostMapping(value = {"/logout"})
-	public ResponseEntity<Void> logout(HttpSession session) {
+	public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+
 		return ResponseEntity.noContent().build();
 	}
 
-	@PostMapping("/login")
+	/**
+	 * <pre>
+	 *     로그인
+	 * </pre>
+	 * @param loginRequest - 로그인 요청 정보(loginId, PW)
+	 * @return status : ok , body : TokenResponse
+	 */
+	@PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<TokenResponse> login(@Valid @RequestBody UserLoginRequest loginRequest) {
 
 		UsernamePasswordAuthenticationToken authenticationToken =
@@ -64,6 +94,7 @@ public class AuthController {
 
 		User user = userService.findUser(loginRequest.getLoginId())
 			.orElseThrow(() -> new UsernameNotFoundException("잘못된 사용자 정보입니다."));
+
 		String jwt = tokenProvider.generateToken(user);
 
 		HttpHeaders httpHeaders = new HttpHeaders();

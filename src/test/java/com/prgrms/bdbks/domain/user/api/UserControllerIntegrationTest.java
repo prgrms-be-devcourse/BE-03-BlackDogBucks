@@ -43,13 +43,13 @@ public class UserControllerIntegrationTest {
 
 	@BeforeEach
 	void setup() {
-		UserCreateRequest userCreateRequest = new UserCreateRequest("user123", "pw123", "nickname",
+		UserCreateRequest userCreateRequest = new UserCreateRequest("user123", "password123", "nickname",
 			LocalDate.now().minusYears(10L),
 			"01012341234", "user123@naver.com");
 		ResponseEntity<?> responseEntity = userController.signup(userCreateRequest);
 
 		String loginId = "user123";
-		String password = "pw123";
+		String password = "password123";
 
 		UserLoginRequest userLoginRequest = new UserLoginRequest(loginId, password);
 

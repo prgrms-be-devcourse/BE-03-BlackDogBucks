@@ -1,5 +1,6 @@
 package com.prgrms.bdbks.domain.user.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,14 +16,13 @@ import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
 import com.prgrms.bdbks.domain.store.entity.Store;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "user_authorities")
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserAuthority extends AbstractTimeColumn {
 
@@ -36,11 +36,18 @@ public class UserAuthority extends AbstractTimeColumn {
 	private Authority authority;
 
 	@JsonBackReference
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
 	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "stores_id")
 	private Store store;
+
+	@Builder
+	protected UserAuthority(Authority authority, User user) {
+		this.authority = authority;
+		this.user = user;
+	}
+	
 }

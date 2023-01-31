@@ -3,13 +3,11 @@ package com.prgrms.bdbks.config.jwt;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @ConfigurationProperties(prefix = "jwt")
 @ConstructorBinding
 @Getter
-@AllArgsConstructor
 public class JwtConfigure {
 
 	private final String authoritiesKey;
@@ -24,4 +22,10 @@ public class JwtConfigure {
 		return tokenValidityInSeconds * seconds;
 	}
 
+	public JwtConfigure(String authoritiesKey, String header, String secret, long tokenValidityInSeconds) {
+		this.authoritiesKey = authoritiesKey;
+		this.header = header;
+		this.secret = secret;
+		this.tokenValidityInSeconds = tokenValidityInSeconds;
+	}
 }

@@ -1,11 +1,17 @@
 package com.prgrms.bdbks.config.web;
 
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
+import com.prgrms.bdbks.config.jwt.JwtConfigure;
+
+@ConfigurationPropertiesScan(value = {"com.prgrms.bdbks.config"}, basePackageClasses = {JwtConfigure.class})
+@EnableConfigurationProperties
 @EnableWebMvc
 @Configuration
 public class WebConfig extends WebMvcConfigurationSupport {
@@ -20,8 +26,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 
 	@Override
 	protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/docs/**")
-			.addResourceLocations("classpath:/static/docs/");
+		registry.addResourceHandler("/docs/**").addResourceLocations("classpath:/static/docs/");
 	}
 
 }
