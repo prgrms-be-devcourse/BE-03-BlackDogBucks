@@ -9,6 +9,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CouponSearchResponses {
 
-	private List<CouponSearchResponse> couponSearchResponses;
+	private List<CouponSearchResponse> coupons;
 
 }

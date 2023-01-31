@@ -9,5 +9,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CouponSaveResponses {
 
-	private List<CouponSaveResponse> couponSaveResponses;
+	private List<CouponSaveResponse> coupons;
 }
