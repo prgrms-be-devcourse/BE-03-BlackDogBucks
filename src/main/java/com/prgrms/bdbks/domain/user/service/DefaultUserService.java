@@ -64,4 +64,11 @@ public class DefaultUserService implements UserService {
 	public User findUserById(Long userId) {
 		return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(User.class, userId));
 	}
+
+	@Override
+	public boolean hasStore(Long userId, String storeId) {
+		User user = findUserById(userId);
+		user.validateStore(storeId);
+		return true;
+	}
 }
