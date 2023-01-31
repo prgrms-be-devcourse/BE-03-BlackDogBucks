@@ -1,5 +1,6 @@
 package com.prgrms.bdbks.domain.coupon.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.domain.coupon.converter.CouponMapper;
 import com.prgrms.bdbks.domain.coupon.dto.CouponSaveResponse;
+import com.prgrms.bdbks.domain.coupon.dto.CouponSaveResponses;
 import com.prgrms.bdbks.domain.coupon.dto.CouponSearchResponses;
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 import com.prgrms.bdbks.domain.coupon.repository.CouponRepository;
@@ -33,6 +35,19 @@ public class DefaultCouponService implements CouponService {
 		Coupon saveCoupon = couponRepository.save(coupon);
 
 		return couponMapper.toCouponSaveResponse(saveCoupon);
+	}
+
+	@Transactional
+	@Override
+	public CouponSaveResponses createByStar(Long userId, int couponCount) {
+
+		List<CouponSaveResponse> couponSaveResponses = new ArrayList<>();
+		while (couponCount-- > 0) {
+			couponSaveResponses.add(create(userId));
+		}
+
+		return new CouponSaveResponses(couponSaveResponses);
+
 	}
 
 	@Override

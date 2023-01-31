@@ -81,7 +81,7 @@ class CouponControllerTest {
 				.accept(APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.couponSearchResponses").exists())
-			.andExpect(jsonPath("$.couponSearchResponses[0].couponId").value(coupons.get(0).getCouponId()))
+			.andExpect(jsonPath("$.couponSearchResponses[0].id").value(coupons.get(0).getId()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].userId").value(coupons.get(0).getUserId()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].name").value(coupons.get(0).getName()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].price").value(coupons.get(0).getPrice()))
@@ -116,7 +116,7 @@ class CouponControllerTest {
 				.accept(APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.couponSearchResponses").exists())
-			.andExpect(jsonPath("$.couponSearchResponses[0].couponId").value(coupons.get(0).getCouponId()))
+			.andExpect(jsonPath("$.couponSearchResponses[0].id").value(coupons.get(0).getId()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].userId").value(coupons.get(0).getUserId()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].name").value(coupons.get(0).getName()))
 			.andExpect(jsonPath("$.couponSearchResponses[0].price").value(coupons.get(0).getPrice()))
@@ -138,5 +138,5 @@ class CouponControllerTest {
 				)
 			));
 	}
-	
+
 }

@@ -5,9 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class StarSearchResponse {
-
-	private Long starId;
+public class StarExchangeResponse {
 
 	private Long userId;
 
