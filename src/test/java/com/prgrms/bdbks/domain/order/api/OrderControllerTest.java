@@ -740,7 +740,7 @@ class OrderControllerTest {
 			)
 			.andExpect(status().isOk())
 			.andDo(print())
-			.andDo(document("orders-reject",
+			.andDo(document("order-reject",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(

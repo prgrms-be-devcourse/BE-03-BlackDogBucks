@@ -99,7 +99,7 @@ public class DefaultStoreService implements StoreService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Store findByUserId(long userId) {
+	public Store findByUserId(Long userId) {
 		return storeRepository.findStoreByUserId(userId)
 			.orElseThrow(() -> new EntityNotFoundException(Store.class, userId));
 	}
@@ -109,4 +109,5 @@ public class DefaultStoreService implements StoreService {
 		return storeRepository.findStoreByLoginId(loginId)
 			.orElseThrow(() -> new EntityNotFoundException(Store.class, loginId));
 	}
+
 }
