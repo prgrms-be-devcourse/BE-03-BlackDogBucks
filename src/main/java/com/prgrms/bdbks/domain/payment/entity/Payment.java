@@ -124,4 +124,8 @@ public class Payment extends AbstractTimeColumn {
 			.chargeCardId(chargeCardId)
 			.build();
 	}
+
+	public void refund() {
+		this.paymentStatus = REFUND;
+	}
 }
