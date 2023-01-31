@@ -26,6 +26,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 public class Star extends AbstractTimeColumn {
 
+	private static final int EXCHANGE_COUNT = 12;
+
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "star_id")
@@ -63,9 +65,7 @@ public class Star extends AbstractTimeColumn {
 		validateCount(count);
 	}
 
-	public int exchangeCoupon() {
-		int couponCount = count / 12;
-		this.count %= 12;
-		return couponCount;
+	public boolean canExchange() {
+		return count >= EXCHANGE_COUNT;
 	}
 }

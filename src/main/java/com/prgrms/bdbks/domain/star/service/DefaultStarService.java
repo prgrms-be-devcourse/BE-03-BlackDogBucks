@@ -60,9 +60,9 @@ public class DefaultStarService implements StarService {
 	@Transactional
 	public StarExchangeResponse exchangeCoupon(Long userId) {
 		Star star = findByUserId(userId);
-		int exchangeCoupon = star.exchangeCoupon();
+		boolean canExchange = star.canExchange();
 
-		return new StarExchangeResponse(star.getUser().getId(), exchangeCoupon);
+		return new StarExchangeResponse(star.getUser().getId(), canExchange);
 	}
 
 	//TODO 거래 취소, 반품 시 별은 원상복구(원래 상태로 감소)

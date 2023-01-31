@@ -9,6 +9,6 @@ public class StarExchangeResponse {
 
 	private Long userId;
 
-	private int count;
+	private boolean canExchange;
 
 }
