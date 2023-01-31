@@ -3,19 +3,27 @@ package com.prgrms.bdbks.domain.user.entity;
 import static com.google.common.base.Preconditions.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
+import com.prgrms.bdbks.common.exception.AuthorityNotFoundException;
 import com.prgrms.bdbks.domain.user.role.Role;
 
 import lombok.AccessLevel;
@@ -57,19 +65,19 @@ public class User extends AbstractTimeColumn {
 	@Column(nullable = false, unique = true)
 	private String email;
 
-	@Enumerated(EnumType.STRING)
-	private Role role;
+	@JsonManagedReference
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+	private List<UserAuthority> userAuthorities = new ArrayList<>();
 
 	@Builder
 	protected User(Long id, String loginId, String password, String nickname, LocalDate birthDate, String phone,
-		String email, Role role) {
+		String email) {
 		validateLoginId(loginId);
 		validatePassword(password);
 		validateNickname(nickname);
 		validateBirthDate(birthDate);
 		validatePhone(phone);
 		validateEmail(email);
-		validateAuthority(role);
 
 		this.id = id;
 		this.loginId = loginId;
@@ -78,7 +86,19 @@ public class User extends AbstractTimeColumn {
 		this.birthDate = birthDate;
 		this.phone = phone;
 		this.email = email;
-		this.role = role;
+	}
+
+	public List<GrantedAuthority> getAuthorities() {
+		return this.userAuthorities.stream().map(
+			userAuth -> new SimpleGrantedAuthority(userAuth.getAuthority().getAuthorityName().name())
+		).collect(Collectors.toList());
+	}
+
+	public void validateStore(String storeId) {
+		userAuthorities.stream()
+			.filter(userAuthority -> Objects.equals(userAuthority.getStore().getId(), storeId))
+			.findAny()
+			.orElseThrow(() -> new AuthorityNotFoundException("해당 유저에게 권한이 없습니다."));
 	}
 
 	private void validateLoginId(String loginId) {
@@ -120,10 +140,4 @@ public class User extends AbstractTimeColumn {
 		validatePassword(password);
 		this.password = password;
 	}
-
-	public void changeAuthority(Role role) {
-		validateAuthority(role);
-		this.role = role;
-	}
-
 }

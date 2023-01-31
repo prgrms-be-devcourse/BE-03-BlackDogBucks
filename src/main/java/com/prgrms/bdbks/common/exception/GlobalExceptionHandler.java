@@ -1,5 +1,7 @@
 package com.prgrms.bdbks.common.exception;
 
+import static org.springframework.http.HttpStatus.*;
+
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +47,7 @@ public class GlobalExceptionHandler {
 		ErrorResponse errorResponse = ErrorResponse.badRequest(e.getParameter().getParameterName(),
 			request.getRequestURI(),
 			List.of(new FieldError(e.getName(), Objects.requireNonNull(e.getValue()).toString(), e.getMessage())));
-		
+
 		return ResponseEntity.badRequest().body(errorResponse);
 	}
 
@@ -97,6 +99,14 @@ public class GlobalExceptionHandler {
 		HttpServletRequest request, InvalidFormatException e) {
 
 		return ResponseEntity.badRequest()
+			.body(ErrorResponse.badRequest(e.getMessage(), request.getRequestURI()));
+	}
+
+	@ExceptionHandler(AuthorityNotFoundException.class)
+	protected ResponseEntity<ErrorResponse> handleAuthorityNotFoundException(
+		HttpServletRequest request, AuthorityNotFoundException e) {
+
+		return ResponseEntity.status(FORBIDDEN)
 			.body(ErrorResponse.badRequest(e.getMessage(), request.getRequestURI()));
 	}
 
