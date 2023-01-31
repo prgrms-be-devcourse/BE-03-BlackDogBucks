@@ -10,9 +10,7 @@ public interface StoreService {
 
 	Store findById(String storeId);
 
-	Store findByUserId(Long userId);
-
-  StoreResponse.Information findStoreById(String storeId);
+	StoreResponse.Information findStoreById(String storeId);
 
 	String createStore(StoreCreateRequest storeCreateRequest);
 

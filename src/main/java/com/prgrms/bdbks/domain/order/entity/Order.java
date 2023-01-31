@@ -55,7 +55,7 @@ public class Order extends AbstractTimeColumn {
 	@Column(name = "total_price", nullable = false)
 	private Integer totalPrice = 0;
 
-	@Column(name = "order_status", nullable = false)
+	@Column(name = "order_status", nullable = false, columnDefinition = "varchar(255)")
 	@Enumerated(EnumType.STRING)
 	private OrderStatus orderStatus;
 

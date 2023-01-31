@@ -17,4 +17,6 @@ public interface StarService {
 	void decreaseCount(Long userId);
 
 	StarExchangeResponse exchangeCoupon(Long userId);
+
+	void cancel(Long userId);
 }

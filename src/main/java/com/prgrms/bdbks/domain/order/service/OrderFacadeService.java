@@ -24,6 +24,7 @@ import com.prgrms.bdbks.domain.order.entity.OrderStatus;
 import com.prgrms.bdbks.domain.payment.dto.OrderPayment;
 import com.prgrms.bdbks.domain.payment.model.PaymentResult;
 import com.prgrms.bdbks.domain.payment.service.PaymentFacadeService;
+import com.prgrms.bdbks.domain.star.service.StarFacadeService;
 import com.prgrms.bdbks.domain.star.service.StarService;
 import com.prgrms.bdbks.domain.store.entity.Store;
 import com.prgrms.bdbks.domain.store.service.StoreService;
@@ -51,6 +52,8 @@ public class OrderFacadeService {
 	private final StarService starService;
 
 	private final CouponService couponService;
+
+	private final StarFacadeService starFacadeService;
 
 	@Transactional
 	public OrderCreateResponse createOrder(OrderCreateRequest request) {
@@ -106,6 +109,30 @@ public class OrderFacadeService {
 		Store store = storeService.findByUserId(userId);
 
 		return orderService.findAllStoreOrdersBy(store.getId(), orderStatus, cursorOrderId, pageable);
+	}
+
+	@Transactional
+	public void acceptOrder(String orderId, Long adminUserId) {
+		Order order = orderService.findById(orderId);
+		userService.hasStore(adminUserId, order.getStoreId());
+
+		order.accept();
+
+		starFacadeService.exchangeCoupon(order.getUserId());
+	}
+
+	@Transactional
+	public void rejectOrder(String orderId, Long adminUserId) {
+		Order order = orderService.findById(orderId);
+		userService.hasStore(adminUserId, order.getStoreId());
+
+		order.reject();
+
+		// payment 취소
+		paymentService.cancel(order);
+
+		// star 취소
+		starService.cancel(order.getUserId());
 	}
 
 }

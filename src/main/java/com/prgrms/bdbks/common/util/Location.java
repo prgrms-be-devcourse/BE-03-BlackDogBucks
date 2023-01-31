@@ -1,4 +1,4 @@
-package com.prgrms.bdbks.global.util;
+package com.prgrms.bdbks.common.util;
 
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;

@@ -66,7 +66,7 @@ public class DefaultCouponIntegrationServiceTest {
 		couponService.create(user.getId());
 
 		CouponSearchResponses couponList = couponService.findAllByUserId(user.getId());
-		List<CouponSearchResponse> couponSearchResponses = couponList.getCouponSearchResponses();
+		List<CouponSearchResponse> couponSearchResponses = couponList.getCoupons();
 
 		assertThat(couponSearchResponses).hasSize(1);
 
@@ -84,7 +84,7 @@ public class DefaultCouponIntegrationServiceTest {
 		couponRepository.saveAll(coupons);
 		CouponSearchResponses unusedCoupons = couponService.findUnusedCoupon(user.getId(), false);
 
-		List<CouponSearchResponse> couponResponses = unusedCoupons.getCouponSearchResponses();
+		List<CouponSearchResponse> couponResponses = unusedCoupons.getCoupons();
 
 		assertThat(couponResponses).hasSize(coupons.size());
 		assertThat(couponResponses)

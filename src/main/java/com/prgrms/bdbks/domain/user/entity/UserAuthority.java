@@ -1,5 +1,6 @@
 package com.prgrms.bdbks.domain.user.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,7 +19,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 @Entity
 @Table(name = "user_authorities")
 @Getter
@@ -31,7 +31,7 @@ public class UserAuthority extends AbstractTimeColumn {
 	@Column(name = "user_authority_id")
 	private Long userAuthorityId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = true)
 	@JoinColumn(name = "authority_name")
 	private Authority authority;
 

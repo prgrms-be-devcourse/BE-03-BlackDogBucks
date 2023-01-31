@@ -68,6 +68,15 @@ public class OrderController {
 		return ResponseEntity.ok().body(orderService.findOrderById(orderId));
 	}
 
+	/**
+	 * <pre>
+	 *     주문 승인
+	 * </pre>
+	 *
+	 * @param orderId - 주문 id
+	 * @param request - 관리자 id
+	 * @return status : ok
+	 */
 	@PatchMapping(value = "/{orderId}/accept",
 		consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> acceptOrder(@PathVariable String orderId,
@@ -78,6 +87,15 @@ public class OrderController {
 		return ResponseEntity.ok().build();
 	}
 
+	/**
+	 * <pre>
+	 *     주문 거절
+	 * </pre>
+	 *
+	 * @param orderId - 주문 id
+	 * @param request - 관리자 id
+	 * @return status : ok
+	 */
 	@PatchMapping(value = "/{orderId}/reject",
 		consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> rejectOrder(@PathVariable String orderId,

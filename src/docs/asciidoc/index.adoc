@@ -223,3 +223,6 @@ include::{snippets}/orders-by-store/request-parameters.adoc[]
 include::{snippets}/orders-by-store/http-response.adoc[]
 
 include::{snippets}/orders-by-store/response-fields.adoc[]
+
+== accept
+

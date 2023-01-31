@@ -67,7 +67,7 @@ class DefaultCardServiceIntegrationTest {
 		//when
 		CardSearchResponses responses = defaultCardService.findAll(user.getId());
 
-		List<CardSearchResponse> cardResponseList = responses.getCardSearchResponses();
+		List<CardSearchResponse> cardResponseList = responses.getCards();
 
 		//then
 		assertThat(cardResponseList.size()).isEqualTo(1);
