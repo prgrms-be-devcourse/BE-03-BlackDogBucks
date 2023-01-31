@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.domain.coupon.converter.CouponMapper;
+import com.prgrms.bdbks.domain.coupon.dto.CouponRefundResponse;
 import com.prgrms.bdbks.domain.coupon.dto.CouponSaveResponse;
 import com.prgrms.bdbks.domain.coupon.dto.CouponSearchResponses;
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
@@ -67,6 +68,16 @@ public class DefaultCouponService implements CouponService {
 			coupons.stream()
 				.map(couponMapper::toCouponSearchResponse)
 				.collect(Collectors.toList()));
+	}
+
+	@Override
+	@Transactional
+	public CouponRefundResponse refundCoupon(Long couponId) {
+		Coupon coupon = getCouponByCouponId(couponId);
+		coupon.refund();
+
+		return new CouponRefundResponse(couponId);
+
 	}
 
 }
