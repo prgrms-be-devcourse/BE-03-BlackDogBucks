@@ -36,7 +36,7 @@ public class UserAuthority extends AbstractTimeColumn {
 	private Authority authority;
 
 	@JsonBackReference
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // Cascade 정책 고민하기
 	@JoinColumn(name = "user_id")
 	private User user;
 
@@ -49,5 +49,23 @@ public class UserAuthority extends AbstractTimeColumn {
 		this.authority = authority;
 		this.user = user;
 	}
-	
+
+	public static UserAuthority create(User user, Authority authority) {
+		UserAuthority userAuthority = UserAuthority
+			.builder()
+			.user(user)
+			.authority(authority)
+			.build();
+
+		user.addUserAuthority(userAuthority);
+
+		return userAuthority;
+	}
+
+	public void changeUser(User user) {
+		if (this.user != user) {
+			this.user = user;
+		}
+	}
+
 }

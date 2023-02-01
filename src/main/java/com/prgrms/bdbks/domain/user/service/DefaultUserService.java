@@ -1,5 +1,7 @@
 package com.prgrms.bdbks.domain.user.service;
 
+import static com.prgrms.bdbks.domain.user.role.Role.*;
+
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -10,9 +12,17 @@ import org.springframework.stereotype.Service;
 import com.prgrms.bdbks.common.exception.DuplicateInsertException;
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.domain.user.converter.UserMapper;
+import com.prgrms.bdbks.domain.user.dto.TokenResponse;
+import com.prgrms.bdbks.domain.user.dto.UserAuthChangeRequest;
 import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
+import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
+import com.prgrms.bdbks.domain.user.entity.Authority;
 import com.prgrms.bdbks.domain.user.entity.User;
 import com.prgrms.bdbks.domain.user.entity.UserAdapter;
+import com.prgrms.bdbks.domain.user.entity.UserAuthority;
+import com.prgrms.bdbks.domain.user.jwt.TokenProvider;
+import com.prgrms.bdbks.domain.user.repository.AuthorityRepository;
+import com.prgrms.bdbks.domain.user.repository.UserAuthorityRepository;
 import com.prgrms.bdbks.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -27,16 +37,32 @@ public class DefaultUserService implements UserService {
 
 	private final UserMapper userMapper;
 
+	private final UserAuthorityRepository userAuthorityRepository;
+
+	private final AuthorityRepository authorityRepository;
+
+	private final TokenProvider tokenProvider;
+
 	@Override
 	@Transactional
 	public User register(UserCreateRequest userCreateRequest) {
+
 		User user = userMapper.createRequestToEntity(userCreateRequest);
-		user.changePassword(this.passwordEncoder.encode(user.getPassword()));
-		if (!this.userRepository.existsByLoginId(user.getLoginId())) {
-			return this.userRepository.save(user);
-		} else {
-			throw new DuplicateInsertException(String.format("이미 등록된 사용자 아이디 입니다. (%s)", user.getLoginId()));
+
+		if (userRepository.existsByLoginId(user.getLoginId())) {
+			throw new DuplicateInsertException(User.class, user.getLoginId());
 		}
+
+		user.changePassword(this.passwordEncoder.encode(user.getPassword()));
+
+		Authority authority = authorityRepository.findById(ROLE_USER)
+			.orElse(authorityRepository.save(new Authority(ROLE_USER)));
+
+		UserAuthority userAuthority = UserAuthority.create(user, authority);
+
+		userAuthorityRepository.save(userAuthority);
+
+		return userRepository.save(user);
 	}
 
 	@Override
@@ -47,16 +73,15 @@ public class DefaultUserService implements UserService {
 
 	@Override
 	@Transactional
-	public Optional<User> login(String loginId, String password) {
-		Optional<User> user = this.userRepository.findByLoginId(loginId);
-		if (user.isPresent()) {
-			String encodedPassword = user.get().getPassword();
-			if (this.passwordEncoder.matches(password, encodedPassword)) {
-				return this.userRepository.findByLoginIdAndPassword(loginId, encodedPassword).map(UserAdapter::new);
-			}
-			return Optional.empty();
-		}
-		return Optional.empty();
+	public TokenResponse login(UserLoginRequest userLoginRequest) {
+		User user = this.userRepository.findByLoginId(userLoginRequest.getLoginId())
+			.orElseThrow();
+
+		user.checkPassword(passwordEncoder, userLoginRequest.getPassword());
+
+		String token = tokenProvider.generateToken(user);
+
+		return new TokenResponse(token);
 	}
 
 	@Override
@@ -70,5 +95,17 @@ public class DefaultUserService implements UserService {
 		User user = findUserById(userId);
 		user.validateStore(storeId);
 		return true;
+	}
+
+	@Override
+	public void changeUserAuthority(UserAuthChangeRequest userAuthChangeRequest) {
+
+		User user = this.userRepository.findByLoginId(userAuthChangeRequest.getLoginId())
+			.orElseThrow(() -> new EntityNotFoundException(User.class, userAuthChangeRequest.getLoginId()));
+
+		Authority authority = new Authority(userAuthChangeRequest.getRole());
+		UserAuthority userAuthority = UserAuthority.create(user, authority);
+
+		userAuthorityRepository.save(userAuthority);
 	}
 }

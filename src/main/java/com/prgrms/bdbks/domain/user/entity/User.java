@@ -18,14 +18,15 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
 import com.prgrms.bdbks.common.exception.AuthorityNotFoundException;
-import com.prgrms.bdbks.domain.user.role.Role;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -133,12 +134,23 @@ public class User extends AbstractTimeColumn {
 		checkArgument(email.matches(EMAIL_REGEX));
 	}
 
-	private void validateAuthority(Role role) {
-		checkNotNull(role, "권한을 입력해주세요.");
-	}
-
 	public void changePassword(String password) {
 		validatePassword(password);
 		this.password = password;
 	}
+
+	public void checkPassword(PasswordEncoder passwordEncoder, String password) {
+		if (!passwordEncoder.matches(password, this.password)) {
+			throw new BadCredentialsException("아이디와 비밀번호를 확인해주세요.");
+		}
+	}
+
+	public void addUserAuthority(UserAuthority userAuthority) {
+		if (!this.getUserAuthorities().contains(userAuthority)) {
+			this.getUserAuthorities().add(userAuthority);
+		}
+
+		userAuthority.changeUser(this);
+	}
+
 }

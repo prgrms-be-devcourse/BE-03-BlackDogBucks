@@ -2,6 +2,7 @@ package com.prgrms.bdbks.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -20,11 +21,14 @@ import com.prgrms.bdbks.domain.user.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
 	private final TokenProvider tokenProvider;
+
+	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
 	@Bean
 	public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
@@ -32,8 +36,14 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public JwtAccessDeniedHandler jwtAccessDeniedHandler() {
-		return new JwtAccessDeniedHandler();
+	public WebSecurityCustomizer webSecurityCustomizer() {
+		return web -> web.ignoring()
+			.antMatchers("/api/v1/auth/signup", "/api/v1/auth/login");
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 
 	@Bean
@@ -42,14 +52,13 @@ public class SecurityConfig {
 			.csrf().disable()
 
 			.authorizeRequests()
-			.antMatchers("/**").permitAll()
-			// .anyRequest().permitAll()
-			.anyRequest().permitAll()
+			// .antMatchers("/**").authenticated()
+			.anyRequest().authenticated()
 			.and()
 
 			.exceptionHandling()
 			.authenticationEntryPoint(jwtAuthenticationEntryPoint())
-			.accessDeniedHandler(jwtAccessDeniedHandler())
+			.accessDeniedHandler(jwtAccessDeniedHandler)
 			.and()
 
 			.apply(new JwtSecurityConfig(tokenProvider))
@@ -59,17 +68,6 @@ public class SecurityConfig {
 			.and()
 			.addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
 			.build();
-	}
-
-	@Bean
-	public WebSecurityCustomizer webSecurityCustomizer() {
-		return web -> web.ignoring()
-			.antMatchers("/**", "/api/v1/**");
-	}
-
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
 	}
 
 }

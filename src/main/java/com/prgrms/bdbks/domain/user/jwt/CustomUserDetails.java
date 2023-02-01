@@ -9,8 +9,10 @@ import com.prgrms.bdbks.domain.user.entity.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 @AllArgsConstructor
+@ToString
 public class CustomUserDetails implements UserDetails {
 
 	@Getter
@@ -50,4 +52,5 @@ public class CustomUserDetails implements UserDetails {
 	public boolean isEnabled() {
 		return true;
 	}
+
 }

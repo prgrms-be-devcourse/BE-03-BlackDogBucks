@@ -3,7 +3,6 @@ package com.prgrms.bdbks.domain.user.jwt;
 import static com.google.common.base.Preconditions.*;
 
 import java.security.Key;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,7 +10,6 @@ import java.util.stream.Collectors;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -89,15 +87,9 @@ public class TokenProvider {
 			throw new AuthorityNotFoundException("클레임에 권한정보가 존재하지 않습니다.");
 
 		} else {
-			List<String> roles = (List)claims.get(authoritiesKey);
-
-			Collection<? extends GrantedAuthority> authorities =
-				roles.stream().map(SimpleGrantedAuthority::new)
-					.collect(Collectors.toList());
-
 			UserDetails userDetails = authService.loadUserByUsername(claims.getSubject());
 
-			return new UsernamePasswordAuthenticationToken(userDetails, accessToken, authorities);
+			return new UsernamePasswordAuthenticationToken(userDetails, accessToken, userDetails.getAuthorities());
 		}
 	}
 
