@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.prgrms.bdbks.common.util.Location;
 import com.prgrms.bdbks.domain.store.entity.Store;
-import com.prgrms.bdbks.global.util.Location;
 
 @Repository
 public interface StoreRepository extends JpaRepository<Store, String> {

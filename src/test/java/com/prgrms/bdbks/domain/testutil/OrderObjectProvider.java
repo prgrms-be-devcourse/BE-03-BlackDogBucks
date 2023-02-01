@@ -16,6 +16,7 @@ public class OrderObjectProvider {
 			.coupon(coupon)
 			.userId(userId)
 			.storeId(storeId)
+			.orderStatus(OrderStatus.PAYMENT_COMPLETE)
 			.build();
 	}
 

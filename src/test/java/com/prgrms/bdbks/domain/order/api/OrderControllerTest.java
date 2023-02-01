@@ -25,6 +25,7 @@ import java.util.stream.IntStream;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +33,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -51,6 +53,7 @@ import com.prgrms.bdbks.domain.item.entity.ItemCategory;
 import com.prgrms.bdbks.domain.item.entity.OptionPrice;
 import com.prgrms.bdbks.domain.item.repository.ItemCategoryRepository;
 import com.prgrms.bdbks.domain.item.repository.ItemRepository;
+import com.prgrms.bdbks.domain.order.dto.OrderAcceptRequest;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateRequest;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateResponse;
 import com.prgrms.bdbks.domain.order.entity.CustomOption;
@@ -67,19 +70,24 @@ import com.prgrms.bdbks.domain.star.entity.Star;
 import com.prgrms.bdbks.domain.star.repository.StarRepository;
 import com.prgrms.bdbks.domain.star.service.StarService;
 import com.prgrms.bdbks.domain.store.entity.Store;
+import com.prgrms.bdbks.domain.store.repository.StoreRepository;
 import com.prgrms.bdbks.domain.store.service.StoreService;
 import com.prgrms.bdbks.domain.testutil.CardObjectProvider;
 import com.prgrms.bdbks.domain.testutil.CouponObjectProvider;
 import com.prgrms.bdbks.domain.testutil.OrderObjectProvider;
 import com.prgrms.bdbks.domain.testutil.StarObjectProvider;
 import com.prgrms.bdbks.domain.testutil.StoreObjectProvider;
+import com.prgrms.bdbks.domain.user.entity.Authority;
 import com.prgrms.bdbks.domain.user.entity.User;
+import com.prgrms.bdbks.domain.user.entity.UserAuthority;
 import com.prgrms.bdbks.domain.user.repository.UserRepository;
+import com.prgrms.bdbks.domain.user.role.Role;
 
 import lombok.RequiredArgsConstructor;
 
+@ActiveProfiles("test")
 @Transactional
-@SpringBootTest
+@SpringBootTest(properties = {"spring.config.location=classpath:application-test.yml"})
 @AutoConfigureRestDocs
 @AutoConfigureMockMvc
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
@@ -111,10 +119,11 @@ class OrderControllerTest {
 
 	private final StarRepository starRepository;
 
-	@MockBean
-	private StarService starService;
+	private final StarService starService;
 
 	private final OrderFacadeService orderFacadeService;
+	@Autowired
+	private StoreRepository storeRepository;
 
 	@DisplayName("조회 - 존재하지않는 id 조회시 404 notFound 를 반환한다. - 실패")
 	@Test
@@ -643,6 +652,110 @@ class OrderControllerTest {
 
 	}
 
+	@DisplayName("수정 - 주문 승인 요청을 정상 반영한다. - 성공")
+	@Test
+	void acceptOrder_success() throws Exception {
+		//given
+		ItemCategory itemCategory = createReserveEspressoCategory();
+		itemCategoryRepository.save(itemCategory);
+
+		Item icedAmericano = createIcedAmericano(itemCategory);// defaultOption
+		itemRepository.save(icedAmericano);
+
+		String storeId = "storeId";
+		Store store = StoreObjectProvider.creatStore(storeId);
+
+		storeRepository.save(store);
+
+		User user = createUser();
+		Authority authority = new Authority(Role.ADMIN);
+		UserAuthority userAuthority = new UserAuthority(null, authority, user, store);
+		user.getUserAuthorities().add(userAuthority);
+		userRepository.save(user);
+
+		Order order = OrderObjectProvider.createOrder(null, user.getId(), storeId);
+		CustomOption customOption = OrderObjectProvider.createCustomOption();
+		OrderItem.create(order, icedAmericano, customOption, 1, new OptionPrice());
+
+		orderRepository.save(order);
+		starService.create(user);
+
+		OrderAcceptRequest orderAcceptRequest = new OrderAcceptRequest(user.getId());
+
+		mockMvc.perform(patch(BASE_REQUEST_URI + "/{orderId}/accept", order.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(orderAcceptRequest))
+			)
+			.andExpect(status().isOk())
+			.andDo(print())
+			.andDo(document("order-accept",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("orderId").description("주문 Id")
+				),
+				requestFields(
+					fieldWithPath("userId").type(JsonFieldType.NUMBER).description("요청 userId")
+				)
+			));
+
+		Order findOrder = orderRepository.findById(order.getId()).get();
+
+		assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.PREPARING);
+	}
+
+	@DisplayName("수정 - 주문 거절 요청을 정상 반영한다. - 성공")
+	@Test
+	void rejectOrder_success() throws Exception {
+		//given
+		ItemCategory itemCategory = createReserveEspressoCategory();
+		itemCategoryRepository.save(itemCategory);
+
+		Item icedAmericano = createIcedAmericano(itemCategory);// defaultOption
+		itemRepository.save(icedAmericano);
+
+		String storeId = "storeId";
+		Store store = StoreObjectProvider.creatStore(storeId);
+
+		storeRepository.save(store);
+
+		User user = createUser();
+		Authority authority = new Authority(Role.ADMIN);
+		UserAuthority userAuthority = new UserAuthority(null, authority, user, store);
+		user.getUserAuthorities().add(userAuthority);
+		userRepository.save(user);
+
+		Order order = OrderObjectProvider.createOrder(null, user.getId(), storeId);
+		CustomOption customOption = OrderObjectProvider.createCustomOption();
+		OrderItem.create(order, icedAmericano, customOption, 1, new OptionPrice());
+
+		orderRepository.save(order);
+		starService.create(user);
+
+		OrderAcceptRequest orderAcceptRequest = new OrderAcceptRequest(user.getId());
+
+		mockMvc.perform(patch(BASE_REQUEST_URI + "/{orderId}/reject", order.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(orderAcceptRequest))
+			)
+			.andExpect(status().isOk())
+			.andDo(print())
+			.andDo(document("order-reject",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("orderId").description("주문 Id")
+				),
+				requestFields(
+					fieldWithPath("userId").type(JsonFieldType.NUMBER).description("요청 userId")
+				)
+			));
+
+		Order findOrder = orderRepository.findById(order.getId()).get();
+
+		assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.STORE_CANCEL);
+	}
+
 	void createOrders() {
 
 		AtomicInteger integer = new AtomicInteger();
@@ -655,7 +768,7 @@ class OrderControllerTest {
 						RandomStringUtils.randomAlphabetic(10) + "@email.com",
 						"0107441484" + integer.getAndIncrement()));
 
-				doNothing().when(starService).updateCount(user.getId(), 1);
+				starService.create(user);
 
 				Card chargeCard = CardObjectProvider.createCard(user);
 				chargeCard.chargeAmount(100000);

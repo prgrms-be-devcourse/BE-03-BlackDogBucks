@@ -31,7 +31,7 @@ public class UserAuthority extends AbstractTimeColumn {
 	@Column(name = "user_authority_id")
 	private Long userAuthorityId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = true)
 	@JoinColumn(name = "authority_name")
 	private Authority authority;
 

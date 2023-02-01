@@ -55,6 +55,12 @@ public class DefaultOrderService implements OrderService {
 
 	@Transactional(readOnly = true)
 	@Override
+	public Order findById(String orderId) {
+		return orderRepository.findById(orderId)
+			.orElseThrow(() -> new EntityNotFoundException(Order.class, orderId));
+	}
+
+	@Transactional(readOnly = true)
 	public SliceResponse<OrderByStoreResponse> findAllStoreOrdersBy(String storeId, OrderStatus orderStatus,
 		String cursorOrderId, Pageable pageable) {
 

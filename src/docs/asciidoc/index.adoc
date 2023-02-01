@@ -4,26 +4,6 @@
 :sectlinks:
 
 [[resources-post]]
-== Test
-
-=== create
-
-==== HTTP request
-
-include::{snippets}/hello-world-api/http-request.adoc[]
-
-===== request Param
-
-include::{snippets}/hello-world-api/request-parameters.adoc[]
-
-==== HTTP response
-
-include::{snippets}/hello-world-api/http-response.adoc[]
-
-===== response body
-
-include::{snippets}/hello-world-api/response-body.adoc[]
-
 == User
 
 === create
@@ -53,20 +33,6 @@ include::{snippets}/login/http-response.adoc[]
 ===== response body
 
 include::{snippets}/login/response-body.adoc[]
-
-=== find_user
-
-==== HTTP request
-
-include::{snippets}/find_user/http-request.adoc[]
-
-==== HTTP response
-
-include::{snippets}/find_user/http-response.adoc[]
-
-===== response body
-
-include::{snippets}/find_user/response-body.adoc[]
 
 == Category
 
@@ -223,3 +189,28 @@ include::{snippets}/orders-by-store/request-parameters.adoc[]
 include::{snippets}/orders-by-store/http-response.adoc[]
 
 include::{snippets}/orders-by-store/response-fields.adoc[]
+
+== accept
+
+==== HTTP request
+
+include::{snippets}/order-accept/http-request.adoc[]
+
+include::{snippets}/order-accept/path-parameters.adoc[]
+
+==== HTTP response
+
+include::{snippets}/order-accept/http-response.adoc[]
+
+== reject
+
+==== HTTP request
+
+include::{snippets}/order-reject/http-request.adoc[]
+
+include::{snippets}/order-reject/path-parameters.adoc[]
+
+==== HTTP response
+
+include::{snippets}/order-reject/http-response.adoc[]
+
