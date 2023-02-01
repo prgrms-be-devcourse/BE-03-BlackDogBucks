@@ -44,4 +44,9 @@ public class PaymentFacadeService {
 		return paymentService.chargePay(paymentChargeRequest.getCardId(), paymentChargeRequest.getAmount());
 
 	}
+
+	@Transactional
+	public void cancel(Order order) {
+
+	}
 }

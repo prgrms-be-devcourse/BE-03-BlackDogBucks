@@ -55,5 +55,4 @@ class StarTest {
 		Star star = createStar(user, count);
 		assertTrue(star.canExchange());
 	}
-
 }

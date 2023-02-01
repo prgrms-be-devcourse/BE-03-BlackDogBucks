@@ -65,5 +65,11 @@ public class DefaultStarService implements StarService {
 		return new StarExchangeResponse(star.getUser().getId(), canExchange);
 	}
 
+	@Transactional
+	@Override
+	public void cancel(Long userId) {
+
+	}
+
 	//TODO 거래 취소, 반품 시 별은 원상복구(원래 상태로 감소)
 }

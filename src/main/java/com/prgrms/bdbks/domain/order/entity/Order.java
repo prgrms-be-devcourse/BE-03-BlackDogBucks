@@ -23,6 +23,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
+import com.prgrms.bdbks.domain.order.exception.AlreadyProgressOrderException;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -54,7 +55,7 @@ public class Order extends AbstractTimeColumn {
 	@Column(name = "total_price", nullable = false)
 	private Integer totalPrice = 0;
 
-	@Column(name = "order_status", nullable = false)
+	@Column(name = "order_status", nullable = false, columnDefinition = "varchar(255)")
 	@Enumerated(EnumType.STRING)
 	private OrderStatus orderStatus;
 
@@ -111,6 +112,22 @@ public class Order extends AbstractTimeColumn {
 
 	public int getTotalQuantity() {
 		return orderItems.stream().mapToInt(OrderItem::getQuantity).sum();
+	}
+
+	public void accept() {
+		if (orderStatus != OrderStatus.PAYMENT_COMPLETE) {
+			throw new AlreadyProgressOrderException("이미 진행중인 주문입니다.");
+		}
+
+		this.orderStatus = OrderStatus.PREPARING;
+	}
+
+	public void reject() {
+		if (orderStatus != OrderStatus.PAYMENT_COMPLETE) {
+			throw new AlreadyProgressOrderException("이미 진행중인 주문입니다.");
+		}
+
+		this.orderStatus = OrderStatus.STORE_CANCEL;
 	}
 
 }

@@ -11,12 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.common.exception.PointParseException;
+import com.prgrms.bdbks.common.util.Location;
 import com.prgrms.bdbks.domain.store.converter.StoreMapper;
 import com.prgrms.bdbks.domain.store.dto.StoreCreateRequest;
 import com.prgrms.bdbks.domain.store.dto.StoreResponse;
 import com.prgrms.bdbks.domain.store.entity.Store;
 import com.prgrms.bdbks.domain.store.repository.StoreRepository;
-import com.prgrms.bdbks.global.util.Location;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +25,9 @@ import lombok.RequiredArgsConstructor;
 public class DefaultStoreService implements StoreService {
 
 	private static final int DISTANCE = 10000;
+
 	private final StoreRepository storeRepository;
+
 	private final StoreMapper storeMapper;
 
 	@Override

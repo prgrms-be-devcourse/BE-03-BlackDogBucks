@@ -6,7 +6,7 @@ import static com.prgrms.bdbks.domain.item.entity.BeverageOption.CupType.*;
 import static com.prgrms.bdbks.domain.item.entity.BeverageOption.Size.*;
 import static com.prgrms.bdbks.domain.testutil.ItemObjectProvider.createCustomOption;
 import static com.prgrms.bdbks.domain.testutil.ItemObjectProvider.*;
-import static com.prgrms.bdbks.domain.testutil.OrderObjectProvider.createCustomOption;
+import static com.prgrms.bdbks.domain.testutil.OrderObjectProvider.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
@@ -24,6 +24,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.prgrms.bdbks.common.exception.AuthorityNotFoundException;
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.common.exception.PaymentException;
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
@@ -40,9 +41,12 @@ import com.prgrms.bdbks.domain.order.dto.OrderDetailResponse;
 import com.prgrms.bdbks.domain.order.entity.CustomOption;
 import com.prgrms.bdbks.domain.order.entity.Order;
 import com.prgrms.bdbks.domain.order.entity.OrderItem;
+import com.prgrms.bdbks.domain.order.entity.OrderStatus;
+import com.prgrms.bdbks.domain.order.exception.AlreadyProgressOrderException;
 import com.prgrms.bdbks.domain.payment.entity.PaymentType;
 import com.prgrms.bdbks.domain.payment.model.PaymentResult;
 import com.prgrms.bdbks.domain.payment.service.PaymentFacadeService;
+import com.prgrms.bdbks.domain.star.service.StarFacadeService;
 import com.prgrms.bdbks.domain.star.service.StarService;
 import com.prgrms.bdbks.domain.store.entity.Store;
 import com.prgrms.bdbks.domain.store.service.StoreService;
@@ -82,12 +86,18 @@ class OrderFacadeServiceSliceTest {
 	private StarService starService;
 
 	@Mock
+	private StarFacadeService starFacadeService;
+
+	@Mock
 	private PaymentFacadeService paymentFacadeService;
 
 	@Spy
 	private OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
 
-	private final CustomOption customOption = createCustomOption();
+	private final CustomOption customOption = createCustomOption(
+		new OrderCreateRequest.Item.Option(0, 0, 0, 0, Milk.OAT, ESPRESSO,
+			MilkAmount.MEDIUM, VENTI, PERSONAL)
+	);
 
 	@SneakyThrows
 	@DisplayName("findOrderById() - orderId 로 로 주문 정보를 조회할 수 있다. - 성공")
@@ -461,6 +471,176 @@ class OrderFacadeServiceSliceTest {
 		verify(itemService).customItems(request.getOrderItems());
 		verify(orderService).createOrder(null, userId, storeId, customItems);
 		verify(starService).increaseCount(userId);
+	}
+
+	@DisplayName("주문 승인 실패 - 올바른 주문 아이디가 아니다.")
+	@Test
+	void acceptOrder_OrderNotFound_fail() {
+		//given
+		String orderId = "orderId";
+		Long adminUserId = 10L;
+		given(orderService.findById(orderId))
+			.willThrow(EntityNotFoundException.class);
+
+		//when
+		assertThrows(EntityNotFoundException.class, () ->
+			orderFacadeService.acceptOrder(orderId, adminUserId));
+		//then
+		verify(orderService).findById(orderId);
+	}
+
+	@DisplayName("주문 승인 실패 - 해당 매장의 관리자가 아니다. ")
+	@Test
+	void acceptOrder_notHasStore_fail() {
+		//given
+		String orderId = "orderId";
+		Long adminUserId = 10L;
+
+		Order order = OrderObjectProvider.createOrder();
+		ReflectionTestUtils.setField(order, "id", orderId);
+
+		given(orderService.findById(orderId))
+			.willReturn(order);
+
+		given(userService.hasStore(adminUserId, order.getStoreId()))
+			.willThrow(AuthorityNotFoundException.class);
+
+		//when
+		assertThrows(AuthorityNotFoundException.class,
+			() -> orderFacadeService.acceptOrder(orderId, adminUserId));
+
+		//then
+		verify(orderService).findById(orderId);
+		verify(userService).hasStore(adminUserId, order.getStoreId());
+	}
+
+	@DisplayName("주문 승인 실패 - 주문의 상태가 결제완료가 아니다 ")
+	@Test
+	void acceptOrder_illegalOrderStatus_fail() {
+		//given
+		String orderId = "orderId";
+		Long adminUserId = 10L;
+		String storeId = "storeId";
+
+		Order order = OrderObjectProvider.createOrder();
+		ReflectionTestUtils.setField(order, "id", orderId);
+		ReflectionTestUtils.setField(order, "orderStatus", OrderStatus.PREPARING);
+		given(orderService.findById(orderId))
+			.willReturn(order);
+		given(userService.hasStore(adminUserId, order.getStoreId()))
+			.willReturn(true);
+		//when
+		assertThrows(AlreadyProgressOrderException.class,
+			() -> orderFacadeService.acceptOrder(orderId, adminUserId));
+
+		//then
+		verify(orderService).findById(orderId);
+		verify(userService).hasStore(adminUserId, order.getStoreId());
+	}
+
+	@DisplayName("주문 승인 - 주문이 정상 승인된다.")
+	@Test
+	void acceptOrder_success() {
+		//given
+		long adminUserId = 1111L;
+		long userId = 23423L;
+		User user = UserObjectProvider.createUser(userId);
+
+		String storeId = "storeId";
+		Store store = StoreObjectProvider.creatStore(storeId);
+
+		Order order = createOrder(null, userId, storeId);
+
+		given(orderService.findById(order.getId()))
+			.willReturn(order);
+		given(userService.hasStore(adminUserId, order.getStoreId()))
+			.willReturn(true);
+		doNothing().when(starFacadeService).exchangeCoupon(userId);
+
+		//when
+		assertDoesNotThrow(() -> orderFacadeService.acceptOrder(order.getId(), adminUserId));
+
+		//then
+		verify(orderService).findById(order.getId());
+		verify(userService).hasStore(adminUserId, storeId);
+
+		assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PREPARING);
+		verify(starFacadeService).exchangeCoupon(userId);
+	}
+
+	@DisplayName("주문 거절 - 주문이 정상 거절된다.")
+	@Test
+	void rejectOrder_success() {
+		//given
+
+		//when
+
+		//then
+	}
+
+	@DisplayName("주문 거절 실패 - 올바른 주문 아이디가 아니다.")
+	@Test
+	void rejectOrder_OrderNotFound_fail() {
+		//given
+		String orderId = "orderId";
+		Long adminUserId = 10L;
+		given(orderService.findById(orderId))
+			.willThrow(EntityNotFoundException.class);
+
+		//when
+		assertThrows(EntityNotFoundException.class, () ->
+			orderFacadeService.rejectOrder(orderId, adminUserId));
+		//then
+		verify(orderService).findById(orderId);
+	}
+
+	@DisplayName("주문 거절 실패 - 해당 매장의 관리자가 아니다. ")
+	@Test
+	void rejectOrder_notHasStore_fail() {
+		//given
+		String orderId = "orderId";
+		Long adminUserId = 10L;
+		String storeId = "storeId";
+
+		Order order = OrderObjectProvider.createOrder();
+		ReflectionTestUtils.setField(order, "id", orderId);
+
+		given(orderService.findById(orderId))
+			.willReturn(order);
+
+		given(userService.hasStore(adminUserId, order.getStoreId()))
+			.willThrow(AuthorityNotFoundException.class);
+
+		//when
+		assertThrows(AuthorityNotFoundException.class,
+			() -> orderFacadeService.rejectOrder(orderId, adminUserId));
+
+		//then
+		verify(orderService).findById(orderId);
+		verify(userService).hasStore(adminUserId, order.getStoreId());
+	}
+
+	@DisplayName("주문 거절 실패 - 주문의 상태가 결제완료가 아니다 ")
+	@Test
+	void rejectOrder_illegalOrderStatus_fail() {
+		//given
+		String orderId = "orderId";
+		Long adminUserId = 10L;
+
+		Order order = OrderObjectProvider.createOrder();
+		ReflectionTestUtils.setField(order, "id", orderId);
+		ReflectionTestUtils.setField(order, "orderStatus", OrderStatus.PREPARING);
+		given(orderService.findById(orderId))
+			.willReturn(order);
+		given(userService.hasStore(adminUserId, order.getStoreId()))
+			.willReturn(true);
+		//when
+		assertThrows(AlreadyProgressOrderException.class,
+			() -> orderFacadeService.rejectOrder(orderId, adminUserId));
+
+		//then
+		verify(orderService).findById(orderId);
+		verify(userService).hasStore(adminUserId, order.getStoreId());
 	}
 
 }
