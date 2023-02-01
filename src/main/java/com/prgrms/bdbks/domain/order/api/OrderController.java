@@ -25,6 +25,7 @@ import com.prgrms.bdbks.domain.order.dto.OrderByStoreResponse;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateRequest;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateResponse;
 import com.prgrms.bdbks.domain.order.dto.OrderDetailResponse;
+import com.prgrms.bdbks.domain.order.dto.OrderRejectRequest;
 import com.prgrms.bdbks.domain.order.dto.OrderSearchRequest;
 import com.prgrms.bdbks.domain.order.service.OrderFacadeService;
 

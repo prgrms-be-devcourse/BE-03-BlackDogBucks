@@ -1,4 +1,4 @@
-package com.prgrms.bdbks.domain.order.api;
+package com.prgrms.bdbks.domain.order.dto;
 
 import javax.validation.constraints.NotNull;
 
