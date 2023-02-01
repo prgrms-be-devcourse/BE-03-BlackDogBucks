@@ -1,22 +1,29 @@
 package com.prgrms.bdbks.domain.user.api;
 
+import static org.hamcrest.Matchers.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestConstructor;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgrms.bdbks.config.jwt.JwtConfigure;
 import com.prgrms.bdbks.config.security.SecurityConfig;
 import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
@@ -27,6 +34,7 @@ import com.prgrms.bdbks.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
+@AutoConfigureRestDocs
 @EnableConfigurationProperties(JwtConfigure.class)
 @Transactional
 @Import({SecurityConfig.class})
@@ -34,9 +42,14 @@ import lombok.RequiredArgsConstructor;
 @AutoConfigureMockMvc
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
-class UserControllerIntegrationTest {
+@Sql({"/test_sql/user.sql"})
+public class AuthControllerIntegrationTest {
 
+	@Autowired
 	private final MockMvc mockMvc;
+
+	@Autowired
+	private final ObjectMapper objectMapper;
 
 	private final AuthController authController;
 
@@ -44,38 +57,47 @@ class UserControllerIntegrationTest {
 
 	private String token;
 
+	private UserLoginRequest userLoginRequest;
+
 	@BeforeEach
 	void setup() {
 		UserCreateRequest userCreateRequest = UserObjectProvider.createBlackDogRequest();
-		userService.register(userCreateRequest);
+		authController.signup(userCreateRequest);
 
-		UserLoginRequest userLoginRequest = UserObjectProvider.createBlackDogLoginRequest();
+		userLoginRequest = UserObjectProvider.createBlackDogLoginRequest();
 		TokenResponse tokenResponse = userService.login(userLoginRequest);
-
 		token = "Bearer " + tokenResponse.getToken();
+
 	}
 
-	@DisplayName("me() - 인증 완료 후 개인정보 조회에 성공한다.")
+	@DisplayName("signup() - 입력한 정보가 올바른 경우 회원가입에 성공한다.")
 	@Test
-	void me_ValidParameters_Success() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me")
+	void signup_success() throws Exception {
+		UserCreateRequest createRequest = new UserCreateRequest("LoginId123", "password123", "nickname123",
+			LocalDate.now().minusYears(10L),
+			"01012345678", "user@naver.com");
+
+		mockMvc.perform(post("/api/v1/auth/signup")
 				.contentType(MediaType.APPLICATION_JSON)
-				.header(HttpHeaders.AUTHORIZATION, token)
-			)
+				.content(objectMapper.writeValueAsString(createRequest)))
 			.andDo(print())
-			.andExpect(status().isOk());
+			.andExpect(status().isCreated())
+			.andExpect(header().string("Location", containsString("/api/v1/auth/login")))
+			.andDo(print())
+			.andDo(document("signup"));
 	}
 
 	@Test
-	@DisplayName("readUser() - 인증 완료 후 개인정보를 조회하는데 성공한다.")
-	void readUser_success() throws Exception {
+	@DisplayName("login() - 아이디와 비밀번호가 DB의 값과 일치할 경우 로그인에 성공한다.")
+	void login_success() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/" + UserObjectProvider.BLACK_DOG_LOGIN_ID)
+		mockMvc.perform(post("/api/v1/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
-				.header(HttpHeaders.AUTHORIZATION, token)
-			)
+				.content(objectMapper.writeValueAsString(userLoginRequest)))
 			.andDo(print())
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andDo(print())
+			.andDo(document("signup"));
 	}
 
 }
