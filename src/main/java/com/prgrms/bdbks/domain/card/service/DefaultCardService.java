@@ -84,7 +84,7 @@ public class DefaultCardService implements CardService {
 			.orElseThrow(() -> new EntityNotFoundException(Card.class, cardId));
 
 		card.compareUser(userId);
-		card.payAmount(totalPrice);
+		card.payPrice(totalPrice);
 
 		return new CardPayResponse(cardId, totalPrice);
 	}
@@ -95,7 +95,7 @@ public class DefaultCardService implements CardService {
 		Card card = cardRepository.findById(cardId)
 			.orElseThrow(() -> new EntityNotFoundException(Card.class, cardId));
 
-		card.refundAmount(totalPrice);
+		card.refundPrice(totalPrice);
 
 		return new CardRefundResponse(card.getChargeCardId(), totalPrice, card.getAmount());
 	}

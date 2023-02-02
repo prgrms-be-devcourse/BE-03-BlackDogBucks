@@ -58,7 +58,7 @@ public class Card extends AbstractTimeColumn {
 		this.name = name;
 	}
 
-	private void validateAmount(int amount) {
+	private void validatePrice(int amount) {
 		checkArgument(amount >= 0, "금액은 0원 이상부터 가능합니다.");
 	}
 
@@ -70,7 +70,7 @@ public class Card extends AbstractTimeColumn {
 		checkArgument(StringUtils.hasText(name), "카드명을 입력해주세요.");
 	}
 
-	private void compareAmount(int amount) {
+	private void comparePrice(int amount) {
 		checkArgument(this.amount >= amount, "결제금액은 충전금액보다 클 수 없습니다.");
 	}
 
@@ -83,15 +83,15 @@ public class Card extends AbstractTimeColumn {
 		this.amount += amount;
 	}
 
-	public void payAmount(int amount) {
-		compareAmount(amount);
-		validateAmount(amount);
-		this.amount -= amount;
+	public void payPrice(int price) {
+		comparePrice(price);
+		validatePrice(price);
+		this.amount -= price;
 	}
 
-	public void refundAmount(int amount) {
-		validateAmount(amount);
-		this.amount += amount;
+	public void refundPrice(int price) {
+		validatePrice(price);
+		this.amount += price;
 	}
 
 	public void compareUser(Long userId) {

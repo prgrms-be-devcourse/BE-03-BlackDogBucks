@@ -50,7 +50,7 @@ public class DefaultPaymentService implements PaymentService {
 		Card card = cardRepository.findById(payment.getChargeCardId())
 			.orElseThrow(() -> new EntityNotFoundException(Card.class, payment.getChargeCardId()));
 
-		card.refundAmount(payment.getPrice());
+		card.refundPrice(payment.getPrice());
 
 		payment.refund();
 

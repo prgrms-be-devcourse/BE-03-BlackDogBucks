@@ -42,50 +42,50 @@ class CardTest {
 	@DisplayName("chargeAmount() - 10000원 ~ 550000원 사이의 금액을 충전할 수 있다. - 성공")
 	@ParameterizedTest
 	@ValueSource(ints = {10000, 550000, 54321, 200000, 12345})
-	void validateAmount_validAmount_ExceptionDoesNotThrown(int amount) {
+	void validateAmount_validAmount_ExceptionDoesNotThrown(int price) {
 		Card card = createCard(user);
-		assertDoesNotThrow(() -> card.chargeAmount(amount));
+		assertDoesNotThrow(() -> card.chargeAmount(price));
 	}
 
 	@DisplayName("validateAmount() - 10000원 ~ 550000원의 범위를 벗어난 금액은 충전할 수 없다. - 실패")
 	@ParameterizedTest
 	@ValueSource(ints = {9999, 550001, 1000, -1000, -20000, -50000})
-	void validateAmount_InvalidAmount_ExceptionThrown(int amount) {
+	void validateAmount_InvalidAmount_ExceptionThrown(int price) {
 		Card card = createCard(user);
-		assertThrows(IllegalArgumentException.class, () -> card.chargeAmount(amount));
+		assertThrows(IllegalArgumentException.class, () -> card.chargeAmount(price));
 	}
 
 	@DisplayName("chargeAmount() - 보유한 금액보다 적은 금액을 결제할 경우 결제할 수 있다. - 성공")
 	@ParameterizedTest
 	@ValueSource(ints = {0, 100, 2000, 5, 10000, 200000, 12345})
-	void payAmount_validAmount_ExceptionDoesNotThrown(int amount) {
+	void payAmount_validAmount_ExceptionDoesNotThrown(int price) {
 		Card card = createCard(user);
 		card.chargeAmount(300000);
-		assertDoesNotThrow(() -> card.payAmount(amount));
+		assertDoesNotThrow(() -> card.payPrice(price));
 	}
 
 	@DisplayName("validateAmount() - 보유한 금액보다 더 많은 금액을 결제할 경우 결제에 실패한다. - 실패")
 	@ParameterizedTest
 	@ValueSource(ints = {20000, 30000, 50000})
-	void payAmount_InvalidAmount_ExceptionThrown(int amount) {
+	void payAmount_InvalidAmount_ExceptionThrown(int price) {
 		Card card = createCard(user);
 		card.chargeAmount(10000);
-		assertThrows(IllegalArgumentException.class, () -> card.payAmount(amount));
+		assertThrows(IllegalArgumentException.class, () -> card.payPrice(price));
 	}
 
 	@DisplayName("refund() - 0원 이상의 금액을 환불한다. - 성공")
 	@ParameterizedTest
 	@ValueSource(ints = {20000, 30000, 50000})
-	void refund_validAmount_ExceptionDoesNotThrown(int amount) {
+	void refund_validAmount_ExceptionDoesNotThrown(int price) {
 		Card card = createCard(user);
-		assertDoesNotThrow(() -> card.refundAmount(amount));
+		assertDoesNotThrow(() -> card.refundPrice(price));
 	}
 
 	@DisplayName("refund() - 0원 이하의 금액은 환불할 수 없다. - 실패")
 	@ParameterizedTest
 	@ValueSource(ints = {-20000, -30000, -50000})
-	void refund_InvalidAmount_ExceptionThrown(int amount) {
+	void refund_InvalidAmount_ExceptionThrown(int price) {
 		Card card = createCard(user);
-		assertThrows(IllegalArgumentException.class, () -> card.refundAmount(amount));
+		assertThrows(IllegalArgumentException.class, () -> card.refundPrice(price));
 	}
 }
