@@ -5,9 +5,14 @@ import javax.validation.constraints.NotNull;
 
 import com.prgrms.bdbks.domain.user.role.Role;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class UserAuthChangeRequest {
 
 	@NotBlank(message = "로그인 ID는 필수 입력사항입니다.")

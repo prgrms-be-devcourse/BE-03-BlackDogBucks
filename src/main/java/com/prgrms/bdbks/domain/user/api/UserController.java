@@ -56,7 +56,7 @@ public class UserController {
 	 * @param user
 	 * @return status : ok , body : String
 	 */
-	@PreAuthorize("hasAnyRole('USER','ADMIN', 'STORE_MANAGER')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN', 'STORE_MANAGER')")
 	@GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserFindResponse> getMe(@AuthenticationPrincipal CustomUserDetails user) {
 		return ResponseEntity.ok(userMapper.entityToFindResponse(user.getUser()));

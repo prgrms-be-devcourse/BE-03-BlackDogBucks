@@ -109,6 +109,14 @@ public class GlobalExceptionHandler {
 			.body(ErrorResponse.badRequest(e.getMessage(), request.getRequestURI()));
 	}
 
+	@ExceptionHandler(DuplicateInsertException.class)
+	protected ResponseEntity<ErrorResponse> handleDuplicateInsertException(
+		HttpServletRequest request, DuplicateInsertException e) {
+
+		return ResponseEntity.status(BAD_REQUEST)
+			.body(ErrorResponse.badRequest(e.getMessage(), request.getRequestURI()));
+	}
+
 	private List<FieldError> makeFieldErrorsFromBindingResult(BindingResult bindingResult) {
 		List<FieldError> fieldErrors = new ArrayList<>();
 

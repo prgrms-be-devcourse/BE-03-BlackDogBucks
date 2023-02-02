@@ -3,6 +3,8 @@ package com.prgrms.bdbks.domain.user.api;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -12,20 +14,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.prgrms.bdbks.config.jwt.JwtConfigure;
-import com.prgrms.bdbks.config.security.SecurityConfig;
 import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
 import com.prgrms.bdbks.domain.user.dto.TokenResponse;
 import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
@@ -35,9 +34,7 @@ import com.prgrms.bdbks.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 @AutoConfigureRestDocs
-@EnableConfigurationProperties(JwtConfigure.class)
 @Transactional
-@Import({SecurityConfig.class})
 @SpringBootTest(properties = {"spring.profiles.active=test"})
 @AutoConfigureMockMvc
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
@@ -67,7 +64,6 @@ public class AuthControllerIntegrationTest {
 		userLoginRequest = UserObjectProvider.createBlackDogLoginRequest();
 		TokenResponse tokenResponse = userService.login(userLoginRequest);
 		token = "Bearer " + tokenResponse.getToken();
-
 	}
 
 	@DisplayName("signup() - 입력한 정보가 올바른 경우 회원가입에 성공한다.")
@@ -84,11 +80,22 @@ public class AuthControllerIntegrationTest {
 			.andExpect(status().isCreated())
 			.andExpect(header().string("Location", containsString("/api/v1/auth/login")))
 			.andDo(print())
-			.andDo(document("signup"));
+			.andDo(document("signup",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				requestFields(
+					fieldWithPath("loginId").type(JsonFieldType.STRING).description("로그인 ID"),
+					fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
+					fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
+					fieldWithPath("birthDate").type(JsonFieldType.STRING).description("생년월일"),
+					fieldWithPath("phone").type(JsonFieldType.STRING).description("핸드폰 번호"),
+					fieldWithPath("email").type(JsonFieldType.STRING).description("이메일")
+				)
+			));
 	}
 
-	@Test
 	@DisplayName("login() - 아이디와 비밀번호가 DB의 값과 일치할 경우 로그인에 성공한다.")
+	@Test
 	void login_success() throws Exception {
 
 		mockMvc.perform(post("/api/v1/auth/login")
@@ -97,7 +104,16 @@ public class AuthControllerIntegrationTest {
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andDo(print())
-			.andDo(document("signup"));
+			.andDo(document("login",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				requestFields(
+					fieldWithPath("loginId").type(JsonFieldType.STRING).description("로그인 ID"),
+					fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호")
+				),
+				responseFields(
+					fieldWithPath("token").type(JsonFieldType.STRING).description("토큰 값")
+				)
+			));
 	}
-
 }

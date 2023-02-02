@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -75,7 +76,7 @@ public class DefaultUserService implements UserService {
 	@Transactional
 	public TokenResponse login(UserLoginRequest userLoginRequest) {
 		User user = this.userRepository.findByLoginId(userLoginRequest.getLoginId())
-			.orElseThrow();
+			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));
 
 		user.checkPassword(passwordEncoder, userLoginRequest.getPassword());
 
