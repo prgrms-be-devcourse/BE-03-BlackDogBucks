@@ -15,9 +15,13 @@ import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.domain.card.dto.CardChargeResponse;
 import com.prgrms.bdbks.domain.card.dto.CardPayResponse;
 import com.prgrms.bdbks.domain.card.service.CardService;
+import com.prgrms.bdbks.domain.coupon.dto.CouponRefundResponse;
+import com.prgrms.bdbks.domain.coupon.service.CouponService;
 import com.prgrms.bdbks.domain.order.entity.Order;
 import com.prgrms.bdbks.domain.payment.dto.OrderPayment;
+import com.prgrms.bdbks.domain.payment.dto.OrderRefundPayment;
 import com.prgrms.bdbks.domain.payment.dto.PaymentChargeRequest;
+import com.prgrms.bdbks.domain.payment.dto.PaymentRefundResult;
 import com.prgrms.bdbks.domain.payment.entity.PaymentType;
 import com.prgrms.bdbks.domain.payment.model.PaymentResult;
 import com.prgrms.bdbks.domain.testutil.OrderObjectProvider;
@@ -30,6 +34,9 @@ class PaymentFacadeServiceTest {
 
 	@Mock
 	private CardService cardService;
+
+	@Mock
+	private CouponService couponService;
 
 	@InjectMocks
 	private PaymentFacadeService paymentFacadeService;
@@ -118,19 +125,67 @@ class PaymentFacadeServiceTest {
 		Long userId = 1L;
 		String cardId = "cardId";
 		int amount = 40000;
-		String paymentId = "PaymentId";
+		String paymentId = "paymentId";
 		PaymentChargeRequest paymentChargeRequest = new PaymentChargeRequest(amount, cardId);
-		PaymentResult paymentResult = new PaymentResult(paymentId);
 
 		when(cardService.charge(userId, cardId, amount)).thenThrow(EntityNotFoundException.class);
 
 		//when
-		assertThrows(EntityNotFoundException.class, () -> {
-			paymentFacadeService.chargePay(userId, paymentChargeRequest);
-		});
+		assertThrows(EntityNotFoundException.class, () -> paymentFacadeService.chargePay(userId, paymentChargeRequest));
 
 		//then
 		verify(cardService).charge(userId, cardId, amount);
+
+	}
+
+	@DisplayName("orderPayRefund - 카드로 한 주문을 결제를 환불할 수 있다. - 성공")
+	@Test
+	void orderPayRefund_validParameters_Success() {
+
+		//given
+		String orderId = "orderId";
+		String paymentId = "paymentId";
+		String cardId = "cardId";
+		Long couponId = 1L;
+		int refundPrice = 5000;
+
+		OrderRefundPayment orderRefundPayment = new OrderRefundPayment(orderId, couponId);
+		CouponRefundResponse couponRefundResponse = new CouponRefundResponse(couponId);
+		PaymentRefundResult paymentRefundResult = new PaymentRefundResult(paymentId, cardId, refundPrice);
+
+		when(couponService.refundCoupon(couponId)).thenReturn(couponRefundResponse);
+		when(paymentService.orderPayRefund(orderId)).thenReturn(paymentRefundResult);
+
+		//when
+		PaymentRefundResult result = paymentFacadeService.orderPayRefund(orderRefundPayment);
+
+		//then
+
+		verify(couponService).refundCoupon(couponId);
+		verify(paymentService).orderPayRefund(orderId);
+
+		assertThat(result)
+			.hasFieldOrPropertyWithValue("id", paymentRefundResult.getId())
+			.hasFieldOrPropertyWithValue("chargeCardId", paymentRefundResult.getChargeCardId())
+			.hasFieldOrPropertyWithValue("price", paymentRefundResult.getPrice());
+	}
+
+	@DisplayName("orderPayRefund - 유효하지 않은 주문은 환불할 수 없다 - 실패")
+	@Test
+	void orderPayRefund_inValidParameters_fail() {
+
+		//given
+		String inValidOrderId = "inValid";
+		Long couponId = 1L;
+		OrderRefundPayment orderRefundPayment = new OrderRefundPayment(inValidOrderId, couponId);
+
+		when(paymentService.orderPayRefund(inValidOrderId)).thenThrow(EntityNotFoundException.class);
+
+		//when
+		assertThrows(EntityNotFoundException.class, () -> paymentFacadeService.orderPayRefund(orderRefundPayment));
+
+		//then
+		verify(paymentService).orderPayRefund(inValidOrderId);
 
 	}
 

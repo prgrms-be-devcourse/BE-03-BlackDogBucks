@@ -10,6 +10,7 @@ import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.domain.card.converter.CardMapper;
 import com.prgrms.bdbks.domain.card.dto.CardChargeResponse;
 import com.prgrms.bdbks.domain.card.dto.CardPayResponse;
+import com.prgrms.bdbks.domain.card.dto.CardRefundResponse;
 import com.prgrms.bdbks.domain.card.dto.CardSaveRequest;
 import com.prgrms.bdbks.domain.card.dto.CardSaveResponse;
 import com.prgrms.bdbks.domain.card.dto.CardSearchResponse;
@@ -83,9 +84,20 @@ public class DefaultCardService implements CardService {
 			.orElseThrow(() -> new EntityNotFoundException(Card.class, cardId));
 
 		card.compareUser(userId);
-		card.payAmount(totalPrice);
+		card.payPrice(totalPrice);
 
 		return new CardPayResponse(cardId, totalPrice);
+	}
+
+	@Override
+	@Transactional
+	public CardRefundResponse refund(String cardId, int totalPrice) {
+		Card card = cardRepository.findById(cardId)
+			.orElseThrow(() -> new EntityNotFoundException(Card.class, cardId));
+
+		card.refundPrice(totalPrice);
+
+		return new CardRefundResponse(card.getChargeCardId(), totalPrice, card.getAmount());
 	}
 
 }

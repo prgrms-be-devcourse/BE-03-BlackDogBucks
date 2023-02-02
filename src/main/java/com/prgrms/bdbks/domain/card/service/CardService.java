@@ -2,6 +2,7 @@ package com.prgrms.bdbks.domain.card.service;
 
 import com.prgrms.bdbks.domain.card.dto.CardChargeResponse;
 import com.prgrms.bdbks.domain.card.dto.CardPayResponse;
+import com.prgrms.bdbks.domain.card.dto.CardRefundResponse;
 import com.prgrms.bdbks.domain.card.dto.CardSaveRequest;
 import com.prgrms.bdbks.domain.card.dto.CardSaveResponse;
 import com.prgrms.bdbks.domain.card.dto.CardSearchResponse;
@@ -18,5 +19,7 @@ public interface CardService {
 	CardPayResponse pay(Long userId, String cardId, int totalPrice);
 
 	CardSaveResponse create(Long userId, CardSaveRequest cardSaveRequest);
+
+	CardRefundResponse refund(String cardId, int totalPrice);
 
 }
