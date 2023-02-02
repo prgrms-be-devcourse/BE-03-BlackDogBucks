@@ -336,7 +336,7 @@ class OrderControllerTest {
 			.hasFieldOrPropertyWithValue("amount", 10000 - payment.getPrice());
 
 		assertThat(star)
-			.hasFieldOrPropertyWithValue("count", Integer.valueOf("2"));
+			.hasFieldOrPropertyWithValue("count", Integer.valueOf("1"));
 
 		verify(storeService).findById(storeId);
 
@@ -768,7 +768,9 @@ class OrderControllerTest {
 						RandomStringUtils.randomAlphabetic(10) + "@email.com",
 						"0107441484" + integer.getAndIncrement()));
 
-				starService.create(user);
+
+				doNothing().when(starService).increaseCount(user.getId());
+
 
 				Card chargeCard = CardObjectProvider.createCard(user);
 				chargeCard.chargeAmount(100000);

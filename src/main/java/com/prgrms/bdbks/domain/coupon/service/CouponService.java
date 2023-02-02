@@ -1,5 +1,6 @@
 package com.prgrms.bdbks.domain.coupon.service;
 
+import com.prgrms.bdbks.domain.coupon.dto.CouponRefundResponse;
 import com.prgrms.bdbks.domain.coupon.dto.CouponSaveResponse;
 import com.prgrms.bdbks.domain.coupon.dto.CouponSearchResponses;
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
@@ -15,5 +16,7 @@ public interface CouponService {
 	Coupon getCouponByCouponId(Long couponId);
 
 	CouponSearchResponses findUnusedCoupon(Long userId, boolean used);
+
+	CouponRefundResponse refundCoupon(Long couponId);
 
 }

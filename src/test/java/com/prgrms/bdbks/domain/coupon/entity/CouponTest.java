@@ -11,6 +11,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.prgrms.bdbks.common.exception.CouponAlreadyUsedException;
+import com.prgrms.bdbks.common.exception.CouponUnUsedException;
+
 class CouponTest {
 
 	private final Long validId = 1L;
@@ -82,5 +85,35 @@ class CouponTest {
 	void validateExpireDate_InValidExpireDate_ExceptionThrown(LocalDateTime expireDate) {
 		assertThrows(NullPointerException.class,
 			() -> createCoupon(validId, validName, validPrice, expireDate));
+	}
+
+	@DisplayName("use() - 쿠폰 사용 처리 - 성공")
+	@Test
+	void use_Unused_ExceptionDoesNotThrown() {
+		Coupon coupon = createCoupon(validId, validName, validPrice, validExpireDate.plusSeconds(1L));
+		assertDoesNotThrow(coupon::use);
+	}
+
+	@DisplayName("use() - 쿠폰 사용 처리 - 실패")
+	@Test
+	void use_Used_ExceptionThrown() {
+		Coupon coupon = createCoupon(validId, validName, validPrice, validExpireDate.plusSeconds(1L));
+		coupon.use();
+		assertThrows(CouponAlreadyUsedException.class, coupon::use);
+	}
+
+	@DisplayName("refund()- 쿠폰 미사용 처리 - 성공")
+	@Test
+	void refund_Used_ExceptionDoesNotThrown() {
+		Coupon coupon = createCoupon(validId, validName, validPrice, validExpireDate.plusSeconds(1L));
+		coupon.use();
+		assertDoesNotThrow(coupon::refund);
+	}
+
+	@DisplayName("refund() - 쿠폰 미사용 처리 - 실패")
+	@Test
+	void refund_Unused_ExceptionThrown() {
+		Coupon coupon = createCoupon(validId, validName, validPrice, validExpireDate.plusSeconds(1L));
+		assertThrows(CouponUnUsedException.class, coupon::refund);
 	}
 }
