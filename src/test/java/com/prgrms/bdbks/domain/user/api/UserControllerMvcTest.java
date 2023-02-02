@@ -30,10 +30,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgrms.bdbks.common.exception.DuplicateInsertException;
+import com.prgrms.bdbks.domain.testutil.StoreObjectProvider;
 import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
 import com.prgrms.bdbks.domain.user.converter.UserMapper;
+import com.prgrms.bdbks.domain.user.dto.StoreUserChangeRequest;
 import com.prgrms.bdbks.domain.user.dto.TokenResponse;
-import com.prgrms.bdbks.domain.user.dto.UserAuthChangeRequest;
 import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
 import com.prgrms.bdbks.domain.user.dto.UserFindResponse;
 import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
@@ -208,21 +209,22 @@ class UserControllerMvcTest {
 	@Test
 	void changeAuthority_success() throws Exception {
 
-		UserAuthChangeRequest userAuthChangeRequest = new UserAuthChangeRequest(BLACK_DOG_LOGIN_ID, Role.ROLE_ADMIN);
+		StoreUserChangeRequest storeUserChangeRequest = new StoreUserChangeRequest(BLACK_DOG_LOGIN_ID, Role.ROLE_ADMIN,
+			StoreObjectProvider.STORE_ID);
 
-		doNothing().when(defaultUserService).changeUserAuthority(any());
+		doNothing().when(defaultUserService).changeStoreUser(any());
 
-		mockMvc.perform(patch("/api/v1/users/authority")
+		mockMvc.perform(patch("/api/v1/users/store")
 				.header(HttpHeaders.AUTHORIZATION, AUTHENTICATION_TYPE_PREFIX + testToken)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(userAuthChangeRequest))
+				.content(objectMapper.writeValueAsString(storeUserChangeRequest))
 				.with(csrf())
 			)
 			.andDo(print())
 			.andExpect(status().isOk())
-			.andExpect(content().string("User Authority Modified"));
+			.andExpect(content().string("User's Store Information Modified"));
 
-		verify(defaultUserService).changeUserAuthority(any());
+		verify(defaultUserService).changeStoreUser(any());
 	}
 
 }

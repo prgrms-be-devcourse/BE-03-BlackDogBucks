@@ -18,15 +18,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.TestConstructor;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prgrms.bdbks.domain.testutil.StoreObjectProvider;
 import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
 import com.prgrms.bdbks.domain.user.converter.UserMapper;
+import com.prgrms.bdbks.domain.user.dto.StoreUserChangeRequest;
 import com.prgrms.bdbks.domain.user.dto.TokenResponse;
-import com.prgrms.bdbks.domain.user.dto.UserAuthChangeRequest;
 import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
 import com.prgrms.bdbks.domain.user.dto.UserFindResponse;
 import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
@@ -42,6 +44,7 @@ import lombok.RequiredArgsConstructor;
 @SpringBootTest(properties = {"spring.profiles.active=test"})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
+@Sql({"/test_sql/user.sql"})
 class UserControllerIntegrationTest {
 
 	private final MockMvc mockMvc;
@@ -119,27 +122,29 @@ class UserControllerIntegrationTest {
 			));
 	}
 
-	@DisplayName("changeUserAuthority() - 인증 완료 후 권한 변경에 성공한다.")
+	@DisplayName("changeStoreUser() - 인증 완료 후 유저의 매장 정보 변경에 성공한다.")
 	@Test
-	void changeUserAuthority_ValidParameters_Success() throws Exception {
+	void changeStoreUserInformation_ValidParameters_Success() throws Exception {
 
-		UserAuthChangeRequest userAuthChangeRequest = new UserAuthChangeRequest(BLACK_DOG_LOGIN_ID, Role.ROLE_ADMIN);
+		StoreUserChangeRequest storeUserChangeRequest = new StoreUserChangeRequest(BLACK_DOG_LOGIN_ID, Role.ROLE_ADMIN,
+			StoreObjectProvider.STORE_ID);
 
-		mockMvc.perform(patch("/api/v1/users/authority")
+		mockMvc.perform(patch("/api/v1/users/store")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header(HttpHeaders.AUTHORIZATION, token)
-				.content(objectMapper.writeValueAsString(userAuthChangeRequest))
+				.content(objectMapper.writeValueAsString(storeUserChangeRequest))
 			)
 			.andDo(print())
 			.andExpect(status().isOk())
-			.andExpect(content().string("User Authority Modified"))
+			.andExpect(content().string("User's Store Information Modified"))
 
-			.andDo(document("change-authority",
+			.andDo(document("change-user-store",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestFields(
 					fieldWithPath("loginId").type(JsonFieldType.STRING).description("로그인 ID"),
-					fieldWithPath("role").type(JsonFieldType.STRING).description("변경할 권한")
+					fieldWithPath("role").type(JsonFieldType.STRING).description("변경할 권한"),
+					fieldWithPath("storeId").type(JsonFieldType.STRING).description("매장 ID")
 				)
 			));
 	}

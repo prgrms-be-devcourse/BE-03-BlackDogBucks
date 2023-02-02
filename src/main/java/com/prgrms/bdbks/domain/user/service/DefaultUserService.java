@@ -12,9 +12,11 @@ import org.springframework.stereotype.Service;
 
 import com.prgrms.bdbks.common.exception.DuplicateInsertException;
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
+import com.prgrms.bdbks.domain.store.entity.Store;
+import com.prgrms.bdbks.domain.store.repository.StoreRepository;
 import com.prgrms.bdbks.domain.user.converter.UserMapper;
+import com.prgrms.bdbks.domain.user.dto.StoreUserChangeRequest;
 import com.prgrms.bdbks.domain.user.dto.TokenResponse;
-import com.prgrms.bdbks.domain.user.dto.UserAuthChangeRequest;
 import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
 import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
 import com.prgrms.bdbks.domain.user.entity.Authority;
@@ -44,6 +46,8 @@ public class DefaultUserService implements UserService {
 
 	private final TokenProvider tokenProvider;
 
+	private final StoreRepository storeRepository;
+
 	@Override
 	@Transactional
 	public User register(UserCreateRequest userCreateRequest) {
@@ -68,7 +72,7 @@ public class DefaultUserService implements UserService {
 
 	@Override
 	public Optional<User> findUser(String loginId) {
-		Optional<User> user = this.userRepository.findByLoginId(loginId);
+		Optional<User> user = this.userRepository.findByLoginIdWithAuthorities(loginId);
 		return user.map(UserAdapter::new);
 	}
 
@@ -79,6 +83,10 @@ public class DefaultUserService implements UserService {
 			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));
 
 		user.checkPassword(passwordEncoder, userLoginRequest.getPassword());
+
+		user.checkActivate();
+
+		user.changeLoginAt();
 
 		String token = tokenProvider.generateToken(user);
 
@@ -100,15 +108,19 @@ public class DefaultUserService implements UserService {
 
 	@Override
 	@Transactional
-	public void changeUserAuthority(UserAuthChangeRequest userAuthChangeRequest) {
+	public void changeStoreUser(StoreUserChangeRequest storeUserChangeRequest) {
+		User user = this.userRepository.findByLoginId(storeUserChangeRequest.getLoginId())
+			.orElseThrow(() -> new EntityNotFoundException(User.class, storeUserChangeRequest.getLoginId()));
 
-		User user = this.userRepository.findByLoginId(userAuthChangeRequest.getLoginId())
-			.orElseThrow(() -> new EntityNotFoundException(User.class, userAuthChangeRequest.getLoginId()));
+		Authority authority = authorityRepository.findById(storeUserChangeRequest.getRole())
+			.orElseThrow(() -> new EntityNotFoundException(Authority.class, storeUserChangeRequest.getRole()));
 
-		Authority authority = authorityRepository.findById(userAuthChangeRequest.getRole())
-			.orElseThrow(() -> new EntityNotFoundException(Authority.class, userAuthChangeRequest.getRole()));
+		Store store = storeRepository.findById(storeUserChangeRequest.getStoreId())
+			.orElseThrow(() -> new EntityNotFoundException(Store.class, storeUserChangeRequest.getStoreId()));
 
-		UserAuthority userAuthority = UserAuthority.create(user, authority);
+		UserAuthority userAuthority = UserAuthority.createWithStore(user, authority, store);
+
+		user.addUserAuthority(userAuthority);
 
 		userAuthorityRepository.save(userAuthority);
 	}

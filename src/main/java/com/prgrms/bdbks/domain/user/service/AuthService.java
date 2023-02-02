@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.prgrms.bdbks.domain.user.entity.User;
 import com.prgrms.bdbks.domain.user.jwt.CustomUserDetails;
 import com.prgrms.bdbks.domain.user.repository.UserRepository;
 
@@ -18,8 +19,11 @@ public class AuthService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return new CustomUserDetails(
-			userRepository.findByLoginIdWithAuthorities(username)
-				.orElseThrow(() -> new UsernameNotFoundException("해당하는 Id의 사용자를 찾을 수 없습니다.")));
+		User user = userRepository.findByLoginIdWithAuthorities(username)
+			.orElseThrow(() -> new UsernameNotFoundException("해당하는 Id의 사용자를 찾을 수 없습니다."));
+
+		user.checkActivate();
+
+		return new CustomUserDetails(user);
 	}
 }

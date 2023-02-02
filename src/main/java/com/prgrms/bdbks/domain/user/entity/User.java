@@ -1,8 +1,10 @@
 package com.prgrms.bdbks.domain.user.entity;
 
 import static com.google.common.base.Preconditions.*;
+import static java.time.LocalDateTime.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +29,7 @@ import org.springframework.util.StringUtils;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
 import com.prgrms.bdbks.common.exception.AuthorityNotFoundException;
+import com.prgrms.bdbks.common.exception.NonActivatedUserException;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -39,7 +42,7 @@ import lombok.ToString;
 @Table(name = "users")
 @Getter
 @ToString
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends AbstractTimeColumn {
 
@@ -68,6 +71,12 @@ public class User extends AbstractTimeColumn {
 
 	@Column(nullable = false, unique = true)
 	private String email;
+
+	@Column(nullable = false)
+	private boolean isActivated = true;
+
+	@Column(nullable = false)
+	private LocalDateTime lastLoginAt;
 
 	@JsonManagedReference
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
@@ -147,6 +156,20 @@ public class User extends AbstractTimeColumn {
 		}
 	}
 
+	public void changeLoginAt() {
+		this.lastLoginAt = now();
+	}
+
+	public void checkActivate() {
+		if (lastLoginAt.isBefore(now().minusYears(1L))) {
+			this.isActivated = false;
+		}
+
+		if (!isActivated) {
+			throw new NonActivatedUserException(this.getLoginId());
+		}
+	}
+
 	public void addUserAuthority(UserAuthority userAuthority) {
 		if (!this.getUserAuthorities().contains(userAuthority)) {
 			this.getUserAuthorities().add(userAuthority);
@@ -154,5 +177,4 @@ public class User extends AbstractTimeColumn {
 
 		userAuthority.changeUser(this);
 	}
-
 }

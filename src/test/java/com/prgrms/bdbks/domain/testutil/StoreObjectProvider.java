@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StoreObjectProvider {
 
+	public static final String STORE_ID = "20585779";
+
 	public static Store creatStore(String storeId) {
 		return Store.builder()
 			.id(storeId)

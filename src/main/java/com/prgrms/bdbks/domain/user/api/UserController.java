@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.prgrms.bdbks.domain.user.converter.UserMapper;
-import com.prgrms.bdbks.domain.user.dto.UserAuthChangeRequest;
+import com.prgrms.bdbks.domain.user.dto.StoreUserChangeRequest;
 import com.prgrms.bdbks.domain.user.dto.UserFindResponse;
 import com.prgrms.bdbks.domain.user.entity.User;
 import com.prgrms.bdbks.domain.user.jwt.CustomUserDetails;
@@ -64,15 +64,18 @@ public class UserController {
 
 	/**
 	 * <pre>
-	 *     유저 권한 변경
+	 *     유저 권한을 매장 관리자로 변경
+	 *     			OR
+	 *     매장 관리자의 매장 정보 변경
 	 * </pre>
-	 * @param userAuthChangeRequest - 변경할 회원정보
+	 * @param storeUserChangeRequest - 변경할 회원정보
 	 * @return status : ok , body : String
 	 */
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN', 'STORE_MANAGER')")
-	@PatchMapping(value = "/authority", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> changeUserAuthority(@Valid @RequestBody UserAuthChangeRequest userAuthChangeRequest) {
-		userService.changeUserAuthority(userAuthChangeRequest);
-		return ResponseEntity.ok("User Authority Modified");
+	@PatchMapping(value = "/store", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> changeUserStoreInformation(
+		@Valid @RequestBody StoreUserChangeRequest storeUserChangeRequest) {
+		userService.changeStoreUser(storeUserChangeRequest);
+		return ResponseEntity.ok("User's Store Information Modified");
 	}
 }

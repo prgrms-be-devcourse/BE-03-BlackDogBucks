@@ -45,9 +45,10 @@ public class UserAuthority extends AbstractTimeColumn {
 	private Store store;
 
 	@Builder
-	protected UserAuthority(Authority authority, User user) {
-		this.authority = authority;
+	protected UserAuthority(User user, Authority authority, Store store) {
 		this.user = user;
+		this.authority = authority;
+		this.store = store;
 	}
 
 	public static UserAuthority create(User user, Authority authority) {
@@ -58,6 +59,17 @@ public class UserAuthority extends AbstractTimeColumn {
 			.build();
 
 		user.addUserAuthority(userAuthority);
+
+		return userAuthority;
+	}
+
+	public static UserAuthority createWithStore(User user, Authority authority, Store store) {
+		UserAuthority userAuthority = UserAuthority
+			.builder()
+			.user(user)
+			.authority(authority)
+			.store(store)
+			.build();
 
 		return userAuthority;
 	}
