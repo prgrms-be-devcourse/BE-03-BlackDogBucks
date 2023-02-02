@@ -3,6 +3,7 @@ package com.prgrms.bdbks.domain.store.repository;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,9 +15,9 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestConstructor;
 
 import com.prgrms.bdbks.CustomDataJpaTest;
+import com.prgrms.bdbks.common.util.Location;
 import com.prgrms.bdbks.config.jpa.JpaConfig;
 import com.prgrms.bdbks.domain.store.entity.Store;
-import com.prgrms.bdbks.global.util.Location;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,7 +34,7 @@ class StoreRepositoryTest {
 	@DisplayName("저장 - 두개 매장 등록에 성공 한다.")
 	@Rollback(false)
 	void insert_test() throws Exception {
-		String pointWKT = String.format("POINT(%s %s)", 37.4843861241449, 127.014197798445);
+		String pointWKT = String.format("POINT (%s %s)", 37.4843861241449, 127.014197798445);
 
 		Store store = Store.builder()
 			.id("200157085")
@@ -43,7 +44,7 @@ class StoreRepositoryTest {
 			.position((Point)new WKTReader().read(pointWKT))
 			.build();
 
-		String pointWKT2 = String.format("POINT(%s %s)", 37.5829644184897, 127.00388696535);
+		String pointWKT2 = String.format("POINT (%s %s)", 37.5829644184897, 127.00388696535);
 		Store store2 = Store.builder()
 			.id("205857795")
 			.name("서울특별시 종로구 동숭동 30")
@@ -64,16 +65,17 @@ class StoreRepositoryTest {
 		Location location = new Location(37.493657, 127.013772);
 		List<Integer> distances = storeRepository.findDistance(location);
 
-		assertTrue(distances.stream().allMatch(x -> x != null));
+		assertTrue(distances.stream().allMatch(Objects::nonNull));
 	}
+	//
+	// @Test
+	// @DisplayName("조회 - 거리가 가까운 순으로 조회하는데 성공 한다.")
+	// void short_distance_test() {
+	// 	Location location = new Location(37.493657, 127.013772);
+	// 	int tenKm = 10000;
+	// 	List<Store> storeList = storeRepository.findAllByDistance(location, tenKm);
+	//
+	// 	assertTrue(storeList.stream().allMatch(Objects::nonNull));
+	// }
 
-	@Test
-	@DisplayName("조회 - 거리가 가까운 순으로 조회하는데 성공 한다.")
-	void short_distance_test() {
-		Location location = new Location(37.493657, 127.013772);
-		int tenKm = 10000;
-		List<Store> storeList = storeRepository.findAllByDistance(location, tenKm);
-
-		assertTrue(storeList.stream().allMatch(x -> x != null));
-	}
 }

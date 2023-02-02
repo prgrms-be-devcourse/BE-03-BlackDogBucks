@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,10 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.prgrms.bdbks.common.dto.SliceResponse;
+import com.prgrms.bdbks.domain.order.dto.OrderAcceptRequest;
 import com.prgrms.bdbks.domain.order.dto.OrderByStoreResponse;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateRequest;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateResponse;
 import com.prgrms.bdbks.domain.order.dto.OrderDetailResponse;
+import com.prgrms.bdbks.domain.order.dto.OrderRejectRequest;
 import com.prgrms.bdbks.domain.order.dto.OrderSearchRequest;
 import com.prgrms.bdbks.domain.order.service.OrderFacadeService;
 
@@ -64,6 +67,43 @@ public class OrderController {
 	@GetMapping(value = "/{orderId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<OrderDetailResponse> findOrderById(@PathVariable String orderId) {
 		return ResponseEntity.ok().body(orderService.findOrderById(orderId));
+	}
+
+	/**
+	 * <pre>
+	 *     주문 승인
+	 * </pre>
+	 *
+	 * @param orderId - 주문 id
+	 * @param request - 관리자 id
+	 * @return status : ok
+	 */
+	@PatchMapping(value = "/{orderId}/accept",
+		consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+	public ResponseEntity<Void> acceptOrder(@PathVariable String orderId,
+		@RequestBody @Valid OrderAcceptRequest request) {
+
+		orderService.acceptOrder(orderId, request.getUserId());
+
+		return ResponseEntity.ok().build();
+	}
+
+	/**
+	 * <pre>
+	 *     주문 거절
+	 * </pre>
+	 *
+	 * @param orderId - 주문 id
+	 * @param request - 관리자 id
+	 * @return status : ok
+	 */
+	@PatchMapping(value = "/{orderId}/reject",
+		consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+	public ResponseEntity<Void> rejectOrder(@PathVariable String orderId,
+		@RequestBody @Valid OrderRejectRequest request) {
+		orderService.rejectOrder(orderId, request.getUserId());
+
+		return ResponseEntity.ok().build();
 	}
 
 	/**

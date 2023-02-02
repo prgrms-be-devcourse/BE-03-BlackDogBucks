@@ -36,11 +36,11 @@ import com.prgrms.bdbks.domain.user.service.UserService;
 
 @AutoConfigureRestDocs
 @Import(SecurityConfig.class)
-@WebMvcTest(controllers = UserController.class)
+@WebMvcTest({AuthController.class, UserController.class})
 class UserControllerMvcTest {
 
 	private final String USER_API_PATH = "/api/v1/users/";
-	// private final String AUTH_API_PATH = "/api/v1/auth/";
+	private final String AUTH_API_PATH = "/api/v1/auth/";
 
 	private final String USER_LOGIN_ID = "blackdog";
 
@@ -86,7 +86,7 @@ class UserControllerMvcTest {
 		UserCreateRequest userCreateRequest = new UserCreateRequest(USER_LOGIN_ID, USER_PASSWORD, USER_NAME,
 			USER_BIRTH_DATE, USER_PHONE, USER_EMAIL, USER_ROLE);
 
-		mockMvc.perform(post("/api/v1/users/auth/signup")
+		mockMvc.perform(post("/api/v1/auth/signup")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(userCreateRequest)))
 			.andDo(print())
@@ -107,7 +107,7 @@ class UserControllerMvcTest {
 
 		when(defaultUserService.findUser(userCreateRequest.getLoginId())).thenReturn(Optional.of(emptyUser));
 
-		mockMvc.perform(post("/api/v1/users/auth/signup")
+		mockMvc.perform(post("/api/v1/auth/signup")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(userCreateRequest)))
 			.andExpect(status().isBadRequest());
@@ -121,7 +121,7 @@ class UserControllerMvcTest {
 		when(defaultUserService.login(request.getLoginId(), request.getPassword()))
 			.thenReturn(Optional.of(emptyUser));
 
-		mockMvc.perform(post("/api/v1/users/auth/login")
+		mockMvc.perform(post("/api/v1/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request))
 				.sessionAttr("user", emptyUser)
@@ -141,7 +141,7 @@ class UserControllerMvcTest {
 
 		when(defaultUserService.login(request.getLoginId(), request.getPassword())).thenReturn(Optional.empty());
 
-		mockMvc.perform(post("/api/v1/users/auth/login")
+		mockMvc.perform(post("/api/v1/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request))
 				.sessionAttr("user", emptyUser)
@@ -161,7 +161,7 @@ class UserControllerMvcTest {
 		when(defaultUserService.findUser(USER_LOGIN_ID)).thenReturn(Optional.of(emptyUser));
 		when(userMapper.entityToFindResponse(emptyUser)).thenReturn(findResponse);
 
-		mockMvc.perform(get("/api/v1/users/users/{loginId}", USER_LOGIN_ID))
+		mockMvc.perform(get("/api/v1/users/{loginId}", USER_LOGIN_ID))
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(content().json(objectMapper.writeValueAsString(findResponse)));

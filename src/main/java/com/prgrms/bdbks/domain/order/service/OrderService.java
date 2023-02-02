@@ -19,6 +19,8 @@ public interface OrderService {
 
 	Order createOrder(Coupon coupon, Long userId, String id, List<CustomItem> customItems);
 
+	Order findById(String orderId);
+
 	SliceResponse<OrderByStoreResponse> findAllStoreOrdersBy(String storeId, OrderStatus orderStatus,
 		String cursorOrderId,
 		Pageable pageable);
