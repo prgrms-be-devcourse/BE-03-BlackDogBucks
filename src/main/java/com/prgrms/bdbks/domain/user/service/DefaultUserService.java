@@ -99,12 +99,15 @@ public class DefaultUserService implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public void changeUserAuthority(UserAuthChangeRequest userAuthChangeRequest) {
 
 		User user = this.userRepository.findByLoginId(userAuthChangeRequest.getLoginId())
 			.orElseThrow(() -> new EntityNotFoundException(User.class, userAuthChangeRequest.getLoginId()));
 
-		Authority authority = new Authority(userAuthChangeRequest.getRole());
+		Authority authority = authorityRepository.findById(userAuthChangeRequest.getRole())
+			.orElseThrow(() -> new EntityNotFoundException(Authority.class, userAuthChangeRequest.getRole()));
+
 		UserAuthority userAuthority = UserAuthority.create(user, authority);
 
 		userAuthorityRepository.save(userAuthority);

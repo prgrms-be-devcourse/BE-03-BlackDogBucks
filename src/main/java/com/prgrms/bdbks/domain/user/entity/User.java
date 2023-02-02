@@ -30,6 +30,7 @@ import com.prgrms.bdbks.common.exception.AuthorityNotFoundException;
 
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -38,6 +39,7 @@ import lombok.ToString;
 @Table(name = "users")
 @Getter
 @ToString
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends AbstractTimeColumn {
 

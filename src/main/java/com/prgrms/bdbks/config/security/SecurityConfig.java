@@ -52,7 +52,6 @@ public class SecurityConfig {
 			.csrf().disable()
 
 			.authorizeRequests()
-			// .antMatchers("/**").authenticated()
 			.anyRequest().authenticated()
 			.and()
 
