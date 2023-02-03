@@ -84,9 +84,8 @@ public class DefaultUserService implements UserService {
 
 		user.checkPassword(passwordEncoder, userLoginRequest.getPassword());
 
-		user.checkActivate();
-
 		user.changeLoginAt();
+		user.checkActivate();
 
 		String token = tokenProvider.generateToken(user);
 
