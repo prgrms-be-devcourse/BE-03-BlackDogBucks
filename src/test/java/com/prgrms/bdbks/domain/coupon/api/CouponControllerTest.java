@@ -1,7 +1,6 @@
 package com.prgrms.bdbks.domain.coupon.api;
 
 import static com.prgrms.bdbks.domain.testutil.CouponObjectProvider.*;
-import static com.prgrms.bdbks.domain.testutil.UserObjectProvider.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -13,15 +12,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,9 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 import com.prgrms.bdbks.domain.coupon.repository.CouponRepository;
-import com.prgrms.bdbks.domain.store.service.StoreService;
+import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
+import com.prgrms.bdbks.domain.user.dto.TokenResponse;
+import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
+import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
 import com.prgrms.bdbks.domain.user.entity.User;
-import com.prgrms.bdbks.domain.user.repository.UserRepository;
+import com.prgrms.bdbks.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -45,30 +45,29 @@ class CouponControllerTest {
 
 	private static final String BASE_REQUEST_URI = "/api/v1/coupons";
 
-	private final HttpSession httpSession;
-
-	private final UserRepository userRepository;
-
 	private final CouponRepository couponRepository;
-
-	private static final String SESSION_USER = "user";
 
 	private final MockMvc mockMvc;
 
-	private User user;
+	private final UserService userService; // 빈 주입 받기
+
+	private String token;
 
 	private List<Coupon> coupons;
 
-	@MockBean
-	private StoreService storeService;
-
 	@BeforeEach
 	void setUp() {
-		user = createUser();
-		userRepository.save(user);
-		coupons = createCoupon(user.getId());
+		UserCreateRequest userCreateRequest = UserObjectProvider.createBlackDogRequest();
+		User savedUser = userService.register(userCreateRequest);
+
+		UserLoginRequest userLoginRequest = UserObjectProvider.createBlackDogLoginRequest();
+		TokenResponse tokenResponse = userService.login(userLoginRequest);
+
+		token = "Bearer " + tokenResponse.getToken();
+
+		coupons = createCoupon(savedUser.getId());
 		couponRepository.saveAll(coupons);
-		httpSession.setAttribute(SESSION_USER, user);
+
 	}
 
 	@DisplayName("findUnusedCoupon - 사용하지 않은 사용자의 쿠폰을 조회한다. - 성공")
@@ -77,7 +76,7 @@ class CouponControllerTest {
 
 		mockMvc.perform(get(BASE_REQUEST_URI + "/detail")
 				.param("used", "false")
-				.sessionAttr("user", user)
+				.header(HttpHeaders.AUTHORIZATION, token)
 				.accept(APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.coupons").exists())
@@ -112,7 +111,7 @@ class CouponControllerTest {
 	@Test
 	void findAll_ValidUser_Success() throws Exception {
 		mockMvc.perform(get(BASE_REQUEST_URI)
-				.sessionAttr("user", user)
+				.header(HttpHeaders.AUTHORIZATION, token)
 				.accept(APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.coupons").exists())

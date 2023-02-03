@@ -6,13 +6,14 @@ import javax.validation.Valid;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.prgrms.bdbks.domain.card.dto.CardSaveRequest;
@@ -20,6 +21,7 @@ import com.prgrms.bdbks.domain.card.dto.CardSaveResponse;
 import com.prgrms.bdbks.domain.card.dto.CardSearchResponse;
 import com.prgrms.bdbks.domain.card.service.CardService;
 import com.prgrms.bdbks.domain.user.entity.User;
+import com.prgrms.bdbks.domain.user.jwt.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,16 +33,19 @@ public class CardController {
 	private final CardService cardService;
 
 	/**
+	 *
 	 * <pre>
 	 *     충전 카드 등록
 	 * </pre>
-	 * @param user - 등록할 충전카드의 User
-	 * @param cardSaveRequest - 등록할 충전카드의 User
+	 * @param userDetails : 유저 정보
+	 * @param cardSaveRequest : 카드 정보
 	 * @return status : created , body : CardSaveResponse
 	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN', 'STORE_MANAGER')")
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<CardSaveResponse> create(@RequestBody @Valid CardSaveRequest cardSaveRequest,
-		@SessionAttribute("user") User user) {
+	public ResponseEntity<CardSaveResponse> create(@AuthenticationPrincipal CustomUserDetails userDetails,
+		@RequestBody @Valid CardSaveRequest cardSaveRequest) {
+		User user = userDetails.getUser();
 		CardSaveResponse cardSaveResponse = cardService.create(user.getId(), cardSaveRequest);
 
 		String createdURI = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString() + "/"
@@ -53,9 +58,11 @@ public class CardController {
 	 * <pre>
 	 *     충전 카드 단건 조회
 	 * </pre>
+	 *
 	 * @param cardId - 조회할 충전카드의 Id
 	 * @return status : ok, body : CardSearchResponse
 	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN', 'STORE_MANAGER')")
 	@GetMapping(value = "/{cardId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CardSearchResponse> getCard(@PathVariable String cardId) {
 		CardSearchResponse cardSearchResponse = cardService.findByCardId(cardId);

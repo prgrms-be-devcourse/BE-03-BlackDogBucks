@@ -1,7 +1,6 @@
 package com.prgrms.bdbks.domain.card.api;
 
 import static com.prgrms.bdbks.domain.testutil.CardObjectProvider.*;
-import static com.prgrms.bdbks.domain.testutil.UserObjectProvider.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
@@ -11,15 +10,13 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import javax.servlet.http.HttpSession;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,9 +27,12 @@ import com.prgrms.bdbks.domain.card.dto.CardSaveRequest;
 import com.prgrms.bdbks.domain.card.dto.CardSaveResponse;
 import com.prgrms.bdbks.domain.card.entity.Card;
 import com.prgrms.bdbks.domain.card.repository.CardRepository;
-import com.prgrms.bdbks.domain.store.service.StoreService;
+import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
+import com.prgrms.bdbks.domain.user.dto.TokenResponse;
+import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
+import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
 import com.prgrms.bdbks.domain.user.entity.User;
-import com.prgrms.bdbks.domain.user.repository.UserRepository;
+import com.prgrms.bdbks.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,32 +46,30 @@ class CardControllerTest {
 
 	private static final String BASE_REQUEST_URI = "/api/v1/cards";
 
-	private final HttpSession httpSession;
-
-	private final UserRepository userRepository;
-
 	private final CardRepository cardRepository;
-
-	private static final String SESSION_USER = "user";
 
 	private final ObjectMapper objectMapper;
 
 	private final MockMvc mockMvc;
 
-	private User user;
-
 	private Card card;
 
-	@MockBean
-	private StoreService storeService;
+	private final UserService userService;
+
+	private String token;
 
 	@BeforeEach
 	void setUp() {
-		user = createUser();
-		userRepository.save(user);
-		card = createCard(user);
+		UserCreateRequest userCreateRequest = UserObjectProvider.createBlackDogRequest();
+		User savedUser = userService.register(userCreateRequest);
+
+		UserLoginRequest userLoginRequest = UserObjectProvider.createBlackDogLoginRequest();
+		TokenResponse tokenResponse = userService.login(userLoginRequest);
+
+		token = "Bearer " + tokenResponse.getToken();
+
+		card = createCard(savedUser);
 		cardRepository.save(card);
-		httpSession.setAttribute(SESSION_USER, user);
 	}
 
 	@DisplayName("create - 사용자의 충전카드를 등록한다. - 성공")
@@ -85,7 +83,7 @@ class CardControllerTest {
 		String jsonRequest = objectMapper.writeValueAsString(cardSaveRequest);
 
 		mockMvc.perform(post(BASE_REQUEST_URI)
-				.sessionAttr("user", user)
+				.header(HttpHeaders.AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
 				.content(jsonRequest)
 				.accept(APPLICATION_JSON))
@@ -114,7 +112,7 @@ class CardControllerTest {
 		String jsonResponse = objectMapper.writeValueAsString(cardSaveResponse);
 
 		mockMvc.perform(get(BASE_REQUEST_URI + "/{cardId}", cardId)
-				.sessionAttr("user", user)
+				.header(HttpHeaders.AUTHORIZATION, token)
 				.accept(APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType(APPLICATION_JSON))
@@ -132,5 +130,6 @@ class CardControllerTest {
 					fieldWithPath("amount").type(JsonFieldType.NUMBER).description("카드 금액")
 				)
 			));
+
 	}
 }

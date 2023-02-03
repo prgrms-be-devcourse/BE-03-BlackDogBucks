@@ -668,8 +668,8 @@ class OrderControllerTest {
 		storeRepository.save(store);
 
 		User user = createUser();
-		Authority authority = new Authority(Role.ADMIN);
-		UserAuthority userAuthority = new UserAuthority(null, authority, user, store);
+		Authority authority = new Authority(Role.ROLE_ADMIN);
+		UserAuthority userAuthority = UserAuthority.createWithStore(user, authority, store);
 		user.getUserAuthorities().add(userAuthority);
 		userRepository.save(user);
 
@@ -720,8 +720,8 @@ class OrderControllerTest {
 		storeRepository.save(store);
 
 		User user = createUser();
-		Authority authority = new Authority(Role.ADMIN);
-		UserAuthority userAuthority = new UserAuthority(null, authority, user, store);
+		Authority authority = new Authority(Role.ROLE_ADMIN);
+		UserAuthority userAuthority = UserAuthority.createWithStore(user, authority, store);
 		user.getUserAuthorities().add(userAuthority);
 		userRepository.save(user);
 
@@ -768,9 +768,7 @@ class OrderControllerTest {
 						RandomStringUtils.randomAlphabetic(10) + "@email.com",
 						"0107441484" + integer.getAndIncrement()));
 
-
 				doNothing().when(starService).increaseCount(user.getId());
-
 
 				Card chargeCard = CardObjectProvider.createCard(user);
 				chargeCard.chargeAmount(100000);

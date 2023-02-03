@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.common.dto.SliceResponse;
+import com.prgrms.bdbks.domain.card.service.CardService;
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 import com.prgrms.bdbks.domain.coupon.service.CouponService;
 import com.prgrms.bdbks.domain.item.dto.CustomItem;
@@ -21,10 +22,9 @@ import com.prgrms.bdbks.domain.order.dto.OrderCreateResponse;
 import com.prgrms.bdbks.domain.order.dto.OrderDetailResponse;
 import com.prgrms.bdbks.domain.order.entity.Order;
 import com.prgrms.bdbks.domain.order.entity.OrderStatus;
-import com.prgrms.bdbks.domain.payment.dto.OrderPayment;
 import com.prgrms.bdbks.domain.payment.model.PaymentResult;
-import com.prgrms.bdbks.domain.payment.service.PaymentFacadeService;
-import com.prgrms.bdbks.domain.star.service.StarFacadeService;
+import com.prgrms.bdbks.domain.payment.service.PaymentService;
+import com.prgrms.bdbks.domain.star.dto.StarExchangeResponse;
 import com.prgrms.bdbks.domain.star.service.StarService;
 import com.prgrms.bdbks.domain.store.entity.Store;
 import com.prgrms.bdbks.domain.store.service.StoreService;
@@ -47,13 +47,13 @@ public class OrderFacadeService {
 
 	private final OrderMapper orderMapper;
 
-	private final PaymentFacadeService paymentService;
-
 	private final StarService starService;
 
 	private final CouponService couponService;
 
-	private final StarFacadeService starFacadeService;
+	private final CardService cardService;
+
+	private final PaymentService paymentService;
 
 	@Transactional
 	public OrderCreateResponse createOrder(OrderCreateRequest request) {
@@ -63,11 +63,19 @@ public class OrderFacadeService {
 		Coupon coupon = findCouponIfExists(request.getPaymentOption().getCouponId());
 
 		List<CustomItem> customItems = itemService.customItems(request.getOrderItems());
+
 		Order order = orderService.createOrder(coupon, request.getUserId(), request.getStoreId(),
 			customItems);
-		PaymentResult paymentResult = paymentService.orderPay(
-			new OrderPayment(order, request.getPaymentOption().getChargeCardId(),
-				request.getPaymentOption().getPaymentType()));
+
+		cardService.pay(order.getUserId(), request.getPaymentOption().getChargeCardId(),
+			order.getTotalPrice());
+
+		if (Objects.nonNull(order.getCoupon())) {
+			order.getCoupon().use();
+		}
+
+		PaymentResult paymentResult = paymentService.orderPay(order, request.getPaymentOption().getChargeCardId(),
+			order.getTotalPrice());
 
 		increaseStar(request.getUserId(), coupon);
 
@@ -118,7 +126,10 @@ public class OrderFacadeService {
 
 		order.accept();
 
-		starFacadeService.exchangeCoupon(order.getUserId());
+		StarExchangeResponse starExchangeResponse = starService.exchangeCoupon(order.getUserId());
+
+		couponService.createByStar(starExchangeResponse.getUserId(), starExchangeResponse.isCanExchange());
+
 	}
 
 	@Transactional
@@ -128,10 +139,14 @@ public class OrderFacadeService {
 
 		order.reject();
 
-		// payment 취소
-		paymentService.cancel(order);
+		Long couponId = order.getCoupon().getId();
 
-		// star 취소
+		if (Objects.nonNull(couponId)) {
+			couponService.refundCoupon(couponId);
+		}
+
+		paymentService.orderPayRefund(orderId);
+
 		starService.cancel(order.getUserId());
 	}
 

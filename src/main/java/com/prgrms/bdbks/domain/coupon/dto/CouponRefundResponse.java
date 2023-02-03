@@ -7,6 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CouponRefundResponse {
 
-	private final Long couponId;
+	private final Long id;
 
 }

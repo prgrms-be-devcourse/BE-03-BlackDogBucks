@@ -9,7 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CouponSaveResponse {
 
-	private Long couponId;
+	private Long id;
 
 	private Long userId;
 

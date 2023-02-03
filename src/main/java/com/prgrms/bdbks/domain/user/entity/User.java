@@ -75,7 +75,7 @@ public class User extends AbstractTimeColumn {
 	@Column(nullable = false)
 	private boolean isActivated = true;
 
-	@Column(nullable = false)
+	@Column
 	private LocalDateTime lastLoginAt;
 
 	@JsonManagedReference
