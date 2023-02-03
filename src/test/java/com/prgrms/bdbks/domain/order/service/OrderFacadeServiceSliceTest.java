@@ -27,6 +27,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.prgrms.bdbks.common.exception.AuthorityNotFoundException;
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
 import com.prgrms.bdbks.common.exception.PaymentException;
+import com.prgrms.bdbks.domain.card.dto.CardPayResponse;
+import com.prgrms.bdbks.domain.card.service.CardService;
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 import com.prgrms.bdbks.domain.coupon.service.CouponService;
 import com.prgrms.bdbks.domain.item.dto.CustomItem;
@@ -45,8 +47,8 @@ import com.prgrms.bdbks.domain.order.entity.OrderStatus;
 import com.prgrms.bdbks.domain.order.exception.AlreadyProgressOrderException;
 import com.prgrms.bdbks.domain.payment.entity.PaymentType;
 import com.prgrms.bdbks.domain.payment.model.PaymentResult;
-import com.prgrms.bdbks.domain.payment.service.PaymentFacadeService;
-import com.prgrms.bdbks.domain.star.service.StarFacadeService;
+import com.prgrms.bdbks.domain.payment.service.PaymentService;
+import com.prgrms.bdbks.domain.star.dto.StarExchangeResponse;
 import com.prgrms.bdbks.domain.star.service.StarService;
 import com.prgrms.bdbks.domain.store.entity.Store;
 import com.prgrms.bdbks.domain.store.service.StoreService;
@@ -86,10 +88,10 @@ class OrderFacadeServiceSliceTest {
 	private StarService starService;
 
 	@Mock
-	private StarFacadeService starFacadeService;
+	private CardService cardService;
 
 	@Mock
-	private PaymentFacadeService paymentFacadeService;
+	private PaymentService paymentService;
 
 	@Spy
 	private OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
@@ -257,6 +259,9 @@ class OrderFacadeServiceSliceTest {
 
 		OrderCreateRequest request = new OrderCreateRequest(userId, storeId, orderItemRequests, paymentOption);
 
+		CardPayResponse cardPayResponse = new CardPayResponse(request.getPaymentOption().getChargeCardId(),
+			order.getTotalPrice());
+
 		Item icedAmericano = createIcedAmericano();
 
 		CustomOption customOption = createCustomOption(option);
@@ -271,7 +276,9 @@ class OrderFacadeServiceSliceTest {
 			.willReturn(customItems);
 		given(orderService.createOrder(null, userId, storeId, customItems))
 			.willReturn(order);
-		given(paymentFacadeService.orderPay(any()))
+		given(cardService.pay(order.getUserId(), request.getPaymentOption().getChargeCardId(), order.getTotalPrice()))
+			.willReturn(cardPayResponse);
+		given(paymentService.orderPay(order, chargeCardId, order.getTotalPrice()))
 			.willThrow(PaymentException.class);
 
 		//when
@@ -281,8 +288,9 @@ class OrderFacadeServiceSliceTest {
 		//then
 		verify(storeService).findById(request.getStoreId());
 		verify(userService).findUserById(request.getUserId());
-		verify(paymentFacadeService).orderPay(any());
+		verify(paymentService).orderPay(order, chargeCardId, order.getTotalPrice());
 		verify(itemService).customItems(request.getOrderItems());
+		verify(cardService).pay(order.getUserId(), request.getPaymentOption().getChargeCardId(), order.getTotalPrice());
 		verify(orderService).createOrder(null, userId, storeId, customItems);
 	}
 
@@ -380,6 +388,9 @@ class OrderFacadeServiceSliceTest {
 
 		PaymentResult paymentResult = new PaymentResult("paymentID");
 
+		CardPayResponse cardPayResponse = new CardPayResponse(request.getPaymentOption().getChargeCardId(),
+			order.getTotalPrice());
+
 		Item icedAmericano = createIcedAmericano();
 
 		CustomOption customOption = createCustomOption(option);
@@ -396,7 +407,9 @@ class OrderFacadeServiceSliceTest {
 			.willReturn(user);
 		given(couponService.getCouponByCouponId(couponId))
 			.willReturn(coupon);
-		given(paymentFacadeService.orderPay(any()))
+		given(cardService.pay(order.getUserId(), request.getPaymentOption().getChargeCardId(), order.getTotalPrice()))
+			.willReturn(cardPayResponse);
+		given(paymentService.orderPay(order, chargeCardId, order.getTotalPrice()))
 			.willReturn(paymentResult);
 
 		//when
@@ -408,8 +421,9 @@ class OrderFacadeServiceSliceTest {
 		verify(storeService).findById(request.getStoreId());
 		verify(userService).findUserById(request.getUserId());
 		verify(couponService).getCouponByCouponId(couponId);
-		verify(paymentFacadeService).orderPay(any());
+		verify(paymentService).orderPay(order, chargeCardId, order.getTotalPrice());
 		verify(itemService).customItems(request.getOrderItems());
+		verify(cardService).pay(order.getUserId(), request.getPaymentOption().getChargeCardId(), order.getTotalPrice());
 		verify(orderService).createOrder(coupon, userId, storeId, customItems);
 	}
 
@@ -438,6 +452,9 @@ class OrderFacadeServiceSliceTest {
 
 		PaymentResult paymentResult = new PaymentResult("paymentID");
 
+		CardPayResponse cardPayResponse = new CardPayResponse(request.getPaymentOption().getChargeCardId(),
+			order.getTotalPrice());
+
 		Item icedAmericano = createIcedAmericano();
 
 		CustomOption customOption = createCustomOption(option);
@@ -452,7 +469,9 @@ class OrderFacadeServiceSliceTest {
 			.willReturn(order);
 		given(userService.findUserById(request.getUserId()))
 			.willReturn(user);
-		given(paymentFacadeService.orderPay(any()))
+		given(cardService.pay(order.getUserId(), request.getPaymentOption().getChargeCardId(), order.getTotalPrice()))
+			.willReturn(cardPayResponse);
+		given(paymentService.orderPay(order, chargeCardId, order.getTotalPrice()))
 			.willReturn(paymentResult);
 
 		doNothing().when(starService).increaseCount(userId);
@@ -467,10 +486,11 @@ class OrderFacadeServiceSliceTest {
 
 		verify(storeService).findById(request.getStoreId());
 		verify(userService).findUserById(request.getUserId());
-		verify(paymentFacadeService).orderPay(any());
+		verify(paymentService).orderPay(order, chargeCardId, order.getTotalPrice());
 		verify(itemService).customItems(request.getOrderItems());
 		verify(orderService).createOrder(null, userId, storeId, customItems);
 		verify(starService).increaseCount(userId);
+		verify(cardService).pay(order.getUserId(), request.getPaymentOption().getChargeCardId(), order.getTotalPrice());
 	}
 
 	@DisplayName("주문 승인 실패 - 올바른 주문 아이디가 아니다.")
@@ -548,14 +568,14 @@ class OrderFacadeServiceSliceTest {
 
 		String storeId = "storeId";
 		Store store = StoreObjectProvider.creatStore(storeId);
-
+		StarExchangeResponse starExchangeResponse = new StarExchangeResponse(userId, false);
 		Order order = createOrder(null, userId, storeId);
 
 		given(orderService.findById(order.getId()))
 			.willReturn(order);
 		given(userService.hasStore(adminUserId, order.getStoreId()))
 			.willReturn(true);
-		doNothing().when(starFacadeService).exchangeCoupon(userId);
+		given(starService.exchangeCoupon(userId)).willReturn(starExchangeResponse);
 
 		//when
 		assertDoesNotThrow(() -> orderFacadeService.acceptOrder(order.getId(), adminUserId));
@@ -565,7 +585,7 @@ class OrderFacadeServiceSliceTest {
 		verify(userService).hasStore(adminUserId, storeId);
 
 		assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PREPARING);
-		verify(starFacadeService).exchangeCoupon(userId);
+		verify(starService).exchangeCoupon(userId);
 	}
 
 	@DisplayName("주문 거절 - 주문이 정상 거절된다.")
