@@ -2,7 +2,10 @@ package com.prgrms.bdbks.domain.user.service;
 
 import java.util.Optional;
 
+import com.prgrms.bdbks.domain.user.dto.StoreUserChangeRequest;
+import com.prgrms.bdbks.domain.user.dto.TokenResponse;
 import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
+import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
 import com.prgrms.bdbks.domain.user.entity.User;
 
 public interface UserService {
@@ -11,9 +14,11 @@ public interface UserService {
 
 	Optional<User> findUser(String loginId);
 
-	Optional<User> login(String loginId, String password);
+	TokenResponse login(UserLoginRequest userLoginRequest);
 
 	User findUserById(Long id);
 
 	boolean hasStore(Long id, String storeId);
+
+	void changeStoreUser(StoreUserChangeRequest storeUserChangeRequest);
 }

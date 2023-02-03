@@ -16,4 +16,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	@Query(value = "SELECT u FROM User u WHERE u.loginId = :loginId AND u.password = :password")
 	Optional<User> findByLoginIdAndPassword(@Param("loginId") String loginId, @Param("password") String password);
+
+	@Query(value = "select u from User u "
+		+ "join fetch u.userAuthorities ua "
+		+ "join fetch ua.authority a "
+		+ "where u.loginId = :loginId")
+	Optional<User> findByLoginIdWithAuthorities(@Param("loginId") String loginId);
 }

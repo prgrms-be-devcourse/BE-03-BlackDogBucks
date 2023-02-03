@@ -1,20 +1,23 @@
 package com.prgrms.bdbks.domain.user.api;
 
-import java.util.Optional;
+import static com.prgrms.bdbks.domain.user.jwt.JwtAuthenticationFilter.*;
 
-import javax.servlet.http.HttpSession;
+import java.net.URI;
+
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.prgrms.bdbks.domain.user.dto.TokenResponse;
 import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
 import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
-import com.prgrms.bdbks.domain.user.entity.User;
 import com.prgrms.bdbks.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,38 +27,37 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 
-	private final UserService defaultUserService;
+	private final UserService userService;
 
-	@PostMapping(value = {"/signup"})
-	public ResponseEntity<String> signup(@RequestBody @Valid UserCreateRequest userCreateRequest) {
-		if (defaultUserService.findUser(userCreateRequest.getLoginId()).isPresent()) {
-			return new ResponseEntity<>("Sign Up Failed", HttpStatus.BAD_REQUEST);
-		} else {
-			this.defaultUserService.register(userCreateRequest);
-			return new ResponseEntity<>("Sign Up Completed", HttpStatus.CREATED);
-		}
+	/**
+	 * <pre>
+	 *     회원 가입
+	 * </pre>
+	 * @param userCreateRequest - 등록할 회원의 정보
+	 * @return status : created , body : URI
+	 */
+	@PostMapping(value = "/signup", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<URI> signup(@RequestBody @Valid UserCreateRequest userCreateRequest) {
+		userService.register(userCreateRequest);
+		return ResponseEntity.created(URI.create("/api/v1/auth/login")).build();
 	}
 
-	@PostMapping(value = {"/login"})
-	public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest request, HttpSession session) {
-		Optional<User> user = this.defaultUserService.login(request.getLoginId(), request.getPassword());
-		if (user.isPresent()) {
-			session.setAttribute("user", user.get());
-			return new ResponseEntity<>("Login Succeeded", HttpStatus.OK);
-		}
-		return new ResponseEntity<>("Login Failed", HttpStatus.UNAUTHORIZED);
-	}
+	/**
+	 * <pre>
+	 *     로그인
+	 * </pre>
+	 * @param loginRequest - 로그인 요청 정보(loginId, PW)
+	 * @return status : ok , body : TokenResponse
+	 */
+	@PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<TokenResponse> login(@RequestBody @Valid UserLoginRequest loginRequest,
+		HttpServletResponse response) {
 
-	@PostMapping(value = {"/logout"})
-	public ResponseEntity<Void> logout(HttpSession session) {
-		User user = (User)session.getAttribute("user");
-		if (user != null) {
-			session.removeAttribute("user");
-			session.invalidate();
-			return ResponseEntity.noContent().build();
-		} else {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-		}
+		TokenResponse tokenResponse = userService.login(loginRequest);
+
+		response.addHeader(HttpHeaders.AUTHORIZATION, AUTHENTICATION_TYPE_PREFIX + tokenResponse.getToken());
+
+		return ResponseEntity.ok(tokenResponse);
 	}
 
 }

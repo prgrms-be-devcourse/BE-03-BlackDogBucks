@@ -10,8 +10,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import com.prgrms.bdbks.domain.user.role.Role;
-
 class UserTest {
 
 	private final String validLoginId = "user123";
@@ -19,7 +17,6 @@ class UserTest {
 	private final String validNickname = "nickname123";
 	private final String validPhone = "01012345678";
 	private final String validEmail = "bdbks@naver.com";
-	private final Role validRole = Role.USER;
 	private final LocalDate validBirthDate = LocalDate.now().minusYears(10L);
 
 	private User createUser(String loginId, String password, String nickname, LocalDate birthDate, String phone,

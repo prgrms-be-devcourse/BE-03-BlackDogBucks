@@ -1,8 +1,10 @@
 package com.prgrms.bdbks.domain.user.entity;
 
 import static com.google.common.base.Preconditions.*;
+import static java.time.LocalDateTime.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -18,17 +20,20 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
 import com.prgrms.bdbks.common.exception.AuthorityNotFoundException;
-import com.prgrms.bdbks.domain.user.role.Role;
+import com.prgrms.bdbks.common.exception.NonActivatedUserException;
 
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -37,6 +42,7 @@ import lombok.ToString;
 @Table(name = "users")
 @Getter
 @ToString
+@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends AbstractTimeColumn {
 
@@ -65,6 +71,12 @@ public class User extends AbstractTimeColumn {
 
 	@Column(nullable = false, unique = true)
 	private String email;
+
+	@Column(nullable = false)
+	private boolean isActivated = true;
+
+	@Column(nullable = false)
+	private LocalDateTime lastLoginAt;
 
 	@JsonManagedReference
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
@@ -133,12 +145,36 @@ public class User extends AbstractTimeColumn {
 		checkArgument(email.matches(EMAIL_REGEX));
 	}
 
-	private void validateAuthority(Role role) {
-		checkNotNull(role, "권한을 입력해주세요.");
-	}
-
 	public void changePassword(String password) {
 		validatePassword(password);
 		this.password = password;
+	}
+
+	public void checkPassword(PasswordEncoder passwordEncoder, String password) {
+		if (!passwordEncoder.matches(password, this.password)) {
+			throw new BadCredentialsException("아이디와 비밀번호를 확인해주세요.");
+		}
+	}
+
+	public void changeLoginAt() {
+		this.lastLoginAt = now();
+	}
+
+	public void checkActivate() {
+		if (lastLoginAt.isBefore(now().minusYears(1L))) {
+			this.isActivated = false;
+		}
+
+		if (!isActivated) {
+			throw new NonActivatedUserException(this.getLoginId());
+		}
+	}
+
+	public void addUserAuthority(UserAuthority userAuthority) {
+		if (!this.getUserAuthorities().contains(userAuthority)) {
+			this.getUserAuthorities().add(userAuthority);
+		}
+
+		userAuthority.changeUser(this);
 	}
 }

@@ -1,5 +1,8 @@
 package com.prgrms.bdbks.domain.user.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +18,8 @@ public class UserAdapter extends User {
 
 	private String email;
 
+	private List<UserAuthority> userAuthorities = new ArrayList<>();
+
 	public UserAdapter(User user) {
 
 		super(user.getId(),
@@ -23,11 +28,12 @@ public class UserAdapter extends User {
 			user.getNickname(),
 			user.getBirthDate(),
 			user.getPhone(),
-			user.getPhone());
+			user.getEmail());
 
 		this.loginId = user.getLoginId();
 		this.nickname = user.getNickname();
 		this.password = user.getPassword();
 		this.email = user.getEmail();
+		this.userAuthorities = user.getUserAuthorities();
 	}
 }

@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 public class Authority extends AbstractTimeColumn {
 
 	@Id
-	@Column(name = "authority_name", length = 10)
+	@Column(name = "authority_name", length = 20)
 	@Enumerated(EnumType.STRING)
 	private Role authorityName;
 

@@ -2,7 +2,6 @@ package com.prgrms.bdbks.common.exception;
 
 import static org.springframework.http.HttpStatus.*;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -70,7 +69,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ErrorResponse> handleRuntimeException(
-		HttpServletRequest request, SQLIntegrityConstraintViolationException e) {
+		HttpServletRequest request, RuntimeException e) {
 
 		return ResponseEntity.badRequest()
 			.body(ErrorResponse.badRequest(e.getMessage(), request.getRequestURI()));
@@ -107,6 +106,14 @@ public class GlobalExceptionHandler {
 		HttpServletRequest request, AuthorityNotFoundException e) {
 
 		return ResponseEntity.status(FORBIDDEN)
+			.body(ErrorResponse.badRequest(e.getMessage(), request.getRequestURI()));
+	}
+
+	@ExceptionHandler(DuplicateInsertException.class)
+	protected ResponseEntity<ErrorResponse> handleDuplicateInsertException(
+		HttpServletRequest request, DuplicateInsertException e) {
+
+		return ResponseEntity.status(BAD_REQUEST)
 			.body(ErrorResponse.badRequest(e.getMessage(), request.getRequestURI()));
 	}
 

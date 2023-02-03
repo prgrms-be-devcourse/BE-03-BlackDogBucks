@@ -5,14 +5,14 @@ import java.util.Optional;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.prgrms.bdbks.common.exception.JwtValidateException;
 
@@ -21,15 +21,15 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends GenericFilterBean {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final TokenProvider tokenProvider;
 
-	@Override
-	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws
-		IOException, ServletException {
+	public static final String AUTHENTICATION_TYPE_PREFIX = "Bearer ";
 
-		HttpServletRequest httpServletRequest = (HttpServletRequest)servletRequest;
+	@Override
+	protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+		FilterChain filterChain) throws ServletException, IOException {
 		String jwt = resolveToken(httpServletRequest);
 
 		if (tokenProvider.validateToken(jwt)) {
@@ -41,15 +41,15 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 			log.debug("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
 		}
 
-		filterChain.doFilter(servletRequest, servletResponse);
+		filterChain.doFilter(httpServletRequest, httpServletResponse);
 	}
 
 	private String resolveToken(HttpServletRequest request) {
-		String bearerToken = request.getHeader("Authorization");
+		String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
 
 		return Optional.of(bearerToken)
 			.filter(t -> StringUtils.hasText(bearerToken))
-			.filter(t -> t.startsWith("Bearer "))
+			.filter(t -> t.startsWith(AUTHENTICATION_TYPE_PREFIX))
 			.map(t -> t.substring(7))
 			.orElseThrow(() ->
 				new JwtValidateException("유효한 형식의 JWT 토큰이 아닙니다."));
