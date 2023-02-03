@@ -51,7 +51,8 @@
 
 
 ## ERD
-![KakaoTalk_20230130_134716543](https://user-images.githubusercontent.com/82176176/215390492-c6a324dd-e342-44af-b060-f3a11d7842dd.png)
+![table](https://user-images.githubusercontent.com/53592454/216527654-69c75592-6d9e-4111-af3e-0f3faab70191.png)
+
 
 ### Branch Convention
 <img src="https://rovitpm.com/content/images/2022/01/feature-branch-with-develop-git-workflow-1.png" width="800">
