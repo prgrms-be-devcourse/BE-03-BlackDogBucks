@@ -15,6 +15,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.springframework.util.StringUtils;
 
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
@@ -34,9 +35,14 @@ public class Card extends AbstractTimeColumn {
 	public static final int MAX_CHARGE_PRICE = 550000;
 
 	@Id
-	@GeneratedValue(generator = "uuid")
-	@GenericGenerator(name = "uuid", strategy = "uuid2")
-	@Column(name = "card_id")
+	@Column(name = "charge_card_id")
+	@GenericGenerator(name = "card_id_generator",
+		strategy = "com.prgrms.bdbks.domain.card.repository.CardIdGenerator",
+		parameters = @Parameter(
+			name = "userId",
+			value = "userId를 어떻게든 받는다 여기서"
+		))
+	@GeneratedValue(generator = "card_id_generator")
 	private String chargeCardId;
 
 	@Column(name = "name", length = 30, nullable = false)
