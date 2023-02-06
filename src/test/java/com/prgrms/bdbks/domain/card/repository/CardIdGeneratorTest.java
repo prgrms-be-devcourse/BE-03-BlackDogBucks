@@ -1,33 +1,61 @@
 package com.prgrms.bdbks.domain.card.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.*;
+
+import java.io.Serializable;
 
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.prgrms.bdbks.CustomDataJpaTest;
+import com.prgrms.bdbks.domain.card.entity.Card;
+import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
+import com.prgrms.bdbks.domain.user.entity.User;
+import com.prgrms.bdbks.domain.user.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@CustomDataJpaTest
 class CardIdGeneratorTest {
+	private final MyRandom random = new MyRandom();
 
-	private final CardIdGenerator cardIdGenerator = new CardIdGenerator();
+	private final CardIdGenerator cardIdGenerator = new CardIdGenerator(random);
 
+	@Autowired
+	private UserRepository userRepository;
+
+	@DisplayName("Id Generator가 잘 동작하는지 확인한다.")
 	@Test
 	public void testNamedGenerator() {
 
-		int idLength = 23;
+		User user = UserObjectProvider.createUser();
 
-		SharedSessionContractImplementor mockSession = mock(SharedSessionContractImplementor.class);
+		userRepository.save(user);
 
-		Object mockObject = mock(Object.class);
+		Card card = Card.create(user, "기서카드");
 
-		String generatedId = this.cardIdGenerator.generate(mockSession, mockObject).toString();
+		SharedSessionContractImplementor session = Mockito.mock(SharedSessionContractImplementor.class);
 
-		log.info("id = {}", generatedId);
+		Serializable result = cardIdGenerator.generate(session, card);
 
-		assertEquals(idLength, generatedId.length());
-		assertTrue(generatedId.contains("HK"));
+		assertThat(result).isEqualTo(hashUserId(card.getUser().getId()) + "-" + random.getRandom());
+
+	}
+
+	private long hashUserId(Long userId) {
+		return userId % 9000 + 1000;
+	}
+
+	public static class MyRandom implements RandomNumberGenerator {
+
+		@Override
+		public int getRandom() {
+			return 999;
+		}
 	}
 
 }
