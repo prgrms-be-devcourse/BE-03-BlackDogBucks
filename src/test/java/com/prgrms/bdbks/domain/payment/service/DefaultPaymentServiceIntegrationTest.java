@@ -68,8 +68,6 @@ public class DefaultPaymentServiceIntegrationTest {
 		card = cardRepository.save(createCard(user));
 	}
 
-	//TODO Order Repository 만들어지먼 orderPay 테스트 작성
-	//Payment 결제상태가 CHARGE인지, 충전카드 금액 검증,
 	@ParameterizedTest
 	@ValueSource(ints = {10000, 20000, 50000, 500000, 549999, 550000})
 	@DisplayName("chargePay - 사용자의 충전카드에 금액을 충전할 수 있다. - 성공")

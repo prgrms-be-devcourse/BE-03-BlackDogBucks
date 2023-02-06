@@ -31,7 +31,6 @@ class CardIdGeneratorTest {
 	@DisplayName("Id Generator가 잘 동작하는지 확인한다.")
 	@Test
 	public void testNamedGenerator() {
-
 		User user = UserObjectProvider.createUser();
 
 		userRepository.save(user);
@@ -39,22 +38,23 @@ class CardIdGeneratorTest {
 		Card card = Card.create(user, "기서카드");
 
 		SharedSessionContractImplementor session = Mockito.mock(SharedSessionContractImplementor.class);
+		String id = String.format("%d012", hashUserId(user.getId())) + random.randomNumber();
 
 		Serializable result = cardIdGenerator.generate(session, card);
 
-		assertThat(result).isEqualTo(hashUserId(card.getUser().getId()) + "-" + random.getRandom());
-
+		assertThat(result).isEqualTo(id);
+		assertThat(result.toString().length()).isEqualTo(16);
 	}
 
-	private long hashUserId(Long userId) {
-		return userId % 9000 + 1000;
+	private Long hashUserId(Long userId) {
+		return userId % 900_000_000L + 100_000_000L;
 	}
 
 	public static class MyRandom implements RandomNumberGenerator {
 
 		@Override
-		public int getRandom() {
-			return 999;
+		public int randomNumber() {
+			return 1234;
 		}
 	}
 

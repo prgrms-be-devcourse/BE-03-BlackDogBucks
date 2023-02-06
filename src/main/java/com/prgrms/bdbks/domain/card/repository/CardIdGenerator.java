@@ -22,14 +22,12 @@ public class CardIdGenerator implements IdentifierGenerator {
 			Card card = (Card)object;
 			Long userId = card.getUser().getId();
 
-			int randomNumber = randomNumberGenerator.getRandom();
+			long userIdEncryption = userId % 900_000_000L + 100_000_000L;
 
-			long userIdEncryption = userId % 9000 + 1000;
-
-			return userIdEncryption + "-" + randomNumber;
+			return String.format("%d012", userIdEncryption) + randomNumberGenerator.randomNumber();
 		}
 
-		return new IllegalArgumentException("올바른 Id Generator가 아닙니다.");
+		return new IllegalArgumentException("올바른 카드가 아닙니다.");
 	}
 
 }

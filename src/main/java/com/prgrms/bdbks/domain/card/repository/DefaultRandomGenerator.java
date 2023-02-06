@@ -1,19 +1,19 @@
 package com.prgrms.bdbks.domain.card.repository;
 
+import java.security.SecureRandom;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 public class DefaultRandomGenerator implements RandomNumberGenerator {
 
+	private final Random random = new SecureRandom();
+
 	@Override
-	public int getRandom() {
-		int num = 0;
-		Random random = new Random();
+	public int randomNumber() {
 
-		for (int i = 0; i < 4; i++) {
-			int randomNumber = random.nextInt(9);
-			num = num * 10 + randomNumber;
-		}
-
-		return num;
+		return IntStream.range(0, 4)
+			.map(i -> random.nextInt(8) + 1)
+			.reduce(0, (left, right) -> left * 10 + right);
 	}
+
 }

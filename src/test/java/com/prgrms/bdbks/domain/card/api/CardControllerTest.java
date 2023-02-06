@@ -1,6 +1,7 @@
 package com.prgrms.bdbks.domain.card.api;
 
 import static com.prgrms.bdbks.domain.testutil.CardObjectProvider.*;
+import static com.prgrms.bdbks.domain.testutil.UserObjectProvider.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
@@ -57,7 +58,7 @@ class CardControllerTest {
 
 	@BeforeEach
 	void setUp() {
-		User user = userService.findUser("blackdog").get();
+		User user = userService.findUser(BLACK_DOG_LOGIN_ID).get();
 
 		card = createCard(user);
 		cardRepository.save(card);

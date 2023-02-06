@@ -1,6 +1,7 @@
 package com.prgrms.bdbks.domain.coupon.api;
 
 import static com.prgrms.bdbks.domain.testutil.CouponObjectProvider.*;
+import static com.prgrms.bdbks.domain.testutil.UserObjectProvider.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -54,7 +55,7 @@ class CouponControllerTest {
 
 	@BeforeEach
 	void setUp() {
-		User user = userService.findUser("blackdog").get();
+		User user = userService.findUser(BLACK_DOG_LOGIN_ID).get();
 
 		coupons = createCoupon(user.getId());
 		couponRepository.saveAll(coupons);
