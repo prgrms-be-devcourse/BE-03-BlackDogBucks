@@ -1,6 +1,7 @@
 package com.prgrms.bdbks.domain.card.api;
 
 import static com.prgrms.bdbks.domain.testutil.CardObjectProvider.*;
+import static com.prgrms.bdbks.domain.testutil.UserObjectProvider.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
@@ -23,15 +24,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prgrms.bdbks.WithMockCustomUser;
+import com.prgrms.bdbks.WithMockCustomUserSecurityContextFactory;
 import com.prgrms.bdbks.domain.card.dto.CardSaveRequest;
 import com.prgrms.bdbks.domain.card.dto.CardSaveResponse;
 import com.prgrms.bdbks.domain.card.entity.Card;
 import com.prgrms.bdbks.domain.card.repository.CardRepository;
-import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
-import com.prgrms.bdbks.domain.user.dto.TokenResponse;
-import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
-import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
 import com.prgrms.bdbks.domain.user.entity.User;
+import com.prgrms.bdbks.domain.user.jwt.JwtAuthenticationFilter;
 import com.prgrms.bdbks.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -56,24 +56,17 @@ class CardControllerTest {
 
 	private final UserService userService;
 
-	private String token;
-
 	@BeforeEach
 	void setUp() {
-		UserCreateRequest userCreateRequest = UserObjectProvider.createBlackDogRequest();
-		User savedUser = userService.register(userCreateRequest);
+		User user = userService.findUser(BLACK_DOG_LOGIN_ID).get();
 
-		UserLoginRequest userLoginRequest = UserObjectProvider.createBlackDogLoginRequest();
-		TokenResponse tokenResponse = userService.login(userLoginRequest);
-
-		token = "Bearer " + tokenResponse.getToken();
-
-		card = createCard(savedUser);
+		card = createCard(user);
 		cardRepository.save(card);
 	}
 
 	@DisplayName("create - 사용자의 충전카드를 등록한다. - 성공")
 	@Test
+	@WithMockCustomUser
 	void create_ValidParameters_Success() throws Exception {
 
 		String name = "normal";
@@ -83,7 +76,8 @@ class CardControllerTest {
 		String jsonRequest = objectMapper.writeValueAsString(cardSaveRequest);
 
 		mockMvc.perform(post(BASE_REQUEST_URI)
-				.header(HttpHeaders.AUTHORIZATION, token)
+				.header(HttpHeaders.AUTHORIZATION, JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+					+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.contentType(APPLICATION_JSON)
 				.content(jsonRequest)
 				.accept(APPLICATION_JSON))
@@ -104,15 +98,17 @@ class CardControllerTest {
 
 	@DisplayName("getCard - 사용자의 충전카드를 단건 조회한다. - 성공")
 	@Test
+	@WithMockCustomUser
 	void getCard_ValidParameters_Success() throws Exception {
-		String cardId = card.getChargeCardId();
+		String cardId = card.getId();
 
 		CardSaveResponse cardSaveResponse = new CardSaveResponse(cardId);
 
 		String jsonResponse = objectMapper.writeValueAsString(cardSaveResponse);
 
 		mockMvc.perform(get(BASE_REQUEST_URI + "/{cardId}", cardId)
-				.header(HttpHeaders.AUTHORIZATION, token)
+				.header(HttpHeaders.AUTHORIZATION, JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+					+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.accept(APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType(APPLICATION_JSON))

@@ -224,7 +224,7 @@ class OrderControllerTest {
 		Card chargeCard = CardObjectProvider.createCard(user);
 		chargeCard.chargeAmount(10000);
 
-		String chargeCardId = cardRepository.save(chargeCard).getChargeCardId();
+		String chargeCardId = cardRepository.save(chargeCard).getId();
 
 		OrderCreateRequest.Item.Option option = new OrderCreateRequest.Item.Option(
 			1, 0, 0, 0,
@@ -330,7 +330,7 @@ class OrderControllerTest {
 			.hasFieldOrPropertyWithValue("paymentStatus", PaymentStatus.APPROVE)
 			.hasFieldOrPropertyWithValue("order", order);
 
-		Card findCard = cardRepository.findById(chargeCard.getChargeCardId()).get();
+		Card findCard = cardRepository.findById(chargeCard.getId()).get();
 
 		assertThat(findCard)
 			.hasFieldOrPropertyWithValue("amount", 10000 - payment.getPrice());
@@ -363,7 +363,7 @@ class OrderControllerTest {
 		Card chargeCard = CardObjectProvider.createCard(user);
 		chargeCard.chargeAmount(10000);
 
-		String chargeCardId = cardRepository.save(chargeCard).getChargeCardId();
+		String chargeCardId = cardRepository.save(chargeCard).getId();
 
 		OrderCreateRequest.Item.Option option = new OrderCreateRequest.Item.Option(
 			1, 0, 0, 0,
@@ -443,7 +443,7 @@ class OrderControllerTest {
 			.hasFieldOrPropertyWithValue("paymentStatus", PaymentStatus.APPROVE)
 			.hasFieldOrPropertyWithValue("order", order);
 
-		Card findCard = cardRepository.findById(chargeCard.getChargeCardId()).get();
+		Card findCard = cardRepository.findById(chargeCard.getId()).get();
 
 		assertThat(findCard)
 			.hasFieldOrPropertyWithValue("amount", 10000 - payment.getPrice());
@@ -480,7 +480,7 @@ class OrderControllerTest {
 		Card chargeCard = CardObjectProvider.createCard(user);
 		chargeCard.chargeAmount(10000);
 
-		String chargeCardId = cardRepository.save(chargeCard).getChargeCardId();
+		String chargeCardId = cardRepository.save(chargeCard).getId();
 
 		OrderCreateRequest.Item.Option option = new OrderCreateRequest.Item.Option(
 			1, 0, 0, 0,
@@ -560,7 +560,7 @@ class OrderControllerTest {
 			.hasFieldOrPropertyWithValue("paymentStatus", PaymentStatus.APPROVE)
 			.hasFieldOrPropertyWithValue("order", order);
 
-		Card findCard = cardRepository.findById(chargeCard.getChargeCardId()).get();
+		Card findCard = cardRepository.findById(chargeCard.getId()).get();
 
 		assertThat(findCard)
 			.hasFieldOrPropertyWithValue("amount", 10000 - payment.getPrice());
@@ -807,7 +807,7 @@ class OrderControllerTest {
 			Card card = (Card)u.getSecond();
 
 			OrderCreateRequest.PaymentOption paymentOption = new OrderCreateRequest.PaymentOption(PaymentType.ORDER,
-				null, card.getChargeCardId());
+				null, card.getId());
 			Store store = stores.get(i.getAndIncrement() % 3);
 
 			List<OrderCreateRequest.Item> orderItemRequests = List.of(

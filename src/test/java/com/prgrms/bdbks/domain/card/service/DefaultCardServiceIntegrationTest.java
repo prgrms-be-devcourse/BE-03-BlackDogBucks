@@ -15,7 +15,6 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +28,6 @@ import com.prgrms.bdbks.domain.card.dto.CardSearchResponse;
 import com.prgrms.bdbks.domain.card.dto.CardSearchResponses;
 import com.prgrms.bdbks.domain.card.entity.Card;
 import com.prgrms.bdbks.domain.card.repository.CardRepository;
-import com.prgrms.bdbks.domain.store.service.StoreService;
 import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
 import com.prgrms.bdbks.domain.user.entity.User;
 import com.prgrms.bdbks.domain.user.repository.UserRepository;
@@ -51,9 +49,6 @@ class DefaultCardServiceIntegrationTest {
 	private final User user = UserObjectProvider.createUser();
 
 	private Card card;
-
-	@MockBean
-	private StoreService storeService;
 
 	@BeforeEach
 	void setUp() {
@@ -80,11 +75,11 @@ class DefaultCardServiceIntegrationTest {
 	void charge_validAmount_chargeSuccess(int amount) {
 
 		//when
-		CardChargeResponse chargeResponse = defaultCardService.charge(user.getId(), card.getChargeCardId(), amount);
+		CardChargeResponse chargeResponse = defaultCardService.charge(user.getId(), card.getId(), amount);
 
 		//then
 		assertThat(chargeResponse)
-			.hasFieldOrPropertyWithValue("chargeCardId", card.getChargeCardId())
+			.hasFieldOrPropertyWithValue("chargeCardId", card.getId())
 			.hasFieldOrPropertyWithValue("amount", card.getAmount());
 	}
 
@@ -95,17 +90,17 @@ class DefaultCardServiceIntegrationTest {
 
 		//when
 		assertThrows(IllegalArgumentException.class,
-			() -> defaultCardService.charge(user.getId(), card.getChargeCardId(), amount));
+			() -> defaultCardService.charge(user.getId(), card.getId(), amount));
 	}
 
 	@DisplayName("getCard - 카드를 카드 id로 조회할 수 있다. - 성공")
 	@Test
 	void getCard_validId_FindSuccess() {
-		assertDoesNotThrow(() -> defaultCardService.findByCardId(card.getChargeCardId()));
-		CardSearchResponse cardSearchResponse = defaultCardService.findByCardId(this.card.getChargeCardId());
+		assertDoesNotThrow(() -> defaultCardService.findByCardId(card.getId()));
+		CardSearchResponse cardSearchResponse = defaultCardService.findByCardId(card.getId());
 
 		assertThat(cardSearchResponse)
-			.hasFieldOrPropertyWithValue("chargeCardId", card.getChargeCardId())
+			.hasFieldOrPropertyWithValue("chargeCardId", card.getId())
 			.hasFieldOrPropertyWithValue("name", card.getName())
 			.hasFieldOrPropertyWithValue("amount", card.getAmount());
 	}
@@ -169,10 +164,10 @@ class DefaultCardServiceIntegrationTest {
 	@ParameterizedTest
 	@ValueSource(ints = {10000, 20000, 50000, 300000, 650000})
 	void refund_validCardId_Success(int amount) {
-		CardRefundResponse cardRefundResponse = defaultCardService.refund(card.getChargeCardId(), amount);
+		CardRefundResponse cardRefundResponse = defaultCardService.refund(card.getId(), amount);
 
 		assertThat(cardRefundResponse)
-			.hasFieldOrPropertyWithValue("chargeCardId", card.getChargeCardId())
+			.hasFieldOrPropertyWithValue("chargeCardId", card.getId())
 			.hasFieldOrPropertyWithValue("refundPrice", amount)
 			.hasFieldOrPropertyWithValue("rest", card.getAmount());
 
@@ -182,7 +177,7 @@ class DefaultCardServiceIntegrationTest {
 	@ParameterizedTest
 	@ValueSource(ints = {-10000, -20000, -50000, -300000, -650000})
 	void refund_inValidCardId_Success(int amount) {
-		assertThrows(IllegalArgumentException.class, () -> defaultCardService.refund(card.getChargeCardId(), amount));
+		assertThrows(IllegalArgumentException.class, () -> defaultCardService.refund(card.getId(), amount));
 
 	}
 }

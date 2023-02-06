@@ -25,8 +25,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
 @Table(name = "cards")
+@Getter
 @NoArgsConstructor(access = PROTECTED)
 public class Card extends AbstractTimeColumn {
 
@@ -34,10 +34,10 @@ public class Card extends AbstractTimeColumn {
 	public static final int MAX_CHARGE_PRICE = 550000;
 
 	@Id
-	@GeneratedValue(generator = "uuid")
-	@GenericGenerator(name = "uuid", strategy = "uuid2")
-	@Column(name = "card_id")
-	private String chargeCardId;
+	@GenericGenerator(name = "card_id_generator",
+		strategy = "com.prgrms.bdbks.domain.card.repository.CardIdGenerator")
+	@GeneratedValue(generator = "card_id_generator")
+	private String id;
 
 	@Column(name = "name", length = 30, nullable = false)
 	private String name;
@@ -98,7 +98,7 @@ public class Card extends AbstractTimeColumn {
 		checkArgument(Objects.equals(this.user.getId(), userId));
 	}
 
-	public static Card createCard(User user, String name) {
+	public static Card create(User user, String name) {
 
 		return Card.builder()
 			.user(user)

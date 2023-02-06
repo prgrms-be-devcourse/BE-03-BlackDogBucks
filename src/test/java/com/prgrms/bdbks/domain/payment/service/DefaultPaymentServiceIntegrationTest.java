@@ -68,14 +68,12 @@ public class DefaultPaymentServiceIntegrationTest {
 		card = cardRepository.save(createCard(user));
 	}
 
-	//TODO Order Repository 만들어지먼 orderPay 테스트 작성
-	//Payment 결제상태가 CHARGE인지, 충전카드 금액 검증,
 	@ParameterizedTest
 	@ValueSource(ints = {10000, 20000, 50000, 500000, 549999, 550000})
 	@DisplayName("chargePay - 사용자의 충전카드에 금액을 충전할 수 있다. - 성공")
 	void chargePay_ValidPrice_Success(int totalPrice) {
 		//when
-		PaymentResult paymentResult = paymentService.chargePay(card.getChargeCardId(), totalPrice);
+		PaymentResult paymentResult = paymentService.chargePay(card.getId(), totalPrice);
 
 		//then
 		Optional<Payment> optionalPayment = paymentRepository.findById(paymentResult.getPaymentId());
@@ -85,7 +83,7 @@ public class DefaultPaymentServiceIntegrationTest {
 
 		assertThat(savedPayment)
 			.hasFieldOrPropertyWithValue("id", paymentResult.getPaymentId())
-			.hasFieldOrPropertyWithValue("chargeCardId", card.getChargeCardId())
+			.hasFieldOrPropertyWithValue("chargeCardId", card.getId())
 			.hasFieldOrPropertyWithValue("paymentStatus", PaymentStatus.APPROVE)
 			.hasFieldOrPropertyWithValue("paymentType", PaymentType.CHARGE);
 	}
@@ -95,7 +93,7 @@ public class DefaultPaymentServiceIntegrationTest {
 	@DisplayName("chargePay - 사용자의 충전카드에 한도를 벗어나는 금액은 충전할 수 없다. - 실패")
 	void chargePay_InvalidPrice_Success(int totalPrice) {
 
-		assertThrows(PaymentException.class, () -> paymentService.chargePay(card.getChargeCardId(), totalPrice));
+		assertThrows(PaymentException.class, () -> paymentService.chargePay(card.getId(), totalPrice));
 	}
 
 	@DisplayName("orderPayRefund - 주문으로 결제 내역을 조회하여 결제상태를 환불로 변경한다. - 성공")
@@ -104,7 +102,7 @@ public class DefaultPaymentServiceIntegrationTest {
 
 		int orderPrice = 5000;
 
-		Payment payment = Payment.createOrderPayment(order, card.getChargeCardId(), orderPrice);
+		Payment payment = Payment.createOrderPayment(order, card.getId(), orderPrice);
 		paymentRepository.save(payment);
 		PaymentRefundResult paymentRefundResult = paymentService.orderPayRefund(payment.getOrder().getId());
 
@@ -126,7 +124,7 @@ public class DefaultPaymentServiceIntegrationTest {
 
 		int orderPrice = 5000;
 		String inValidId = "wrongId";
-		Payment payment = Payment.createOrderPayment(order, card.getChargeCardId(), orderPrice);
+		Payment payment = Payment.createOrderPayment(order, card.getId(), orderPrice);
 		paymentRepository.save(payment);
 
 		assertThrows(EntityNotFoundException.class, () -> paymentService.orderPayRefund(inValidId));

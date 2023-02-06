@@ -158,7 +158,7 @@ class DefaultOrderServiceTest {
 			Card card = (Card)u.getSecond();
 
 			OrderCreateRequest.PaymentOption paymentOption = new OrderCreateRequest.PaymentOption(PaymentType.ORDER,
-				null, card.getChargeCardId());
+				null, card.getId());
 			Store store = stores.get(i.getAndIncrement() % 3);
 
 			List<OrderCreateRequest.Item> orderItemRequests = List.of(

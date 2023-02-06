@@ -41,8 +41,8 @@ import lombok.ToString;
 @Entity
 @Table(name = "users")
 @Getter
-@ToString
-@EqualsAndHashCode
+@ToString(exclude = "lastLoginAt")
+@EqualsAndHashCode(exclude = "lastLoginAt")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends AbstractTimeColumn {
 

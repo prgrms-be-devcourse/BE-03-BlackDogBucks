@@ -1,6 +1,7 @@
 package com.prgrms.bdbks.domain.coupon.api;
 
 import static com.prgrms.bdbks.domain.testutil.CouponObjectProvider.*;
+import static com.prgrms.bdbks.domain.testutil.UserObjectProvider.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -24,13 +25,12 @@ import org.springframework.test.context.TestConstructor;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.prgrms.bdbks.WithMockCustomUser;
+import com.prgrms.bdbks.WithMockCustomUserSecurityContextFactory;
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
 import com.prgrms.bdbks.domain.coupon.repository.CouponRepository;
-import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
-import com.prgrms.bdbks.domain.user.dto.TokenResponse;
-import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
-import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
 import com.prgrms.bdbks.domain.user.entity.User;
+import com.prgrms.bdbks.domain.user.jwt.JwtAuthenticationFilter;
 import com.prgrms.bdbks.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -49,34 +49,28 @@ class CouponControllerTest {
 
 	private final MockMvc mockMvc;
 
-	private final UserService userService; // 빈 주입 받기
-
-	private String token;
+	private final UserService userService;
 
 	private List<Coupon> coupons;
 
 	@BeforeEach
 	void setUp() {
-		UserCreateRequest userCreateRequest = UserObjectProvider.createBlackDogRequest();
-		User savedUser = userService.register(userCreateRequest);
+		User user = userService.findUser(BLACK_DOG_LOGIN_ID).get();
 
-		UserLoginRequest userLoginRequest = UserObjectProvider.createBlackDogLoginRequest();
-		TokenResponse tokenResponse = userService.login(userLoginRequest);
-
-		token = "Bearer " + tokenResponse.getToken();
-
-		coupons = createCoupon(savedUser.getId());
+		coupons = createCoupon(user.getId());
 		couponRepository.saveAll(coupons);
 
 	}
 
 	@DisplayName("findUnusedCoupon - 사용하지 않은 사용자의 쿠폰을 조회한다. - 성공")
 	@Test
+	@WithMockCustomUser
 	void findUnusedCoupon_ValidUser_Success() throws Exception {
 
 		mockMvc.perform(get(BASE_REQUEST_URI + "/detail")
 				.param("used", "false")
-				.header(HttpHeaders.AUTHORIZATION, token)
+				.header(HttpHeaders.AUTHORIZATION, JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+					+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.accept(APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.coupons").exists())
@@ -109,9 +103,11 @@ class CouponControllerTest {
 
 	@DisplayName("findAll - 사용자의 모든 쿠폰을 조회한다. - 성공")
 	@Test
+	@WithMockCustomUser
 	void findAll_ValidUser_Success() throws Exception {
 		mockMvc.perform(get(BASE_REQUEST_URI)
-				.header(HttpHeaders.AUTHORIZATION, token)
+				.header(HttpHeaders.AUTHORIZATION, JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+					+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.accept(APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.coupons").exists())
