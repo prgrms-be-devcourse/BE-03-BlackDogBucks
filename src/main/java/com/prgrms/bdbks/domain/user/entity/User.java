@@ -30,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.prgrms.bdbks.common.domain.AbstractTimeColumn;
 import com.prgrms.bdbks.common.exception.AuthorityNotFoundException;
 import com.prgrms.bdbks.common.exception.NonActivatedUserException;
+import com.prgrms.bdbks.domain.user.role.Role;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -109,12 +110,8 @@ public class User extends AbstractTimeColumn {
 
 	public void validateStore(String storeId) {
 		userAuthorities.stream()
-			.filter(userAuthority -> {
-				if (Objects.nonNull(userAuthority.getStore())) {
-					return Objects.equals(userAuthority.getStore().getId(), storeId);
-				}
-				return false;
-			})
+			.filter(userAuthority -> userAuthority.getAuthority().getAuthorityName() == Role.ROLE_STORE_MANAGER)
+			.filter(userAuthority -> Objects.equals(userAuthority.getStore().getId(), storeId))
 			.findFirst()
 			.orElseThrow(() -> new AuthorityNotFoundException("해당 유저에게 권한이 없습니다."));
 	}
