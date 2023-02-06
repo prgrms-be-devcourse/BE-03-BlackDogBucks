@@ -53,7 +53,8 @@ class UserControllerIntegrationTest {
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header(HttpHeaders.AUTHORIZATION,
-					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX + WithMockCustomUserSecurityContextFactory.token)
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 			)
 			.andDo(print())
 			.andExpect(status().isOk())
@@ -79,7 +80,8 @@ class UserControllerIntegrationTest {
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/" + BLACK_DOG_LOGIN_ID)
 				.contentType(MediaType.APPLICATION_JSON)
 				.header(HttpHeaders.AUTHORIZATION,
-					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX + WithMockCustomUserSecurityContextFactory.token)
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 			)
 			.andDo(print())
 			.andExpect(status().isOk())
@@ -109,7 +111,8 @@ class UserControllerIntegrationTest {
 		mockMvc.perform(patch("/api/v1/users/store")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header(HttpHeaders.AUTHORIZATION,
-					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX + WithMockCustomUserSecurityContextFactory.token)
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.content(objectMapper.writeValueAsString(storeUserChangeRequest))
 			)
 			.andDo(print())

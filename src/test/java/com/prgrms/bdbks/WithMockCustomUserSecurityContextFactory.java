@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WithMockCustomUserSecurityContextFactory implements WithSecurityContextFactory<WithMockCustomUser> {
 
-	public static String token;
+	public static String mockUserToken;
 
 	private final UserService userService;
 
@@ -36,7 +36,7 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
 
 		TokenResponse tokenResponse = userService.login(loginRequest);
 
-		token = tokenResponse.getToken();
+		mockUserToken = tokenResponse.getToken();
 
 		CustomUserDetails customUserDetails = new CustomUserDetails(savedUser);
 
