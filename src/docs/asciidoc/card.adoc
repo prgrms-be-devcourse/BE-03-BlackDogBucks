@@ -1,0 +1,20 @@
+
+=== create
+
+==== HTTP request
+
+include::{snippets}/card-create/http-request.adoc[]
+
+==== request fields
+
+include::{snippets}/card-create/request-fields.adoc[]
+
+=== findOne
+
+==== HTTP response
+
+include::{snippets}/card-findOne/http-response.adoc[]
+
+==== response fields
+
+include::{snippets}/card-findOne/response-fields.adoc[]

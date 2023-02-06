@@ -1,0 +1,38 @@
+=== find-user-by-login-id
+
+==== HTTP request
+
+include::{snippets}/find-user/http-request.adoc[]
+
+==== HTTP response
+
+include::{snippets}/find-user/http-response.adoc[]
+
+==== response field
+
+include::{snippets}/find-user/response-fields.adoc[]
+
+
+=== me
+
+==== HTTP request
+
+include::{snippets}/me/http-request.adoc[]
+
+==== HTTP response
+
+include::{snippets}/me/http-response.adoc[]
+
+==== response field
+
+include::{snippets}/me/response-fields.adoc[]
+
+=== change-user-store
+
+==== HTTP request
+
+include::{snippets}/change-user-store/http-request.adoc[]
+
+==== HTTP response
+
+include::{snippets}/change-user-store/http-response.adoc[]

@@ -4,272 +4,28 @@
 :sectlinks:
 
 [[resources-post]]
+== Auth
+
+include::auth.adoc[]
+
 == User
 
-=== signup
-
-==== HTTP request
-
-include::{snippets}/signup/http-request.adoc[]
-
-==== response body
-
-include::{snippets}/signup/response-body.adoc[]
-
-=== login
-
-==== HTTP request
-
-include::{snippets}/login/http-request.adoc[]
-
-==== HTTP response
-
-include::{snippets}/login/http-response.adoc[]
-
-==== response body
-
-include::{snippets}/login/response-body.adoc[]
-
-=== find-user
-
-==== HTTP request
-
-include::{snippets}/find-user/http-request.adoc[]
-
-==== HTTP response
-
-include::{snippets}/find-user/http-response.adoc[]
-
-==== response field
-
-include::{snippets}/find-user/response-fields.adoc[]
-
-== me
-
-==== HTTP request
-
-include::{snippets}/me/http-request.adoc[]
-
-==== HTTP response
-
-include::{snippets}/me/http-response.adoc[]
-
-==== response field
-
-include::{snippets}/me/response-fields.adoc[]
-
-== change-user-store
-
-==== HTTP request
-
-include::{snippets}/change-user-store/http-request.adoc[]
-
-==== HTTP response
-
-include::{snippets}/change-user-store/http-response.adoc[]
-
-==== response body
-
-include::{snippets}/change-user-store/response-body.adoc[]
+include::user.adoc[]
 
 == Category
 
-=== read-all
-
-==== HTTP request
-
-include::{snippets}/category-list/http-request.adoc[]
-
-==== HTTP request param
-
-include::{snippets}/category-list/request-parameters.adoc[]
-
-==== HTTP response
-
-include::{snippets}/category-list/http-response.adoc[]
-
-==== response fields
-
-include::{snippets}/category-list/response-fields.adoc[]
+include::category.adoc[]
 
 == Item
 
-=== create
-
-==== HTTP request
-
-include::{snippets}/item-create/http-request.adoc[]
-
-===== request body
-
-include::{snippets}/item-create/request-body.adoc[]
-
-include::{snippets}/item-create/request-fields.adoc[]
-
-==== HTTP response
-
-include::{snippets}/item-create/http-response.adoc[]
-
-=== read-all
-
-==== HTTP request
-
-include::{snippets}/item-list/http-request.adoc[]
-
-==== HTTP request param
-
-include::{snippets}/item-list/request-parameters.adoc[]
-
-==== HTTP response
-
-include::{snippets}/item-list/http-response.adoc[]
-
-==== response fields
-
-include::{snippets}/item-list/response-fields.adoc[]
-
-=== read-one
-
-==== HTTP request
-
-include::{snippets}/item-detail/http-request.adoc[]
-
-==== HTTP request param
-
-include::{snippets}/item-detail/path-parameters.adoc[]
-
-==== HTTP response
-
-include::{snippets}/item-detail/http-response.adoc[]
-
-==== response fields
-
-include::{snippets}/item-detail/response-fields.adoc[]
+include::item.adoc[]
 
 == Coupon
 
-=== find-All
-
-==== HTTP request
-
-include::{snippets}/coupon-findAll/http-request.adoc[]
-
-==== HTTP response
-
-include::{snippets}/coupon-findAll/http-response.adoc[]
-
-==== response fields
-
-include::{snippets}/coupon-findAll/response-fields.adoc[]
-
-=== find-Unused
-
-==== HTTP request
-
-include::{snippets}/coupon-findUnused/http-request.adoc[]
-
-==== HTTP response
-
-include::{snippets}/coupon-findUnused/http-response.adoc[]
-
-==== response fields
-
-include::{snippets}/coupon-findUnused/response-fields.adoc[]
+include::coupon.adoc[]
 
 == Order
-
-=== read-one
-
-==== HTTP request
-
-include::{snippets}/order-detail/http-request.adoc[]
-
-==== HTTP request param
-
-include::{snippets}/order-detail/path-parameters.adoc[]
-
-==== HTTP response
-
-include::{snippets}/order-detail/http-response.adoc[]
-
-==== response fields
-
-include::{snippets}/order-detail/response-fields.adoc[]
-
-=== create
-
-==== HTTP request
-
-include::{snippets}/order-create/http-request.adoc[]
-
-===== request fields
-
-include::{snippets}/order-create/request-fields.adoc[]
-
-==== HTTP response
-
-include::{snippets}/order-create/http-response.adoc[]
-
-==== response fields
-
-include::{snippets}/order-create/response-fields.adoc[]
-
-== read-all
-
-==== HTTP request
-
-include::{snippets}/orders-by-store/http-request.adoc[]
-
-include::{snippets}/orders-by-store/request-parameters.adoc[]
-
-==== HTTP response
-
-include::{snippets}/orders-by-store/http-response.adoc[]
-
-include::{snippets}/orders-by-store/response-fields.adoc[]
-
-==== HTTP request
-
-include::{snippets}/order-accept/http-request.adoc[]
-
-include::{snippets}/order-accept/path-parameters.adoc[]
-
-==== HTTP response
-
-include::{snippets}/order-accept/http-response.adoc[]
-
-== reject
-
-==== HTTP request
-
-include::{snippets}/order-reject/http-request.adoc[]
-
-include::{snippets}/order-reject/path-parameters.adoc[]
-
-==== HTTP response
-
-include::{snippets}/order-reject/http-response.adoc[]
-
-== accept
+include::order.adoc[]
 
 == Card
-
-=== create
-
-==== HTTP request
-
-include::{snippets}/card-create/http-request.adoc[]
-
-==== request fields
-
-include::{snippets}/card-create/request-fields.adoc[]
-
-=== findOne
-
-==== HTTP response
-
-include::{snippets}/card-findOne/http-response.adoc[]
-
-==== response fields
-
-include::{snippets}/card-findOne/response-fields.adoc[]
+include::card.adoc[]

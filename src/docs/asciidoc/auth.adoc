@@ -1,0 +1,23 @@
+=== signup
+
+==== HTTP request
+
+include::{snippets}/signup/http-request.adoc[]
+
+==== response body
+
+include::{snippets}/signup/http-response.adoc[]
+
+=== login
+
+==== HTTP request
+
+include::{snippets}/login/http-request.adoc[]
+
+==== HTTP response
+
+include::{snippets}/login/http-response.adoc[]
+
+==== response body
+
+include::{snippets}/login/response-body.adoc[]
