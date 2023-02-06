@@ -57,7 +57,7 @@ class CardControllerTest {
 
 	@BeforeEach
 	void setUp() {
-		User user = userService.findUser("blackDog").get();
+		User user = userService.findUser("blackdog").get();
 
 		card = createCard(user);
 		cardRepository.save(card);
@@ -99,7 +99,7 @@ class CardControllerTest {
 	@Test
 	@WithMockCustomUser
 	void getCard_ValidParameters_Success() throws Exception {
-		String cardId = card.getChargeCardId();
+		String cardId = card.getId();
 
 		CardSaveResponse cardSaveResponse = new CardSaveResponse(cardId);
 

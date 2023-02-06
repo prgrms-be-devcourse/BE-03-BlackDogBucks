@@ -54,7 +54,7 @@ class CouponControllerTest {
 
 	@BeforeEach
 	void setUp() {
-		User user = userService.findUser("blackDog").get();
+		User user = userService.findUser("blackdog").get();
 
 		coupons = createCoupon(user.getId());
 		couponRepository.saveAll(coupons);

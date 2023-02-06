@@ -39,7 +39,7 @@ public class DefaultCardService implements CardService {
 		User findUser = userRepository.findById(userId)
 			.orElseThrow(() -> new EntityNotFoundException(User.class, userId));
 
-		Card card = Card.createCard(findUser, cardSaveRequest.getName());
+		Card card = Card.create(findUser, cardSaveRequest.getName());
 
 		cardRepository.save(card);
 
@@ -97,7 +97,7 @@ public class DefaultCardService implements CardService {
 
 		card.refundPrice(totalPrice);
 
-		return new CardRefundResponse(card.getChargeCardId(), totalPrice, card.getAmount());
+		return new CardRefundResponse(card.getId(), totalPrice, card.getAmount());
 	}
 
 }
