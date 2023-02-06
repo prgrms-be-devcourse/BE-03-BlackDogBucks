@@ -4,11 +4,10 @@ import static com.prgrms.bdbks.domain.user.role.Role.*;
 
 import java.util.Optional;
 
-import javax.transaction.Transactional;
-
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.prgrms.bdbks.common.exception.DuplicateInsertException;
 import com.prgrms.bdbks.common.exception.EntityNotFoundException;
@@ -101,6 +100,7 @@ public class DefaultUserService implements UserService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public boolean hasStore(Long userId, String storeId) {
 		User user = findUserById(userId);
 		user.validateStore(storeId);

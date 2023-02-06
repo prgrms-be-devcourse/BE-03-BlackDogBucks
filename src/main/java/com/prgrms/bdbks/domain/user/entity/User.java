@@ -103,14 +103,19 @@ public class User extends AbstractTimeColumn {
 
 	public List<GrantedAuthority> getAuthorities() {
 		return this.userAuthorities.stream().map(
-			userAuth -> new SimpleGrantedAuthority(userAuth.getAuthority().getAuthorityName().name())
+			userAuthority -> new SimpleGrantedAuthority(userAuthority.getAuthority().getAuthorityName().name())
 		).collect(Collectors.toList());
 	}
 
 	public void validateStore(String storeId) {
 		userAuthorities.stream()
-			.filter(userAuthority -> Objects.equals(userAuthority.getStore().getId(), storeId))
-			.findAny()
+			.filter(userAuthority -> {
+				if (Objects.nonNull(userAuthority.getStore())) {
+					return Objects.equals(userAuthority.getStore().getId(), storeId);
+				}
+				return false;
+			})
+			.findFirst()
 			.orElseThrow(() -> new AuthorityNotFoundException("해당 유저에게 권한이 없습니다."));
 	}
 

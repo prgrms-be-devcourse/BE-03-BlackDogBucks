@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,14 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.prgrms.bdbks.common.dto.SliceResponse;
-import com.prgrms.bdbks.domain.order.dto.OrderAcceptRequest;
 import com.prgrms.bdbks.domain.order.dto.OrderByStoreResponse;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateRequest;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateResponse;
 import com.prgrms.bdbks.domain.order.dto.OrderDetailResponse;
-import com.prgrms.bdbks.domain.order.dto.OrderRejectRequest;
 import com.prgrms.bdbks.domain.order.dto.OrderSearchRequest;
 import com.prgrms.bdbks.domain.order.service.OrderFacadeService;
+import com.prgrms.bdbks.domain.user.jwt.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 
@@ -47,8 +47,10 @@ public class OrderController {
 	 * @return status : created, body : 생성된 주문 단건 조회 redirectUri
 	 */
 	@PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-	public ResponseEntity<OrderCreateResponse> createOrder(@RequestBody @Valid OrderCreateRequest orderCreateRequest) {
-		OrderCreateResponse response = orderService.createOrder(orderCreateRequest);
+	public ResponseEntity<OrderCreateResponse> createOrder(
+		@RequestBody @Valid OrderCreateRequest orderCreateRequest,
+		@AuthenticationPrincipal CustomUserDetails user) {
+		OrderCreateResponse response = orderService.createOrder(user.getUser().getId(), orderCreateRequest);
 
 		String redirectUri =
 			ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString() + "/" + response.getOrderId();
@@ -75,15 +77,14 @@ public class OrderController {
 	 * </pre>
 	 *
 	 * @param orderId - 주문 id
-	 * @param request - 관리자 id
 	 * @return status : ok
 	 */
 	@PatchMapping(value = "/{orderId}/accept",
 		consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> acceptOrder(@PathVariable String orderId,
-		@RequestBody @Valid OrderAcceptRequest request) {
+		@AuthenticationPrincipal CustomUserDetails user) {
 
-		orderService.acceptOrder(orderId, request.getUserId());
+		orderService.acceptOrder(orderId, user.getUser().getId());
 
 		return ResponseEntity.ok().build();
 	}
@@ -94,14 +95,13 @@ public class OrderController {
 	 * </pre>
 	 *
 	 * @param orderId - 주문 id
-	 * @param request - 관리자 id
 	 * @return status : ok
 	 */
 	@PatchMapping(value = "/{orderId}/reject",
 		consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> rejectOrder(@PathVariable String orderId,
-		@RequestBody @Valid OrderRejectRequest request) {
-		orderService.rejectOrder(orderId, request.getUserId());
+		@AuthenticationPrincipal CustomUserDetails user) {
+		orderService.rejectOrder(orderId, user.getUser().getId());
 
 		return ResponseEntity.ok().build();
 	}

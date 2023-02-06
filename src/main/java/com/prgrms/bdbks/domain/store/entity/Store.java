@@ -101,7 +101,6 @@ public class Store extends AbstractTimeColumn {
 		public Point convertToEntityAttribute(String dbData) {
 			try {
 				String decoded = new String(dbData.getBytes(), StandardCharsets.UTF_8);
-				System.out.println(decoded);
 				return (Point)wktReader.read(decoded);
 			} catch (ParseException e) {
 				throw new PointParseException(String.format("위경도 파싱에 실패했습니다. %s", dbData));

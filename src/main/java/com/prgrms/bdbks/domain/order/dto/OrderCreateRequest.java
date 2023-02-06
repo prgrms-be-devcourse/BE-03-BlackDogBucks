@@ -20,9 +20,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderCreateRequest {
 
-	@NotNull(message = "사용자 id가 입력되지않았습니다.")
-	private Long userId;
-
 	@NotBlank(message = "매장이 선택되지 않았습니다.")
 	private String storeId;
 

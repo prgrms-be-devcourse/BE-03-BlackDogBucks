@@ -56,44 +56,28 @@ public class OrderFacadeService {
 	private final PaymentService paymentService;
 
 	@Transactional
-	public OrderCreateResponse createOrder(OrderCreateRequest request) {
+	public OrderCreateResponse createOrder(Long orderUserId, OrderCreateRequest request) {
 		storeService.findById(request.getStoreId());
-		userService.findUserById(request.getUserId());
+		userService.findUserById(orderUserId);
 
 		Coupon coupon = findCouponIfExists(request.getPaymentOption().getCouponId());
 
 		List<CustomItem> customItems = itemService.customItems(request.getOrderItems());
 
-		Order order = orderService.createOrder(coupon, request.getUserId(), request.getStoreId(),
+		Order order = orderService.createOrder(coupon, orderUserId, request.getStoreId(),
 			customItems);
 
 		cardService.pay(order.getUserId(), request.getPaymentOption().getChargeCardId(),
 			order.getTotalPrice());
 
-		if (Objects.nonNull(order.getCoupon())) {
-			order.getCoupon().use();
-		}
+		order.useCoupon();
 
 		PaymentResult paymentResult = paymentService.orderPay(order, request.getPaymentOption().getChargeCardId(),
 			order.getTotalPrice());
 
-		increaseStar(request.getUserId(), coupon);
+		increaseStar(orderUserId, coupon);
 
 		return new OrderCreateResponse(order.getId(), paymentResult.getPaymentId());
-	}
-
-	@Nullable
-	private Coupon findCouponIfExists(Long couponId) {
-		if (Objects.nonNull(couponId)) {
-			return couponService.getCouponByCouponId(couponId);
-		}
-		return null;
-	}
-
-	private void increaseStar(long userId, Coupon coupon) {
-		if (Objects.isNull(coupon)) {
-			starService.increaseCount(userId);
-		}
 	}
 
 	@Transactional(readOnly = true)
@@ -129,7 +113,6 @@ public class OrderFacadeService {
 		StarExchangeResponse starExchangeResponse = starService.exchangeCoupon(order.getUserId());
 
 		couponService.createByStar(starExchangeResponse.getUserId(), starExchangeResponse.isCanExchange());
-
 	}
 
 	@Transactional
@@ -139,15 +122,27 @@ public class OrderFacadeService {
 
 		order.reject();
 
-		Long couponId = order.getCoupon().getId();
-
-		if (Objects.nonNull(couponId)) {
-			couponService.refundCoupon(couponId);
+		if (Objects.nonNull(order.getCoupon())) {
+			couponService.refundCoupon(order.getCoupon().getId());
 		}
 
 		paymentService.orderPayRefund(orderId);
 
 		starService.cancel(order.getUserId());
+	}
+
+	@Nullable
+	private Coupon findCouponIfExists(Long couponId) {
+		if (Objects.nonNull(couponId)) {
+			return couponService.getCouponByCouponId(couponId);
+		}
+		return null;
+	}
+
+	private void increaseStar(long userId, Coupon coupon) {
+		if (Objects.isNull(coupon)) {
+			starService.increaseCount(userId);
+		}
 	}
 
 }
