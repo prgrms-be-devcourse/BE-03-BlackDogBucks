@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -24,17 +23,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prgrms.bdbks.WithMockCustomUser;
+import com.prgrms.bdbks.WithMockCustomUserSecurityContextFactory;
 import com.prgrms.bdbks.domain.testutil.StoreObjectProvider;
-import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
-import com.prgrms.bdbks.domain.user.converter.UserMapper;
 import com.prgrms.bdbks.domain.user.dto.StoreUserChangeRequest;
-import com.prgrms.bdbks.domain.user.dto.TokenResponse;
-import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
-import com.prgrms.bdbks.domain.user.dto.UserFindResponse;
-import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
-import com.prgrms.bdbks.domain.user.entity.User;
+import com.prgrms.bdbks.domain.user.jwt.JwtAuthenticationFilter;
 import com.prgrms.bdbks.domain.user.role.Role;
-import com.prgrms.bdbks.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -51,35 +45,16 @@ class UserControllerIntegrationTest {
 
 	private final ObjectMapper objectMapper;
 
-	private final UserService userService;
-
-	private final UserMapper userMapper;
-
-	private String token;
-
-	private UserFindResponse userFindResponse;
-
-	@BeforeEach
-	void setup() {
-		UserCreateRequest userCreateRequest = UserObjectProvider.createBlackDogRequest();
-		userService.register(userCreateRequest);
-
-		UserLoginRequest userLoginRequest = UserObjectProvider.createBlackDogLoginRequest();
-		TokenResponse tokenResponse = userService.login(userLoginRequest);
-
-		User user = userService.findUser(BLACK_DOG_LOGIN_ID).get();
-		userFindResponse = userMapper.entityToFindResponse(user);
-
-		token = "Bearer " + tokenResponse.getToken();
-	}
-
 	@DisplayName("me() - 인증 완료 후 개인정보 조회에 성공한다.")
 	@Test
+	@WithMockCustomUser(username = "tinajeong", role = "ADMIN")
 	void me_ValidParameters_Success() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me")
 				.contentType(MediaType.APPLICATION_JSON)
-				.header(HttpHeaders.AUTHORIZATION, token)
+				.header(HttpHeaders.AUTHORIZATION,
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 			)
 			.andDo(print())
 			.andExpect(status().isOk())
@@ -99,11 +74,14 @@ class UserControllerIntegrationTest {
 
 	@DisplayName("readUser() - 인증 완료 후 회원정보를 조회하는데 성공한다.")
 	@Test
+	@WithMockCustomUser
 	void readUser_success() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/" + BLACK_DOG_LOGIN_ID)
 				.contentType(MediaType.APPLICATION_JSON)
-				.header(HttpHeaders.AUTHORIZATION, token)
+				.header(HttpHeaders.AUTHORIZATION,
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 			)
 			.andDo(print())
 			.andExpect(status().isOk())
@@ -124,6 +102,7 @@ class UserControllerIntegrationTest {
 
 	@DisplayName("changeStoreUser() - 인증 완료 후 유저의 매장 정보 변경에 성공한다.")
 	@Test
+	@WithMockCustomUser
 	void changeStoreUserInformation_ValidParameters_Success() throws Exception {
 
 		StoreUserChangeRequest storeUserChangeRequest = new StoreUserChangeRequest(BLACK_DOG_LOGIN_ID, Role.ROLE_ADMIN,
@@ -131,7 +110,9 @@ class UserControllerIntegrationTest {
 
 		mockMvc.perform(patch("/api/v1/users/store")
 				.contentType(MediaType.APPLICATION_JSON)
-				.header(HttpHeaders.AUTHORIZATION, token)
+				.header(HttpHeaders.AUTHORIZATION,
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.content(objectMapper.writeValueAsString(storeUserChangeRequest))
 			)
 			.andDo(print())

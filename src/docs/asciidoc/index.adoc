@@ -6,17 +6,13 @@
 [[resources-post]]
 == User
 
-=== create
+=== signup
 
 ==== HTTP request
 
 include::{snippets}/signup/http-request.adoc[]
 
-==== HTTP response
-
-include::{snippets}/signup/http-response.adoc[]
-
-===== response body
+==== response body
 
 include::{snippets}/signup/response-body.adoc[]
 
@@ -30,9 +26,51 @@ include::{snippets}/login/http-request.adoc[]
 
 include::{snippets}/login/http-response.adoc[]
 
-===== response body
+==== response body
 
 include::{snippets}/login/response-body.adoc[]
+
+=== find-user
+
+==== HTTP request
+
+include::{snippets}/find-user/http-request.adoc[]
+
+==== HTTP response
+
+include::{snippets}/find-user/http-response.adoc[]
+
+==== response field
+
+include::{snippets}/find-user/response-fields.adoc[]
+
+== me
+
+==== HTTP request
+
+include::{snippets}/me/http-request.adoc[]
+
+==== HTTP response
+
+include::{snippets}/me/http-response.adoc[]
+
+==== response field
+
+include::{snippets}/me/response-fields.adoc[]
+
+== change-user-store
+
+==== HTTP request
+
+include::{snippets}/change-user-store/http-request.adoc[]
+
+==== HTTP response
+
+include::{snippets}/change-user-store/http-response.adoc[]
+
+==== response body
+
+include::{snippets}/change-user-store/response-body.adoc[]
 
 == Category
 

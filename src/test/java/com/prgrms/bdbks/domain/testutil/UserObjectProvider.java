@@ -62,6 +62,15 @@ public class UserObjectProvider {
 			"blackdog@blackdog.com");
 	}
 
+	public static UserCreateRequest createMockUserRequest(String username) {
+		return new UserCreateRequest(username,
+			username + "password",
+			username,
+			BLACK_DOG_BIRTH_DATE,
+			"01098541234",
+			username + "@blackdog.com");
+	}
+
 	public static UserLoginRequest createBlackDogLoginRequest() {
 		return new UserLoginRequest(BLACK_DOG_LOGIN_ID, BLACK_DOG_PASSWORD);
 	}

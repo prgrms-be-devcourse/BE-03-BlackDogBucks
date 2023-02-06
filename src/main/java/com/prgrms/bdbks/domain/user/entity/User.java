@@ -76,11 +76,11 @@ public class User extends AbstractTimeColumn {
 	private boolean isActivated = true;
 
 	@Column
-	private LocalDateTime lastLoginAt;
+	private LocalDateTime lastLoginAt = now();
 
 	@JsonManagedReference
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
-	private List<UserAuthority> userAuthorities = new ArrayList<>();
+	private final List<UserAuthority> userAuthorities = new ArrayList<>();
 
 	@Builder
 	protected User(Long id, String loginId, String password, String nickname, LocalDate birthDate, String phone,
