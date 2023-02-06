@@ -228,8 +228,6 @@ include::{snippets}/orders-by-store/http-response.adoc[]
 
 include::{snippets}/orders-by-store/response-fields.adoc[]
 
-== accept
-
 ==== HTTP request
 
 include::{snippets}/order-accept/http-request.adoc[]
@@ -252,3 +250,26 @@ include::{snippets}/order-reject/path-parameters.adoc[]
 
 include::{snippets}/order-reject/http-response.adoc[]
 
+== accept
+
+== Card
+
+=== create
+
+==== HTTP request
+
+include::{snippets}/card-create/http-request.adoc[]
+
+==== request fields
+
+include::{snippets}/card-create/request-fields.adoc[]
+
+=== findOne
+
+==== HTTP response
+
+include::{snippets}/card-findOne/http-response.adoc[]
+
+==== response fields
+
+include::{snippets}/card-findOne/response-fields.adoc[]
