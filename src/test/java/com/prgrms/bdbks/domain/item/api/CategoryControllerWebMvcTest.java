@@ -12,17 +12,16 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.prgrms.bdbks.config.security.SecurityConfig;
 import com.prgrms.bdbks.domain.item.service.ItemCategoryService;
 
 import lombok.RequiredArgsConstructor;
 
-@Import(SecurityConfig.class)
+@WithMockUser
 @AutoConfigureMockMvc
 @WebMvcTest(controllers = CategoryController.class)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
@@ -40,7 +39,6 @@ class CategoryControllerWebMvcTest {
 	@ParameterizedTest
 	@ValueSource(strings = {"음료", "응가", "veberage", "cood"})
 	void findAllByType_fail(String itemType) throws Exception {
-
 		//when
 		mockMvc.perform(get(BASE_REQUEST_URI)
 				// .with(csrf())

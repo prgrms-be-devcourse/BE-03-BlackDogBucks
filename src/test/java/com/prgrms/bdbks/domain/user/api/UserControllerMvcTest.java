@@ -67,12 +67,13 @@ class UserControllerMvcTest {
 
 	private String testToken;
 
+	static class EmptyUser extends User {
+	}
+
 	@BeforeEach
 	@Rollback(value = false)
 	public void setUp() {
 
-		class EmptyUser extends User {
-		}
 		emptyUser = new EmptyUser();
 
 		User user = User.builder()
@@ -85,7 +86,6 @@ class UserControllerMvcTest {
 			.build();
 
 		testToken = tokenProvider.generateToken(user);
-
 	}
 
 	@DisplayName("등록 - 사용자 가입에 성공하고 201 코드를 리턴한다.")

@@ -27,14 +27,12 @@ class CardTest {
 	@DisplayName("validateUser() - 유저의 정보가 유효하면 충전카드가 생성된다. - 성공")
 	@Test
 	void validateUser_validUser_ExceptionDoesNotThrown() {
-
 		assertDoesNotThrow(() -> createCard(user));
 	}
 
 	@DisplayName("validateUser() - 유저 객체가 null인 경우 충전카드를 생성할 수 없다. - 실패")
 	@Test
 	void validateUser_InvalidUser_ExceptionThrown() {
-
 		User invalidUser = null;
 		assertThrows(NullPointerException.class, () -> createCard(invalidUser));
 	}

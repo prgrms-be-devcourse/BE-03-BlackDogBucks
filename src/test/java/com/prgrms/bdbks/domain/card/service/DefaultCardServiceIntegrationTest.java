@@ -59,7 +59,6 @@ class DefaultCardServiceIntegrationTest {
 	@DisplayName("getCardList - 로그인한 사용자의 충전카드 목록을 조회할 수 있다. - 성공")
 	@Test
 	void getCardList_validUser_ReturnCards() {
-
 		//when
 		CardSearchResponses responses = defaultCardService.findAll(user.getId());
 
@@ -178,6 +177,5 @@ class DefaultCardServiceIntegrationTest {
 	@ValueSource(ints = {-10000, -20000, -50000, -300000, -650000})
 	void refund_inValidCardId_Success(int amount) {
 		assertThrows(IllegalArgumentException.class, () -> defaultCardService.refund(card.getId(), amount));
-
 	}
 }

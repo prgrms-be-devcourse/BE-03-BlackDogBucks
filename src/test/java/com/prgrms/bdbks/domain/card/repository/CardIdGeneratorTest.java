@@ -21,7 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @CustomDataJpaTest
 class CardIdGeneratorTest {
-	private final MyRandom random = new MyRandom();
+
+	private final TestRandomGenerator random = new TestRandomGenerator();
 
 	private final CardIdGenerator cardIdGenerator = new CardIdGenerator(random);
 
@@ -50,7 +51,7 @@ class CardIdGeneratorTest {
 		return userId % 900_000_000L + 100_000_000L;
 	}
 
-	public static class MyRandom implements RandomNumberGenerator {
+	private static class TestRandomGenerator implements RandomNumberGenerator {
 
 		@Override
 		public int randomNumber() {

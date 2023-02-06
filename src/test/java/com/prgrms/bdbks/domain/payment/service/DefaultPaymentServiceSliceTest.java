@@ -12,12 +12,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.prgrms.bdbks.domain.card.entity.Card;
 import com.prgrms.bdbks.domain.order.entity.Order;
 import com.prgrms.bdbks.domain.payment.entity.Payment;
 import com.prgrms.bdbks.domain.payment.entity.PaymentType;
 import com.prgrms.bdbks.domain.payment.repository.PaymentRepository;
-import com.prgrms.bdbks.domain.testutil.CardObjectProvider;
 import com.prgrms.bdbks.domain.testutil.OrderObjectProvider;
 import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
 import com.prgrms.bdbks.domain.user.entity.User;
@@ -52,7 +50,6 @@ public class DefaultPaymentServiceSliceTest {
 	@DisplayName("chargePay - 사용자의 충전카드 충전 결제 내역을 만들 수 있다. - 성공")
 	@Test
 	void chargePay_ValidParameters_Success() {
-
 		//given
 		String cardId = "cardID";
 		int totalPrice = 10000;
@@ -65,6 +62,5 @@ public class DefaultPaymentServiceSliceTest {
 
 		//then
 		verify(paymentRepository).save(any());
-
 	}
 }

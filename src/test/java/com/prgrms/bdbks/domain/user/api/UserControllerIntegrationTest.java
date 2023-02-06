@@ -72,7 +72,7 @@ class UserControllerIntegrationTest {
 			));
 	}
 
-	@DisplayName("readUser() - 인증 완료 후 회원정보를 조회하는데 성공한다.")
+	@DisplayName("findUser() - 인증 완료 후 회원정보를 조회하는데 성공한다.")
 	@Test
 	@WithMockCustomUser
 	void readUser_success() throws Exception {

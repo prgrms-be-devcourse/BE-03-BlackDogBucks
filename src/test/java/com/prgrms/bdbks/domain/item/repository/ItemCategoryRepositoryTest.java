@@ -19,7 +19,6 @@ class ItemCategoryRepositoryTest {
 	@DisplayName("조회 - itemType과 name으로 카테고리를 조회할 수 있다.")
 	@Test
 	void findByItemTypeAndName_query_success() {
-
 		ItemType beverage = ItemType.BEVERAGE;
 		String name = "에스프레소";
 
@@ -29,7 +28,6 @@ class ItemCategoryRepositoryTest {
 	@DisplayName("조회 - itemType으로 카테고리 List를 조회할 수 있다.")
 	@Test
 	void findByItemType_success() {
-
 		ItemType itemType = ItemType.BEVERAGE;
 
 		itemCategoryRepository.findByItemType(itemType);

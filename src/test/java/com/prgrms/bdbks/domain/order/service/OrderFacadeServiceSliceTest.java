@@ -217,7 +217,7 @@ class OrderFacadeServiceSliceTest {
 		PaymentOption paymentOption = new PaymentOption(PaymentType.ORDER,
 			couponId, chargeCardId);
 
-		OrderCreateRequest request = new OrderCreateRequest(userId, storeId, orderItemRequests, paymentOption);
+		OrderCreateRequest request = new OrderCreateRequest(storeId, orderItemRequests, paymentOption);
 
 		given(storeService.findById(storeId))
 			.willReturn(store);
@@ -228,11 +228,11 @@ class OrderFacadeServiceSliceTest {
 
 		//when
 		assertThrows(EntityNotFoundException.class, () ->
-			orderFacadeService.createOrder(request));
+			orderFacadeService.createOrder(userId, request));
 
 		//then
 		verify(storeService).findById(request.getStoreId());
-		verify(userService).findUserById(request.getUserId());
+		verify(userService).findUserById(userId);
 		verify(couponService).getCouponByCouponId(couponId);
 	}
 
@@ -257,7 +257,7 @@ class OrderFacadeServiceSliceTest {
 		PaymentOption paymentOption = new PaymentOption(PaymentType.ORDER, null,
 			chargeCardId);
 
-		OrderCreateRequest request = new OrderCreateRequest(userId, storeId, orderItemRequests, paymentOption);
+		OrderCreateRequest request = new OrderCreateRequest(storeId, orderItemRequests, paymentOption);
 
 		CardPayResponse cardPayResponse = new CardPayResponse(request.getPaymentOption().getChargeCardId(),
 			order.getTotalPrice());
@@ -270,7 +270,7 @@ class OrderFacadeServiceSliceTest {
 
 		given(storeService.findById(request.getStoreId()))
 			.willReturn(store);
-		given(userService.findUserById(request.getUserId()))
+		given(userService.findUserById(userId))
 			.willReturn(user);
 		given(itemService.customItems(request.getOrderItems()))
 			.willReturn(customItems);
@@ -283,11 +283,11 @@ class OrderFacadeServiceSliceTest {
 
 		//when
 		assertThrows(PaymentException.class, () ->
-			orderFacadeService.createOrder(request));
+			orderFacadeService.createOrder(userId, request));
 
 		//then
 		verify(storeService).findById(request.getStoreId());
-		verify(userService).findUserById(request.getUserId());
+		verify(userService).findUserById(userId);
 		verify(paymentService).orderPay(order, chargeCardId, order.getTotalPrice());
 		verify(itemService).customItems(request.getOrderItems());
 		verify(cardService).pay(order.getUserId(), request.getPaymentOption().getChargeCardId(), order.getTotalPrice());
@@ -309,14 +309,14 @@ class OrderFacadeServiceSliceTest {
 		List<OrderCreateRequest.Item> orderItemRequests = List.of(new OrderCreateRequest.Item(1L, 1, 4500, option));
 
 		PaymentOption paymentOption = new PaymentOption(PaymentType.ORDER, null, chargeCardId);
-		OrderCreateRequest request = new OrderCreateRequest(userId, storeId, orderItemRequests, paymentOption);
+		OrderCreateRequest request = new OrderCreateRequest(storeId, orderItemRequests, paymentOption);
 
 		given(storeService.findById(request.getStoreId()))
 			.willThrow(EntityNotFoundException.class);
 
 		//when
 		assertThrows(EntityNotFoundException.class, () ->
-			orderFacadeService.createOrder(request));
+			orderFacadeService.createOrder(userId, request));
 
 		//then
 		verify(storeService).findById(request.getStoreId());
@@ -341,18 +341,18 @@ class OrderFacadeServiceSliceTest {
 
 		PaymentOption paymentOption = new PaymentOption(PaymentType.ORDER, null, chargeCardId);
 
-		OrderCreateRequest request = new OrderCreateRequest(userId, storeId, orderItemRequests, paymentOption);
+		OrderCreateRequest request = new OrderCreateRequest(storeId, orderItemRequests, paymentOption);
 
 		given(storeService.findById(request.getStoreId())).willReturn(store);
-		given(userService.findUserById(request.getUserId())).willThrow(EntityNotFoundException.class);
+		given(userService.findUserById(userId)).willThrow(EntityNotFoundException.class);
 
 		//when
 		assertThrows(EntityNotFoundException.class, () ->
-			orderFacadeService.createOrder(request));
+			orderFacadeService.createOrder(userId, request));
 
 		//then
 		verify(storeService).findById(request.getStoreId());
-		verify(userService).findUserById(request.getUserId());
+		verify(userService).findUserById(userId);
 	}
 
 	@DisplayName("주문 생성 - 주문을 정상 생성한다 - 성공")
@@ -384,7 +384,7 @@ class OrderFacadeServiceSliceTest {
 		PaymentOption paymentOption = new PaymentOption(PaymentType.ORDER,
 			couponId, chargeCardId);
 
-		OrderCreateRequest request = new OrderCreateRequest(userId, storeId, orderItemRequests, paymentOption);
+		OrderCreateRequest request = new OrderCreateRequest(storeId, orderItemRequests, paymentOption);
 
 		PaymentResult paymentResult = new PaymentResult("paymentID");
 
@@ -403,7 +403,7 @@ class OrderFacadeServiceSliceTest {
 			.willReturn(store);
 		given(orderService.createOrder(coupon, userId, storeId, customItems))
 			.willReturn(order);
-		given(userService.findUserById(request.getUserId()))
+		given(userService.findUserById(userId))
 			.willReturn(user);
 		given(couponService.getCouponByCouponId(couponId))
 			.willReturn(coupon);
@@ -413,13 +413,13 @@ class OrderFacadeServiceSliceTest {
 			.willReturn(paymentResult);
 
 		//when
-		OrderCreateResponse orderCreateResponse = orderFacadeService.createOrder(request);
+		OrderCreateResponse orderCreateResponse = orderFacadeService.createOrder(userId, request);
 
 		//then
 		assertThat(orderCreateResponse.getOrderId()).isEqualTo(orderId);
 
 		verify(storeService).findById(request.getStoreId());
-		verify(userService).findUserById(request.getUserId());
+		verify(userService).findUserById(userId);
 		verify(couponService).getCouponByCouponId(couponId);
 		verify(paymentService).orderPay(order, chargeCardId, order.getTotalPrice());
 		verify(itemService).customItems(request.getOrderItems());
@@ -448,7 +448,7 @@ class OrderFacadeServiceSliceTest {
 
 		PaymentOption paymentOption = new PaymentOption(PaymentType.ORDER,
 			null, chargeCardId);
-		OrderCreateRequest request = new OrderCreateRequest(userId, storeId, orderItemRequests, paymentOption);
+		OrderCreateRequest request = new OrderCreateRequest(storeId, orderItemRequests, paymentOption);
 
 		PaymentResult paymentResult = new PaymentResult("paymentID");
 
@@ -467,7 +467,7 @@ class OrderFacadeServiceSliceTest {
 			.willReturn(store);
 		given(orderService.createOrder(null, userId, storeId, customItems))
 			.willReturn(order);
-		given(userService.findUserById(request.getUserId()))
+		given(userService.findUserById(userId))
 			.willReturn(user);
 		given(cardService.pay(order.getUserId(), request.getPaymentOption().getChargeCardId(), order.getTotalPrice()))
 			.willReturn(cardPayResponse);
@@ -477,7 +477,7 @@ class OrderFacadeServiceSliceTest {
 		doNothing().when(starService).increaseCount(userId);
 
 		//when
-		OrderCreateResponse response = orderFacadeService.createOrder(request);
+		OrderCreateResponse response = orderFacadeService.createOrder(userId, request);
 
 		//then
 		assertThat(response.getOrderId()).isEqualTo(orderId);
@@ -485,7 +485,7 @@ class OrderFacadeServiceSliceTest {
 		assertThat(response.getPaymentId()).isEqualTo("paymentID");
 
 		verify(storeService).findById(request.getStoreId());
-		verify(userService).findUserById(request.getUserId());
+		verify(userService).findUserById(userId);
 		verify(paymentService).orderPay(order, chargeCardId, order.getTotalPrice());
 		verify(itemService).customItems(request.getOrderItems());
 		verify(orderService).createOrder(null, userId, storeId, customItems);
@@ -540,7 +540,6 @@ class OrderFacadeServiceSliceTest {
 		//given
 		String orderId = "orderId";
 		Long adminUserId = 10L;
-		String storeId = "storeId";
 
 		Order order = OrderObjectProvider.createOrder();
 		ReflectionTestUtils.setField(order, "id", orderId);
@@ -564,10 +563,8 @@ class OrderFacadeServiceSliceTest {
 		//given
 		long adminUserId = 1111L;
 		long userId = 23423L;
-		User user = UserObjectProvider.createUser(userId);
 
 		String storeId = "storeId";
-		Store store = StoreObjectProvider.creatStore(storeId);
 		StarExchangeResponse starExchangeResponse = new StarExchangeResponse(userId, false);
 		Order order = createOrder(null, userId, storeId);
 

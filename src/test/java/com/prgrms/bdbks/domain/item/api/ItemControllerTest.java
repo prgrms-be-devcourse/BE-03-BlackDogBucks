@@ -6,7 +6,6 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -22,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -32,6 +32,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prgrms.bdbks.WithMockCustomUser;
+import com.prgrms.bdbks.WithMockCustomUserSecurityContextFactory;
 import com.prgrms.bdbks.domain.item.dto.DefaultOptionCreateRequest;
 import com.prgrms.bdbks.domain.item.dto.ItemCreateRequest;
 import com.prgrms.bdbks.domain.item.entity.BeverageOption;
@@ -43,9 +45,11 @@ import com.prgrms.bdbks.domain.item.repository.DefaultOptionRepository;
 import com.prgrms.bdbks.domain.item.repository.ItemCategoryRepository;
 import com.prgrms.bdbks.domain.item.repository.ItemRepository;
 import com.prgrms.bdbks.domain.store.service.StoreService;
+import com.prgrms.bdbks.domain.user.jwt.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
+@WithMockCustomUser
 @Transactional
 @SpringBootTest
 @AutoConfigureRestDocs
@@ -99,7 +103,10 @@ class ItemControllerTest {
 
 		//when
 		mockMvc.perform(post(BASE_REQUEST_URI)
-				.with(csrf())
+				.header(HttpHeaders.AUTHORIZATION,
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
+
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding(StandardCharsets.UTF_8)
@@ -189,6 +196,9 @@ class ItemControllerTest {
 
 		//when
 		mockMvc.perform(get(BASE_REQUEST_URI)
+				.header(HttpHeaders.AUTHORIZATION,
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.params(params)
@@ -244,6 +254,9 @@ class ItemControllerTest {
 
 		//when
 		mockMvc.perform(get(BASE_REQUEST_URI)
+				.header(HttpHeaders.AUTHORIZATION,
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.contentType(MediaType.APPLICATION_JSON)
 				.params(params)
 				.accept(MediaType.APPLICATION_JSON)
@@ -286,6 +299,9 @@ class ItemControllerTest {
 
 		//when
 		mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_REQUEST_URI + "/{itemId}", newItem.getId())
+				.header(HttpHeaders.AUTHORIZATION,
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding(StandardCharsets.UTF_8)
@@ -362,6 +378,9 @@ class ItemControllerTest {
 
 		//when
 		mockMvc.perform(get(BASE_REQUEST_URI + "/{itemId}", itemId)
+				.header(HttpHeaders.AUTHORIZATION,
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding(StandardCharsets.UTF_8)

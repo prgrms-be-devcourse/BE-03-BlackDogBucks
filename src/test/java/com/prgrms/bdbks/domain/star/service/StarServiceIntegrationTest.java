@@ -44,7 +44,6 @@ class StarServiceIntegrationTest {
 	@DisplayName("create - 사용자의 별을 만들 수 있다. - 성공")
 	@Test
 	void create_ValidUser_CreateSuccess() {
-
 		//given
 		int expectSize = 1;
 
@@ -53,7 +52,6 @@ class StarServiceIntegrationTest {
 
 		//then
 		assertEquals(starRepository.findAll().size(), expectSize);
-
 	}
 
 	@DisplayName("findById - 미등록 사용자의 별은 조회할 수 없다.")
@@ -81,7 +79,6 @@ class StarServiceIntegrationTest {
 	@DisplayName("delete - 사용자의 별을 삭제할 수 있다. - 성공")
 	@Test
 	void delete_ValidUserId_DeleteSuccess() {
-
 		//given
 		Long userId = user.getId();
 
@@ -90,7 +87,6 @@ class StarServiceIntegrationTest {
 
 		//then
 		assertFalse(starRepository.findByUserId(userId).isPresent());
-
 	}
 
 }
