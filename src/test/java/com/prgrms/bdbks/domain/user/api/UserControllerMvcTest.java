@@ -54,8 +54,6 @@ class UserControllerMvcTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	private User emptyUser;
-
 	@MockBean
 	private UserService defaultUserService;
 
@@ -64,6 +62,8 @@ class UserControllerMvcTest {
 
 	@MockBean
 	private TokenProvider tokenProvider;
+
+	private User emptyUser;
 
 	private String testToken;
 

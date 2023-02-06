@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDate;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +24,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.prgrms.bdbks.domain.testutil.UserObjectProvider;
-import com.prgrms.bdbks.domain.user.dto.TokenResponse;
+import com.prgrms.bdbks.WithMockCustomUser;
 import com.prgrms.bdbks.domain.user.dto.UserCreateRequest;
 import com.prgrms.bdbks.domain.user.dto.UserLoginRequest;
-import com.prgrms.bdbks.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -40,31 +37,13 @@ import lombok.RequiredArgsConstructor;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 @Sql({"/test_sql/user.sql"})
-public class AuthControllerIntegrationTest {
+class AuthControllerIntegrationTest {
 
 	@Autowired
 	private final MockMvc mockMvc;
 
 	@Autowired
 	private final ObjectMapper objectMapper;
-
-	private final AuthController authController;
-
-	private final UserService userService;
-
-	private String token;
-
-	private UserLoginRequest userLoginRequest;
-
-	@BeforeEach
-	void setup() {
-		UserCreateRequest userCreateRequest = UserObjectProvider.createBlackDogRequest();
-		authController.signup(userCreateRequest);
-
-		userLoginRequest = UserObjectProvider.createBlackDogLoginRequest();
-		TokenResponse tokenResponse = userService.login(userLoginRequest);
-		token = "Bearer " + tokenResponse.getToken();
-	}
 
 	@DisplayName("signup() - 입력한 정보가 올바른 경우 회원가입에 성공한다.")
 	@Test
@@ -96,11 +75,13 @@ public class AuthControllerIntegrationTest {
 
 	@DisplayName("login() - 아이디와 비밀번호가 DB의 값과 일치할 경우 로그인에 성공한다.")
 	@Test
+	@WithMockCustomUser(username = "tinajeong", role = "ADMIN")
 	void login_success() throws Exception {
 
 		mockMvc.perform(post("/api/v1/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(userLoginRequest)))
+				.content(
+					objectMapper.writeValueAsString(new UserLoginRequest("tinajeong", "tinajeongpassword"))))
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andDo(print())

@@ -79,8 +79,9 @@ class StoreControllerTest {
 			.andExpect(status().isCreated());
 	}
 
-	@Test
 	@DisplayName("조회 - 매장 아이디로 조회하는데 성공한다.")
+	@Test
+	@WithMockCustomUser
 	void find_store_success() throws Exception {
 
 		String storeId = "200157085";
@@ -93,8 +94,8 @@ class StoreControllerTest {
 		verify(storeService, times(1)).findStoreById(storeId);
 	}
 
-	@Test
 	@DisplayName("조회 - 구 이름으로 조회하는데 성공한다.")
+	@Test
 	void find_districtStores_success() throws Exception {
 
 		String district = "종로구";
