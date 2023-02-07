@@ -29,6 +29,8 @@ repositories {
 
 ext {
     set('snippetsDir', file("build/generated-snippets"))
+
+//    set('snippetsDir', file("src/docs/snipets"))
     queryDslVersion = "5.0.0"
 }
 

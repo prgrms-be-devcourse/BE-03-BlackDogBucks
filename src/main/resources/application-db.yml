@@ -37,9 +37,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/bdbks_local;
-    username: username
-    password: password
+    url: jdbc:mysql://localhost:5431/bdbks_local
+    username: root
+    password: 303ehd
   jpa:
     open-in-view: false
     hibernate:
@@ -66,7 +66,7 @@ jwt:
   authorities-key: auth
   header: Authorization
   secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
-  token-validity-in-seconds: 3600
+  token-validity-in-seconds: 36000000
 
 ---
 spring:
@@ -105,7 +105,7 @@ jwt:
   authorities-key: auth
   header: Authorization
   secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
-  token-validity-in-seconds: 3600
+  token-validity-in-seconds: 360000
 
 ---
 spring:
@@ -143,4 +143,4 @@ jwt:
   authorities-key: auth
   header: Authorization
   secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
-  token-validity-in-seconds: 3600
+  token-validity-in-seconds: 360000

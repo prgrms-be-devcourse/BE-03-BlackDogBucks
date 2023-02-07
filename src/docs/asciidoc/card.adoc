@@ -1,4 +1,6 @@
-
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
 === create
 
 ==== HTTP request
@@ -13,8 +15,8 @@ include::{snippets}/card-create/request-fields.adoc[]
 
 ==== HTTP response
 
-include::{snippets}/card-findOne/http-response.adoc[]
+include::{snippets}/card-find-one/http-response.adoc[]
 
 ==== response fields
 
-include::{snippets}/card-findOne/response-fields.adoc[]
+include::{snippets}/card-find-one/response-fields.adoc[]

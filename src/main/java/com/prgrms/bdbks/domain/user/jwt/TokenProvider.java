@@ -3,6 +3,8 @@ package com.prgrms.bdbks.domain.user.jwt;
 import static com.google.common.base.Preconditions.*;
 
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,12 +68,14 @@ public class TokenProvider {
 
 		Date validity = new Date(new Date().getTime() + tokenValidityInSeconds);
 
+		LocalDateTime localDateTime = LocalDateTime.now().plusSeconds(tokenValidityInSeconds);
+
 		return Jwts.builder()
 			.setSubject(user.getLoginId())
 			.claim(authoritiesKey, authorities)
 			.claim("email", user.getEmail())
 			.signWith(key, SignatureAlgorithm.HS512)
-			.setExpiration(validity)
+			.setExpiration(Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant()))
 			.compact();
 	}
 

@@ -1,31 +1,37 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
 = 흑구벅스 API Docs
 :toc: left
 :toclevels: 2
 :sectlinks:
+:source-highlighter: highlightjs // 문서에 표기되는 코드들의 하이라이팅을 highlightjs를 사용
 
 [[resources-post]]
 == Auth
 
-include::auth.adoc[]
+=== icon:link[] link:./auth.html[Auth]
 
 == User
 
-include::user.adoc[]
+=== icon:link[] link:./user.html[User]
 
 == Category
 
-include::category.adoc[]
+=== icon:link[] link:./category.html[Category]
 
 == Item
 
-include::item.adoc[]
+=== icon:link[] link:./item.html[Item]
 
 == Coupon
 
-include::coupon.adoc[]
+=== icon:link[] link:./coupon.html[Coupon]
 
 == Order
-include::order.adoc[]
+
+=== icon:link[] link:./order.html[Order]
 
 == Card
-include::card.adoc[]
+
+=== icon:link[] link:./card.html[Card]

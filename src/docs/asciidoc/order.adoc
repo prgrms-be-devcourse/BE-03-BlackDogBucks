@@ -1,4 +1,6 @@
-
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
 === find-one
 
 ==== HTTP request

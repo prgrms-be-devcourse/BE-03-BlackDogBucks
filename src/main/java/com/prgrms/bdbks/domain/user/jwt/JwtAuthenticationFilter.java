@@ -25,17 +25,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final TokenProvider tokenProvider;
 
+	private static final String FILTER_APPLIED = "JwtFilterApplied";
+
 	public static final String AUTHENTICATION_TYPE_PREFIX = "Bearer ";
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
 		FilterChain filterChain) throws ServletException, IOException {
+
 		String jwt = resolveToken(httpServletRequest);
 
 		if (tokenProvider.validateToken(jwt)) {
 			Authentication authentication = tokenProvider.getAuthentication(jwt);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
-
+			httpServletRequest.setAttribute(FILTER_APPLIED, true);
 		} else {
 			String requestURI = httpServletRequest.getRequestURI();
 			log.debug("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
@@ -47,12 +50,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private String resolveToken(HttpServletRequest request) {
 		String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-		return Optional.of(bearerToken)
+		return Optional.ofNullable(bearerToken)
 			.filter(t -> StringUtils.hasText(bearerToken))
 			.filter(t -> t.startsWith(AUTHENTICATION_TYPE_PREFIX))
 			.map(t -> t.substring(7))
 			.orElseThrow(() ->
-				new JwtValidateException("유효한 형식의 JWT 토큰이 아닙니다."));
+				new JwtValidateException("인증에 실패하였습니다."));
 	}
 
 }

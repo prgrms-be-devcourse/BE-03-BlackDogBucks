@@ -1,3 +1,6 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
 === signup
 
 ==== HTTP request

@@ -1,3 +1,6 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
 === find-user-by-login-id
 
 ==== HTTP request
@@ -11,7 +14,6 @@ include::{snippets}/find-user/http-response.adoc[]
 ==== response field
 
 include::{snippets}/find-user/response-fields.adoc[]
-
 
 === me
 

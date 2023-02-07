@@ -81,7 +81,7 @@ class CouponControllerTest {
 			.andExpect(jsonPath("$.coupons[0].expireDate").exists())
 			.andExpect(jsonPath("$.coupons[0].used").value(coupons.get(0).isUsed()))
 			.andDo(print())
-			.andDo(document("coupon-findUnused",
+			.andDo(document("coupon-find-unused",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestParameters(
@@ -118,7 +118,7 @@ class CouponControllerTest {
 			.andExpect(jsonPath("$.coupons[0].expireDate").exists())
 			.andExpect(jsonPath("$.coupons[0].used").value(coupons.get(0).isUsed()))
 			.andDo(print())
-			.andDo(document("coupon-findAll",
+			.andDo(document("coupon-find-all",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				responseFields(

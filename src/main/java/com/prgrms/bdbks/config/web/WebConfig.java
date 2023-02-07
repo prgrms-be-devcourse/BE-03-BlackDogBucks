@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.prgrms.bdbks.config.jwt.JwtConfigure;
 
@@ -14,10 +14,10 @@ import com.prgrms.bdbks.config.jwt.JwtConfigure;
 @EnableConfigurationProperties
 @EnableWebMvc
 @Configuration
-public class WebConfig extends WebMvcConfigurationSupport {
+public class WebConfig implements WebMvcConfigurer {
 
 	@Override
-	protected void addCorsMappings(CorsRegistry registry) {
+	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
 			.allowedOriginPatterns("http://localhost:8080/", "http://localhost:3000", "/**")
 			.allowedMethods("GET", "POST", "DELETE", "PATCH", "PUT", "OPTION")
@@ -25,7 +25,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	}
 
 	@Override
-	protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/docs/**").addResourceLocations("classpath:/static/docs/");
 	}
 

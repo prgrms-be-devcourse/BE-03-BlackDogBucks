@@ -1,27 +1,30 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
 === find-All
 
 ==== HTTP request
 
-include::{snippets}/coupon-findAll/http-request.adoc[]
+include::{snippets}/coupon-find-all/http-request.adoc[]
 
 ==== HTTP response
 
-include::{snippets}/coupon-findAll/http-response.adoc[]
+include::{snippets}/coupon-find-all/http-response.adoc[]
 
 ==== response fields
 
-include::{snippets}/coupon-findAll/response-fields.adoc[]
+include::{snippets}/coupon-find-all/response-fields.adoc[]
 
 === find-Unused
 
 ==== HTTP request
 
-include::{snippets}/coupon-findUnused/http-request.adoc[]
+include::{snippets}/coupon-find-unused/http-request.adoc[]
 
 ==== HTTP response
 
-include::{snippets}/coupon-findUnused/http-response.adoc[]
+include::{snippets}/coupon-find-unused/http-response.adoc[]
 
 ==== response fields
 
-include::{snippets}/coupon-findUnused/response-fields.adoc[]
+include::{snippets}/coupon-find-unused/response-fields.adoc[]

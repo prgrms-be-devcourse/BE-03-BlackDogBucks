@@ -117,7 +117,7 @@ class CardControllerTest {
 			.andExpect(jsonPath("$.amount").value(card.getAmount()))
 
 			.andDo(print())
-			.andDo(document("card-findOne",
+			.andDo(document("card-find-one",
 				responseFields(
 					fieldWithPath("chargeCardId").type(JsonFieldType.STRING).description("카드 Id"),
 					fieldWithPath("name").type(JsonFieldType.STRING)

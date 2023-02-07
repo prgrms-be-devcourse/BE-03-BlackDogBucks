@@ -12,10 +12,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prgrms.bdbks.config.jwt.ExceptionHandlingFilter;
 import com.prgrms.bdbks.domain.user.jwt.JwtAccessDeniedHandler;
 import com.prgrms.bdbks.domain.user.jwt.JwtAuthenticationEntryPoint;
 import com.prgrms.bdbks.domain.user.jwt.JwtAuthenticationFilter;
-import com.prgrms.bdbks.domain.user.jwt.JwtSecurityConfig;
 import com.prgrms.bdbks.domain.user.jwt.TokenProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,13 @@ public class SecurityConfig {
 
 	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
+	private final ObjectMapper objectMapper;
+
+	private final String[] allowedApiUrls = {
+		"/api/v1/auth/signup", "/api/v1/auth/login", "/api/v1/categories", "/api/v1/items/**",
+		"/api/v1/items", "/docs", "/docs/index.html", "/docs/**"
+	};
+
 	@Bean
 	public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
 		return new JwtAuthenticationEntryPoint();
@@ -38,7 +46,7 @@ public class SecurityConfig {
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return web -> web.ignoring()
-			.antMatchers("/api/v1/auth/signup", "/api/v1/auth/login");
+			.antMatchers(allowedApiUrls);
 	}
 
 	@Bean
@@ -50,8 +58,11 @@ public class SecurityConfig {
 	public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
 		return http
 			.csrf().disable()
-
+			.formLogin().disable()
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
 			.authorizeRequests()
+			.antMatchers(allowedApiUrls).permitAll()
 			.anyRequest().authenticated()
 			.and()
 
@@ -60,12 +71,8 @@ public class SecurityConfig {
 			.accessDeniedHandler(jwtAccessDeniedHandler)
 			.and()
 
-			.apply(new JwtSecurityConfig(tokenProvider))
-			.and()
-			.sessionManagement()
-			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			.and()
 			.addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(new ExceptionHandlingFilter(objectMapper), JwtAuthenticationFilter.class)
 			.build();
 	}
 

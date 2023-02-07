@@ -30,7 +30,7 @@ class ItemCategoryRepositoryTest {
 	void findByItemType_success() {
 		ItemType itemType = ItemType.BEVERAGE;
 
-		itemCategoryRepository.findByItemType(itemType);
+		itemCategoryRepository.findByItemTypeOrderById(itemType);
 	}
 
 	@DisplayName("조회 - name으로 카테고리를 조회할 수 있다.")

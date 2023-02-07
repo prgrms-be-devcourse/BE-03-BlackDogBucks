@@ -53,7 +53,7 @@ public class DefaultItemCategoryService implements ItemCategoryService {
 
 	@Override
 	public ItemCategoryResponses findAllByType(ItemType itemType) {
-		List<ItemCategoryResponse> categoryResponses = itemCategoryRepository.findByItemType(itemType)
+		List<ItemCategoryResponse> categoryResponses = itemCategoryRepository.findByItemTypeOrderById(itemType)
 			.stream()
 			.map(category -> new ItemCategoryResponse(category.getId(), category.getName(), category.getEnglishName(),
 				category.getItemType()))
