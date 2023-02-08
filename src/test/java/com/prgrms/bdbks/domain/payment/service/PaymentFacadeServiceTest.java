@@ -32,7 +32,6 @@ class PaymentFacadeServiceTest {
 	@DisplayName("chargePay - 카드 충전 결제를 진행할 수 있다. - 성공")
 	@Test
 	void chargePay_ValidParameters_Success() {
-
 		//given
 		Long userId = 1L;
 		String cardId = "cardId";
@@ -60,7 +59,6 @@ class PaymentFacadeServiceTest {
 	@DisplayName("chargePay - 카드 충전 결제를 진행할 수 있다. - 실패")
 	@Test
 	void chargePay_InValidParameters_Fail() {
-
 		//given
 		Long userId = 1L;
 		String cardId = "cardId";
@@ -74,7 +72,6 @@ class PaymentFacadeServiceTest {
 
 		//then
 		verify(cardService).charge(userId, cardId, amount);
-
 	}
 
 }

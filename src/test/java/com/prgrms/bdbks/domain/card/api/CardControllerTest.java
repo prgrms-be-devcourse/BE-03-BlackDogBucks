@@ -93,7 +93,6 @@ class CardControllerTest {
 					fieldWithPath("name").type(JsonFieldType.STRING).description("카드 이름")
 				)
 			));
-
 	}
 
 	@DisplayName("getCard - 사용자의 충전카드를 단건 조회한다. - 성공")
@@ -118,7 +117,7 @@ class CardControllerTest {
 			.andExpect(jsonPath("$.amount").value(card.getAmount()))
 
 			.andDo(print())
-			.andDo(document("card-findOne",
+			.andDo(document("card-find-one",
 				responseFields(
 					fieldWithPath("chargeCardId").type(JsonFieldType.STRING).description("카드 Id"),
 					fieldWithPath("name").type(JsonFieldType.STRING)
@@ -126,6 +125,5 @@ class CardControllerTest {
 					fieldWithPath("amount").type(JsonFieldType.NUMBER).description("카드 금액")
 				)
 			));
-
 	}
 }

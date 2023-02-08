@@ -14,7 +14,7 @@ public interface ItemCategoryRepository extends JpaRepository<ItemCategory, Long
 	Optional<ItemCategory> findByItemTypeAndName(@Param("itemType") ItemType itemType,
 		@Param("name") String name);
 
-	List<ItemCategory> findByItemType(@Param("itemType") ItemType itemType);
+	List<ItemCategory> findByItemTypeOrderById(@Param("itemType") ItemType itemType);
 
 	Optional<ItemCategory> findByName(@Param("name") String name);
 

@@ -17,21 +17,21 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.prgrms.bdbks.config.security.SecurityConfig;
 import com.prgrms.bdbks.domain.item.dto.DefaultOptionCreateRequest;
 import com.prgrms.bdbks.domain.item.dto.ItemCreateRequest;
 import com.prgrms.bdbks.domain.item.entity.ItemType;
 import com.prgrms.bdbks.domain.item.service.ItemService;
+import com.prgrms.bdbks.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
-@Import(SecurityConfig.class)
+@WithMockUser
 @AutoConfigureMockMvc
 @WebMvcTest(controllers = ItemController.class)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
@@ -41,7 +41,10 @@ class ItemControllerWebMvcTest {
 	private static final String BASE_REQUEST_URI = "/api/v1/items";
 
 	@MockBean
-	private final ItemService itemService;
+	private ItemService itemService;
+
+	@MockBean
+	private UserService defaultUserService;
 
 	private final MockMvc mockMvc;
 
@@ -125,7 +128,6 @@ class ItemControllerWebMvcTest {
 			)
 			.andExpect(status().isBadRequest())
 			.andDo(print());
-
 	}
 
 	@DisplayName("생성 - ItemCreateRequest의 categoryName이 black이면 응답에 실패하여 BadRequest를 반환한다. - 실패.")
@@ -164,7 +166,6 @@ class ItemControllerWebMvcTest {
 			)
 			.andExpect(status().isBadRequest())
 			.andDo(print());
-
 	}
 
 	@DisplayName("생성 - ItemCreateRequest의 name이 black이면 응답에 실패하여 BadRequest를 반환한다. - 실패.")
@@ -203,7 +204,6 @@ class ItemControllerWebMvcTest {
 			)
 			.andExpect(status().isBadRequest())
 			.andDo(print());
-
 	}
 
 	@DisplayName("생성 - ItemCreateRequest의 englishName이 black이면 응답에 실패하여 BadRequest를 반환한다. - 실패.")
@@ -242,7 +242,6 @@ class ItemControllerWebMvcTest {
 			)
 			.andExpect(status().isBadRequest())
 			.andDo(print());
-
 	}
 
 	@DisplayName("생성 - ItemCreateRequest의 image이 url 형식에 맞지않으면 응답에 실패하여 BadRequest를 반환한다. - 실패.")
@@ -281,7 +280,6 @@ class ItemControllerWebMvcTest {
 			)
 			.andExpect(status().isBadRequest())
 			.andDo(print());
-
 	}
 
 	@DisplayName("생성 - ItemCreateRequest의 description이 black이면 응답에 실패하여 BadRequest를 반환한다. - 실패.")
@@ -320,7 +318,6 @@ class ItemControllerWebMvcTest {
 			)
 			.andExpect(status().isBadRequest())
 			.andDo(print());
-
 	}
 
 	@DisplayName("생성 - ItemCreateRequest의 defaultOptionRequest이 null이면 응답에 실패하여 BadRequest를 반환한다. - 실패.")
@@ -350,7 +347,6 @@ class ItemControllerWebMvcTest {
 			)
 			.andExpect(status().isBadRequest())
 			.andDo(print());
-
 	}
 
 	@DisplayName("생성 - ItemCreateRequest의 price이 0 미만이면 응답에 실패하여 BadRequest를 반환한다. - 실패.")
@@ -389,7 +385,6 @@ class ItemControllerWebMvcTest {
 			)
 			.andExpect(status().isBadRequest())
 			.andDo(print());
-
 	}
 
 }

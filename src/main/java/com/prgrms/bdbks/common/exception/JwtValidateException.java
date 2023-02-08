@@ -1,6 +1,8 @@
 package com.prgrms.bdbks.common.exception;
 
-public class JwtValidateException extends BusinessException {
+import org.springframework.security.core.AuthenticationException;
+
+public class JwtValidateException extends AuthenticationException {
 
 	public JwtValidateException(String message) {
 		super(message);

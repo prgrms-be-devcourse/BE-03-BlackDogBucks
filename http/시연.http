@@ -1,0 +1,146 @@
+### 어드민 로그인
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "loginId": "blackdogManager",
+  "password": "asdfghjkl;"
+}
+
+> {% client.global.set("adminToken", response.body.token);
+%}
+
+### 로그인
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "loginId": "blackdog",
+  "password": "asdfghjkl;"
+}
+
+> {% client.global.set("userToken", response.body.token);
+client.log(response.body.token);
+client.log("생성된 토큰" +client.global.get("token"));
+%}
+
+
+### 카테고리 조회
+GET http://localhost:8080/api/v1/categories?kinds=BEVERAGE
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+### 상품 리스트 조회
+GET http://localhost:8080/api/v1/items?kinds=BEVERAGE&category=에스프레소
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+### 아이템 조회
+GET http://localhost:8080/api/v1/items/22
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+
+### 매장 조회 - 그랩 위치
+GET http://localhost:8080/api/v1/stores/location?latitude=37.492129&longitude=127.014197798445
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+
+### 주문
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "storeId": "20010511",
+  "orderItems": [
+    {
+      "itemId": 22,
+      "quantity": 1,
+      "price": 6000,
+      "option": {
+        "espressoShotCount": 1,
+        "vanillaSyrupCount": 0,
+        "classicSyrupCount": 0,
+        "hazelnutSyrupCount": 0,
+        "milkType": "OAT",
+        "espressoType": "DECAFFEINATED",
+        "milkAmount": "MEDIUM",
+        "cupSize": "VENTI",
+        "cupType": "PERSONAL"
+      }
+    }
+  ],
+  "paymentOption": {
+    "paymentType": "ORDER",
+    "couponId": null,
+    "chargeCardId": "1000000010122876"
+  }
+}
+
+### 매장 주문 리스트 조회
+GET http://localhost:8080/api/v1/orders?userId=3&orderStatus=PAYMENT_COMPLETE&pageSize=10&by=ORDER_ID&direction=ASC
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+> {%
+ client.global.set("orderId", response.body.data.orderId);
+client.log(client.global.get("orderId"));
+ %}
+
+### 주문 승인
+PATCH http://localhost:8080/api/v1/orders/{{orderId}}/accept
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 충전 카드 등록
+POST http://localhost:8080/api/v1/cards
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "내 소중한 카드"
+}
+
+### 충전 카드 단건 조회
+GET http://localhost:8080/api/v1/cards/1000000010122876
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 충전 카드 금액 충전
+PATCH http://localhost:8080/api/v1/cards
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "chargeCardId": 1000000010122876,
+  "amount": 500000
+}
+

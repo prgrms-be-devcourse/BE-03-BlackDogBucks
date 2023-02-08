@@ -1,0 +1,22 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+=== create
+
+==== HTTP request
+
+include::{snippets}/card-create/http-request.adoc[]
+
+==== request fields
+
+include::{snippets}/card-create/request-fields.adoc[]
+
+=== findOne
+
+==== HTTP response
+
+include::{snippets}/card-find-one/http-response.adoc[]
+
+==== response fields
+
+include::{snippets}/card-find-one/response-fields.adoc[]

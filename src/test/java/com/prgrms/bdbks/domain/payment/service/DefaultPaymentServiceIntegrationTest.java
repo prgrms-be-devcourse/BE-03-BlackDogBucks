@@ -92,14 +92,12 @@ public class DefaultPaymentServiceIntegrationTest {
 	@ValueSource(ints = {-50000, -500, 100, 200, 999, 550001, 10000000})
 	@DisplayName("chargePay - 사용자의 충전카드에 한도를 벗어나는 금액은 충전할 수 없다. - 실패")
 	void chargePay_InvalidPrice_Success(int totalPrice) {
-
 		assertThrows(PaymentException.class, () -> paymentService.chargePay(card.getId(), totalPrice));
 	}
 
 	@DisplayName("orderPayRefund - 주문으로 결제 내역을 조회하여 결제상태를 환불로 변경한다. - 성공")
 	@Test
 	void orderPayRefund_validOrder_Success() {
-
 		int orderPrice = 5000;
 
 		Payment payment = Payment.createOrderPayment(order, card.getId(), orderPrice);
@@ -115,19 +113,16 @@ public class DefaultPaymentServiceIntegrationTest {
 			.hasFieldOrPropertyWithValue("id", savedPayment.getId())
 			.hasFieldOrPropertyWithValue("chargeCardId", savedPayment.getChargeCardId())
 			.hasFieldOrPropertyWithValue("price", savedPayment.getPrice());
-
 	}
 
 	@DisplayName("orderPayRefund - 유효하지 않는 주문은 환불이 불가능하다. - 실패")
 	@Test
 	void orderPayRefund_inValidOrder_Fail() {
-
 		int orderPrice = 5000;
 		String inValidId = "wrongId";
 		Payment payment = Payment.createOrderPayment(order, card.getId(), orderPrice);
 		paymentRepository.save(payment);
 
 		assertThrows(EntityNotFoundException.class, () -> paymentService.orderPayRefund(inValidId));
-
 	}
 }

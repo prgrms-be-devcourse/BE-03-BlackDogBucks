@@ -23,6 +23,8 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
 
 	public static String mockUserToken;
 
+	public static Long userId;
+
 	private final UserService userService;
 
 	@Override
@@ -31,7 +33,7 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
 
 		UserCreateRequest createRequest = UserObjectProvider.createMockUserRequest(annotation.username());
 		User savedUser = userService.register(createRequest);
-
+		userId = savedUser.getId();
 		UserLoginRequest loginRequest = new UserLoginRequest(createRequest.getLoginId(), createRequest.getPassword());
 
 		TokenResponse tokenResponse = userService.login(loginRequest);
@@ -43,6 +45,7 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
 		final UsernamePasswordAuthenticationToken authenticationToken
 			= new UsernamePasswordAuthenticationToken(customUserDetails, null,
 			List.of(new SimpleGrantedAuthority(annotation.role())));
+
 		securityContext.setAuthentication(authenticationToken);
 
 		return securityContext;

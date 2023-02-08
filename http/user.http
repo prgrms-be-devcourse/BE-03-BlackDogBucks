@@ -3,13 +3,12 @@ POST http://localhost:8080/api/v1/auth/signup
 Content-Type: application/json
 
 {
-  "loginId": "migujeong2",
-  "password": "여덟글자넘어야됨1",
-  "email": "abc2@abc.com",
-  "nickname": "미구2",
-  "birthDate": "2022-01-18T18:25:40",
-  "phone": "01012345670",
-  "role": "USER"
+  "loginId": "blackdogManager",
+  "password": "asdfghjkl;",
+  "email": "blackdogManager@naver.com",
+  "nickname": "흑구매니저",
+  "birthDate": "2022-01-23T00:00:00",
+  "phone": "01012345671"
 }
 
 
@@ -22,8 +21,8 @@ POST http://localhost:8080/api/v1/auth/login
 Content-Type: application/json
 
 {
-  "loginId": "migujeong2",
-  "password": "여덟글자넘어야됨1"
+  "loginId": "blackdog",
+  "password": "asdfghjkl;"
 }
 
 ### 로그인 실패 401(가입안된 유저)

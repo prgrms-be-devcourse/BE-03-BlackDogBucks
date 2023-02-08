@@ -1,0 +1,87 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+=== find-one
+
+==== HTTP request
+
+include::{snippets}/order-detail/http-request.adoc[]
+
+==== HTTP request param
+
+include::{snippets}/order-detail/path-parameters.adoc[]
+
+==== HTTP response
+
+include::{snippets}/order-detail/http-response.adoc[]
+
+==== response fields
+
+include::{snippets}/order-detail/response-fields.adoc[]
+
+=== create
+
+==== HTTP request
+
+include::{snippets}/order-create/http-request.adoc[]
+
+===== request fields
+
+include::{snippets}/order-create/request-fields.adoc[]
+
+==== HTTP response
+
+include::{snippets}/order-create/http-response.adoc[]
+
+==== response fields
+
+include::{snippets}/order-create/response-fields.adoc[]
+
+=== find-all
+
+==== HTTP request
+
+include::{snippets}/orders-by-store/http-request.adoc[]
+
+include::{snippets}/orders-by-store/request-parameters.adoc[]
+
+==== HTTP response
+
+include::{snippets}/orders-by-store/http-response.adoc[]
+
+include::{snippets}/orders-by-store/response-fields.adoc[]
+
+==== HTTP request
+
+include::{snippets}/order-accept/http-request.adoc[]
+
+include::{snippets}/order-accept/path-parameters.adoc[]
+
+==== HTTP response
+
+include::{snippets}/order-accept/http-response.adoc[]
+
+=== reject
+
+==== HTTP request
+
+include::{snippets}/order-reject/http-request.adoc[]
+
+include::{snippets}/order-reject/path-parameters.adoc[]
+
+==== HTTP response
+
+include::{snippets}/order-reject/http-response.adoc[]
+
+=== accept
+
+==== HTTP request
+
+include::{snippets}/order-accept/http-request.adoc[]
+
+include::{snippets}/order-accept/path-parameters.adoc[]
+
+
+==== HTTP response
+
+include::{snippets}/order-accept/http-response.adoc[]

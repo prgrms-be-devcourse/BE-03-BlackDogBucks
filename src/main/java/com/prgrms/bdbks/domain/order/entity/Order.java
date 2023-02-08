@@ -130,4 +130,9 @@ public class Order extends AbstractTimeColumn {
 		this.orderStatus = OrderStatus.STORE_CANCEL;
 	}
 
+	public void useCoupon() {
+		if (this.coupon != null) {
+			this.coupon.use();
+		}
+	}
 }

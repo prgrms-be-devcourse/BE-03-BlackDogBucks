@@ -101,7 +101,7 @@ class DefaultItemCategoryServiceTest {
 			createItemCategory("리저브", "reserve", beverage)
 		);
 
-		given(itemCategoryRepository.findByItemType(beverage))
+		given(itemCategoryRepository.findByItemTypeOrderById(beverage))
 			.willReturn(itemCategories);
 
 		//when
@@ -110,7 +110,7 @@ class DefaultItemCategoryServiceTest {
 		assertThat(findItemCategories.getCategories()).hasSize(3)
 			.extracting(ItemCategoryResponse::getType)
 			.contains(beverage);
-		verify(itemCategoryRepository).findByItemType(beverage);
+		verify(itemCategoryRepository).findByItemTypeOrderById(beverage);
 	}
 
 	@DisplayName("조회 - itemType에 해당하는 itemCategory가 없을 경우 빈 list를 반환한다.")
@@ -118,7 +118,7 @@ class DefaultItemCategoryServiceTest {
 	void findAllByType_empty_success() {
 		//given
 		ItemType itemType = ItemType.PRODUCT;
-		given(itemCategoryRepository.findByItemType(itemType))
+		given(itemCategoryRepository.findByItemTypeOrderById(itemType))
 			.willReturn(Collections.emptyList());
 
 		//when
@@ -127,7 +127,7 @@ class DefaultItemCategoryServiceTest {
 		//then
 		assertThat(categories.getCategories().size()).isEqualTo(0);
 
-		verify(itemCategoryRepository).findByItemType(itemType);
+		verify(itemCategoryRepository).findByItemTypeOrderById(itemType);
 	}
 
 	@DisplayName("조회 - name 으로 ItemCategory를 정상 조회한다.")

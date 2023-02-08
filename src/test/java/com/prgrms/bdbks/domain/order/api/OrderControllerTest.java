@@ -30,6 +30,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -43,6 +44,8 @@ import org.springframework.util.MultiValueMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysema.commons.lang.Pair;
+import com.prgrms.bdbks.WithMockCustomUser;
+import com.prgrms.bdbks.WithMockCustomUserSecurityContextFactory;
 import com.prgrms.bdbks.domain.card.entity.Card;
 import com.prgrms.bdbks.domain.card.repository.CardRepository;
 import com.prgrms.bdbks.domain.coupon.entity.Coupon;
@@ -53,7 +56,6 @@ import com.prgrms.bdbks.domain.item.entity.ItemCategory;
 import com.prgrms.bdbks.domain.item.entity.OptionPrice;
 import com.prgrms.bdbks.domain.item.repository.ItemCategoryRepository;
 import com.prgrms.bdbks.domain.item.repository.ItemRepository;
-import com.prgrms.bdbks.domain.order.dto.OrderAcceptRequest;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateRequest;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateResponse;
 import com.prgrms.bdbks.domain.order.entity.CustomOption;
@@ -80,11 +82,15 @@ import com.prgrms.bdbks.domain.testutil.StoreObjectProvider;
 import com.prgrms.bdbks.domain.user.entity.Authority;
 import com.prgrms.bdbks.domain.user.entity.User;
 import com.prgrms.bdbks.domain.user.entity.UserAuthority;
+import com.prgrms.bdbks.domain.user.jwt.JwtAuthenticationFilter;
+import com.prgrms.bdbks.domain.user.repository.AuthorityRepository;
+import com.prgrms.bdbks.domain.user.repository.UserAuthorityRepository;
 import com.prgrms.bdbks.domain.user.repository.UserRepository;
 import com.prgrms.bdbks.domain.user.role.Role;
 
 import lombok.RequiredArgsConstructor;
 
+@WithMockCustomUser
 @ActiveProfiles("test")
 @Transactional
 @SpringBootTest(properties = {"spring.config.location=classpath:application-test.yml"})
@@ -122,8 +128,12 @@ class OrderControllerTest {
 	private final StarService starService;
 
 	private final OrderFacadeService orderFacadeService;
+
+	private final StoreRepository storeRepository;
+
+	private final UserAuthorityRepository userAuthorityRepository;
 	@Autowired
-	private StoreRepository storeRepository;
+	private AuthorityRepository authorityRepository;
 
 	@DisplayName("조회 - 존재하지않는 id 조회시 404 notFound 를 반환한다. - 실패")
 	@Test
@@ -133,6 +143,9 @@ class OrderControllerTest {
 
 		// when
 		mockMvc.perform(get(BASE_REQUEST_URI + "/{orderId}", orderId)
+				.header(HttpHeaders.AUTHORIZATION,
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.contentType(MediaType.APPLICATION_JSON)
 			)
 			.andDo(print())
@@ -165,6 +178,9 @@ class OrderControllerTest {
 
 		//when
 		mockMvc.perform(get(BASE_REQUEST_URI + "/{orderId}", order.getId())
+				.header(HttpHeaders.AUTHORIZATION,
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.contentType(MediaType.APPLICATION_JSON)
 			)
 			.andDo(print())
@@ -215,8 +231,7 @@ class OrderControllerTest {
 		given(storeService.findById(storeId))
 			.willReturn(store);
 
-		User user = createUser();
-		userRepository.save(user);
+		User user = userRepository.findById(WithMockCustomUserSecurityContextFactory.userId).get();
 
 		Star star = StarObjectProvider.createStar(user, (short)1);
 		starRepository.save(star);
@@ -236,13 +251,16 @@ class OrderControllerTest {
 		OrderCreateRequest.PaymentOption paymentOption = new OrderCreateRequest.PaymentOption(PaymentType.ORDER,
 			null, chargeCardId);
 
-		OrderCreateRequest request = new OrderCreateRequest(user.getId(), storeId, orderItemRequests, paymentOption);
+		OrderCreateRequest request = new OrderCreateRequest(storeId, orderItemRequests, paymentOption);
 
 		given(storeService.findById(storeId))
 			.willReturn(store);
 
 		//when
 		MvcResult result = mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_REQUEST_URI)
+				.header(HttpHeaders.AUTHORIZATION,
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request))
 			)
@@ -253,7 +271,6 @@ class OrderControllerTest {
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestFields(
-					fieldWithPath("userId").type(JsonFieldType.NUMBER).description("사용자 ID"),
 					fieldWithPath("storeId").type(JsonFieldType.STRING).description("매장 ID"),
 					fieldWithPath("orderItems[].itemId").type(JsonFieldType.NUMBER).description("아이템 ID"),
 					fieldWithPath("orderItems[].quantity").type(JsonFieldType.NUMBER).description("아이템 수량"),
@@ -336,7 +353,7 @@ class OrderControllerTest {
 			.hasFieldOrPropertyWithValue("amount", 10000 - payment.getPrice());
 
 		assertThat(star)
-			.hasFieldOrPropertyWithValue("count", Integer.valueOf("1"));
+			.hasFieldOrPropertyWithValue("count", Integer.valueOf("2"));
 
 		verify(storeService).findById(storeId);
 
@@ -357,8 +374,7 @@ class OrderControllerTest {
 		given(storeService.findById(storeId))
 			.willReturn(store);
 
-		User user = createUser();
-		userRepository.save(user);
+		User user = userRepository.findById(WithMockCustomUserSecurityContextFactory.userId).get();
 
 		Card chargeCard = CardObjectProvider.createCard(user);
 		chargeCard.chargeAmount(10000);
@@ -383,13 +399,16 @@ class OrderControllerTest {
 		OrderCreateRequest.PaymentOption paymentOption = new OrderCreateRequest.PaymentOption(PaymentType.ORDER,
 			coupon.getId(), chargeCardId);
 
-		OrderCreateRequest request = new OrderCreateRequest(user.getId(), storeId, orderItemRequests, paymentOption);
+		OrderCreateRequest request = new OrderCreateRequest(storeId, orderItemRequests, paymentOption);
 
 		given(storeService.findById(storeId))
 			.willReturn(store);
 
 		//when
 		MvcResult result = mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_REQUEST_URI)
+				.header(HttpHeaders.AUTHORIZATION,
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request))
 			)
@@ -474,8 +493,7 @@ class OrderControllerTest {
 		given(storeService.findById(storeId))
 			.willReturn(store);
 
-		User user = createUser();
-		userRepository.save(user);
+		User user = userRepository.findById(WithMockCustomUserSecurityContextFactory.userId).get();
 
 		Card chargeCard = CardObjectProvider.createCard(user);
 		chargeCard.chargeAmount(10000);
@@ -500,13 +518,16 @@ class OrderControllerTest {
 		OrderCreateRequest.PaymentOption paymentOption = new OrderCreateRequest.PaymentOption(PaymentType.ORDER,
 			coupon.getId(), chargeCardId);
 
-		OrderCreateRequest request = new OrderCreateRequest(user.getId(), storeId, orderItemRequests, paymentOption);
+		OrderCreateRequest request = new OrderCreateRequest(storeId, orderItemRequests, paymentOption);
 
 		given(storeService.findById(storeId))
 			.willReturn(store);
 
 		//when
 		MvcResult result = mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_REQUEST_URI)
+				.header(HttpHeaders.AUTHORIZATION,
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request))
 			)
@@ -600,6 +621,9 @@ class OrderControllerTest {
 		param.add("orderStatus", requestOrderStatus);
 
 		mockMvc.perform(get(BASE_REQUEST_URI)
+				.header(HttpHeaders.AUTHORIZATION,
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.contentType(MediaType.APPLICATION_JSON)
 				.params(param)
 			).andExpect(status().isOk())
@@ -667,11 +691,12 @@ class OrderControllerTest {
 
 		storeRepository.save(store);
 
-		User user = createUser();
-		Authority authority = new Authority(Role.ROLE_ADMIN);
+		User user = userRepository.findById(WithMockCustomUserSecurityContextFactory.userId).get();
+		Authority authority = new Authority(Role.ROLE_STORE_MANAGER);
 		UserAuthority userAuthority = UserAuthority.createWithStore(user, authority, store);
-		user.getUserAuthorities().add(userAuthority);
-		userRepository.save(user);
+		user.addUserAuthority(userAuthority);
+		userAuthorityRepository.save(userAuthority);
+		userRepository.saveAndFlush(user);
 
 		Order order = OrderObjectProvider.createOrder(null, user.getId(), storeId);
 		CustomOption customOption = OrderObjectProvider.createCustomOption();
@@ -680,11 +705,11 @@ class OrderControllerTest {
 		orderRepository.save(order);
 		starService.create(user);
 
-		OrderAcceptRequest orderAcceptRequest = new OrderAcceptRequest(user.getId());
-
 		mockMvc.perform(patch(BASE_REQUEST_URI + "/{orderId}/accept", order.getId())
+				.header(HttpHeaders.AUTHORIZATION,
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(orderAcceptRequest))
 			)
 			.andExpect(status().isOk())
 			.andDo(print())
@@ -693,9 +718,6 @@ class OrderControllerTest {
 				preprocessResponse(prettyPrint()),
 				pathParameters(
 					parameterWithName("orderId").description("주문 Id")
-				),
-				requestFields(
-					fieldWithPath("userId").type(JsonFieldType.NUMBER).description("요청 userId")
 				)
 			));
 
@@ -714,29 +736,31 @@ class OrderControllerTest {
 		Item icedAmericano = createIcedAmericano(itemCategory);// defaultOption
 		itemRepository.save(icedAmericano);
 
-		String storeId = "storeId";
+		String storeId = "store1";
 		Store store = StoreObjectProvider.creatStore(storeId);
 
 		storeRepository.save(store);
 
-		User user = createUser();
-		Authority authority = new Authority(Role.ROLE_ADMIN);
+		User user = userRepository.findById(WithMockCustomUserSecurityContextFactory.userId).get();
+		Authority authority = new Authority(Role.ROLE_STORE_MANAGER);
 		UserAuthority userAuthority = UserAuthority.createWithStore(user, authority, store);
-		user.getUserAuthorities().add(userAuthority);
-		userRepository.save(user);
+		user.addUserAuthority(userAuthority);
+		userAuthorityRepository.save(userAuthority);
+		userRepository.saveAndFlush(user);
 
-		Order order = OrderObjectProvider.createOrder(null, user.getId(), storeId);
-		CustomOption customOption = OrderObjectProvider.createCustomOption();
-		OrderItem.create(order, icedAmericano, customOption, 1, new OptionPrice());
-
-		orderRepository.save(order);
 		starService.create(user);
 
-		OrderAcceptRequest orderAcceptRequest = new OrderAcceptRequest(user.getId());
+		Card card = CardObjectProvider.createCard(user);
+		card.chargeAmount(100000);
+		cardRepository.save(card);
 
-		mockMvc.perform(patch(BASE_REQUEST_URI + "/{orderId}/reject", order.getId())
+		OrderCreateResponse createOrder = createOrder(icedAmericano, user.getId(), card.getId());
+
+		mockMvc.perform(patch(BASE_REQUEST_URI + "/{orderId}/reject", createOrder.getOrderId())
+				.header(HttpHeaders.AUTHORIZATION,
+					JwtAuthenticationFilter.AUTHENTICATION_TYPE_PREFIX
+						+ WithMockCustomUserSecurityContextFactory.mockUserToken)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(orderAcceptRequest))
 			)
 			.andExpect(status().isOk())
 			.andDo(print())
@@ -745,15 +769,39 @@ class OrderControllerTest {
 				preprocessResponse(prettyPrint()),
 				pathParameters(
 					parameterWithName("orderId").description("주문 Id")
-				),
-				requestFields(
-					fieldWithPath("userId").type(JsonFieldType.NUMBER).description("요청 userId")
 				)
 			));
 
-		Order findOrder = orderRepository.findById(order.getId()).get();
+		Order findOrder = orderRepository.findById(createOrder.getOrderId()).get();
 
 		assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.STORE_CANCEL);
+	}
+
+	OrderCreateResponse createOrder(Item item, Long userId, String cardId) {
+
+		List<Store> stores = List.of(StoreObjectProvider.creatStore("store1"),
+			StoreObjectProvider.creatStore("store2"),
+			StoreObjectProvider.creatStore("store3"));
+
+		storeRepository.saveAll(stores);
+
+		OrderCreateRequest.Item.Option option = new OrderCreateRequest.Item.Option(
+			1, 0, 0, 0,
+			BeverageOption.Milk.OAT, BeverageOption.Coffee.DECAFFEINATED, BeverageOption.MilkAmount.MEDIUM,
+			BeverageOption.Size.VENTI, BeverageOption.CupType.PERSONAL);
+
+		List<OrderCreateRequest.Item> orderItemRequests = List.of(
+			new OrderCreateRequest.Item(item.getId(), 1, 4500, option)
+		);
+
+		OrderCreateRequest.PaymentOption paymentOption = new OrderCreateRequest.PaymentOption(PaymentType.ORDER,
+			null, cardId);
+
+		OrderCreateRequest request = new OrderCreateRequest(stores.get(0).getId(),
+			orderItemRequests,
+			paymentOption);
+
+		return orderFacadeService.createOrder(userId, request);
 	}
 
 	void createOrders() {
@@ -767,8 +815,6 @@ class OrderControllerTest {
 					createUser(RandomStringUtils.randomAlphabetic(10),
 						RandomStringUtils.randomAlphabetic(10) + "@email.com",
 						"0107441484" + integer.getAndIncrement()));
-
-				doNothing().when(starService).increaseCount(user.getId());
 
 				Card chargeCard = CardObjectProvider.createCard(user);
 				chargeCard.chargeAmount(100000);
@@ -789,10 +835,8 @@ class OrderControllerTest {
 			StoreObjectProvider.creatStore("store2"),
 			StoreObjectProvider.creatStore("store3"));
 
-		stores.forEach(s -> {
-			given(storeService.findById(s.getId()))
-				.willReturn(s);
-		});
+		stores.forEach(s -> given(storeService.findById(s.getId()))
+			.willReturn(s));
 
 		OrderCreateRequest.Item.Option option = new OrderCreateRequest.Item.Option(
 			1, 0, 0, 0,
@@ -808,19 +852,23 @@ class OrderControllerTest {
 
 			OrderCreateRequest.PaymentOption paymentOption = new OrderCreateRequest.PaymentOption(PaymentType.ORDER,
 				null, card.getId());
+
 			Store store = stores.get(i.getAndIncrement() % 3);
+
+			starService.create(user);
 
 			List<OrderCreateRequest.Item> orderItemRequests = List.of(
 				new OrderCreateRequest.Item(americano.getId(), 1, 4500, option),
 				new OrderCreateRequest.Item(latte.getId(), 2, 4500, option)
 			);
 
-			OrderCreateRequest request = new OrderCreateRequest(user.getId(),
+			OrderCreateRequest request = new OrderCreateRequest(
 				store.getId(), orderItemRequests,
 				paymentOption);
 
-			orderFacadeService.createOrder(request);
+			orderFacadeService.createOrder(user.getId(), request);
 		});
 
 	}
+
 }

@@ -36,14 +36,14 @@ public class UserController {
 
 	/**
 	 * <pre>
-	 *     로그인
+	 *     유저 정보 loginId로 조회
 	 * </pre>
 	 * @param loginId - 조회할 회원의 loginId
 	 * @return status : ok , body : UserFindResponse
 	 */
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN', 'STORE_MANAGER')")
 	@GetMapping(value = "/{loginId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<UserFindResponse> readUser(@PathVariable String loginId) {
+	public ResponseEntity<UserFindResponse> findUser(@PathVariable String loginId) {
 		Optional<User> user = this.userService.findUser(loginId);
 		return user.map(value -> ResponseEntity.ok(userMapper.entityToFindResponse(value)))
 			.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());

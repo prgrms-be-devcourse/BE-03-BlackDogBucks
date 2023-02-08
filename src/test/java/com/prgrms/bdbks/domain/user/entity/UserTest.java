@@ -35,7 +35,6 @@ class UserTest {
 	@Test
 	@DisplayName("Builder - 유저의 모든 필드 값이 유효한 경우 - 생성 성공")
 	void builder_validBuilder_Success() {
-
 		assertDoesNotThrow(
 			() -> createUser(validLoginId, validPassword, validNickname, validBirthDate, validPhone, validEmail));
 	}

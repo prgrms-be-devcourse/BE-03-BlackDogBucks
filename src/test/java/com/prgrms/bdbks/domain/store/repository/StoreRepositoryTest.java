@@ -61,21 +61,10 @@ class StoreRepositoryTest {
 	@Test
 	@DisplayName("조회 - 좌표간 거리 환산에 성공 한다.")
 	void distance_test() {
-
 		Location location = new Location(37.493657, 127.013772);
 		List<Integer> distances = storeRepository.findDistance(location);
 
 		assertTrue(distances.stream().allMatch(Objects::nonNull));
 	}
-	//
-	// @Test
-	// @DisplayName("조회 - 거리가 가까운 순으로 조회하는데 성공 한다.")
-	// void short_distance_test() {
-	// 	Location location = new Location(37.493657, 127.013772);
-	// 	int tenKm = 10000;
-	// 	List<Store> storeList = storeRepository.findAllByDistance(location, tenKm);
-	//
-	// 	assertTrue(storeList.stream().allMatch(Objects::nonNull));
-	// }
 
 }

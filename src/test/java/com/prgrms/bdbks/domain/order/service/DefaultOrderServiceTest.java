@@ -20,13 +20,11 @@ import org.springframework.test.context.TestConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysema.commons.lang.Pair;
 import com.prgrms.bdbks.common.dto.SliceResponse;
 import com.prgrms.bdbks.config.jpa.JpaConfig;
 import com.prgrms.bdbks.domain.card.entity.Card;
 import com.prgrms.bdbks.domain.card.repository.CardRepository;
-import com.prgrms.bdbks.domain.coupon.repository.CouponRepository;
 import com.prgrms.bdbks.domain.item.entity.BeverageOption;
 import com.prgrms.bdbks.domain.item.entity.Item;
 import com.prgrms.bdbks.domain.item.entity.ItemCategory;
@@ -35,10 +33,7 @@ import com.prgrms.bdbks.domain.item.repository.ItemRepository;
 import com.prgrms.bdbks.domain.order.dto.OrderByStoreResponse;
 import com.prgrms.bdbks.domain.order.dto.OrderCreateRequest;
 import com.prgrms.bdbks.domain.order.entity.OrderStatus;
-import com.prgrms.bdbks.domain.order.repository.OrderRepository;
 import com.prgrms.bdbks.domain.payment.entity.PaymentType;
-import com.prgrms.bdbks.domain.payment.repository.PaymentRepository;
-import com.prgrms.bdbks.domain.star.repository.StarRepository;
 import com.prgrms.bdbks.domain.star.service.StarService;
 import com.prgrms.bdbks.domain.store.entity.Store;
 import com.prgrms.bdbks.domain.store.service.StoreService;
@@ -60,10 +55,6 @@ class DefaultOrderServiceTest {
 	@MockBean
 	private StoreService storeService;
 
-	private final ObjectMapper objectMapper;
-
-	private final OrderRepository orderRepository;
-
 	private final ItemRepository itemRepository;
 
 	private final CardRepository cardRepository;
@@ -71,12 +62,6 @@ class DefaultOrderServiceTest {
 	private final ItemCategoryRepository itemCategoryRepository;
 
 	private final UserRepository userRepository;
-
-	private final PaymentRepository paymentRepository;
-
-	private final CouponRepository couponRepository;
-
-	private final StarRepository starRepository;
 
 	private final OrderFacadeService orderFacadeService;
 
@@ -103,8 +88,6 @@ class DefaultOrderServiceTest {
 			.extracting(OrderByStoreResponse::getOrderStatus).contains(OrderStatus.PAYMENT_COMPLETE);
 
 		assertThat(orders.getSize()).isEqualTo(4);
-
-		System.out.println(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(storeOrders));
 	}
 
 	void createOrders() {
@@ -166,11 +149,11 @@ class DefaultOrderServiceTest {
 				new OrderCreateRequest.Item(latte.getId(), 2, 4500, option)
 			);
 
-			OrderCreateRequest request = new OrderCreateRequest(user.getId(),
-				store.getId(), orderItemRequests,
+			OrderCreateRequest request = new OrderCreateRequest(store.getId(),
+				orderItemRequests,
 				paymentOption);
 
-			orderFacadeService.createOrder(request);
+			orderFacadeService.createOrder(user.getId(), request);
 		});
 
 	}

@@ -1,0 +1,20 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+=== find-all
+
+==== HTTP request
+
+include::{snippets}/category-list/http-request.adoc[]
+
+==== HTTP request param
+
+include::{snippets}/category-list/request-parameters.adoc[]
+
+==== HTTP response
+
+include::{snippets}/category-list/http-response.adoc[]
+
+==== response fields
+
+include::{snippets}/category-list/response-fields.adoc[]
