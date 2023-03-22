@@ -1,5 +1,5 @@
 
-### 📃 [BlackDogBuscks Notion Page](https://www.notion.so/1-693b2efd49e24928a17aefa241c85472)
+### 📃 [BlackDogBucks Notion Page](https://www.notion.so/1-693b2efd49e24928a17aefa241c85472)
 
 ## 🔹 프로젝트 소개
 
